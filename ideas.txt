@@ -1,0 +1,265 @@
+
+== Output XML (check junit task in ant)
+
+== Stress testing / real life scenarios
+
+Script existing unit tests into scenarios.
+
+Idea from http://junitscenario.sourceforge.net/
+
+<scenario name="cashier" users="20" loops="500">
+  <task JUnitClass="org.mybank.MyFirstTest" JUnitMethod="testCreateAccount" wait="10"/>
+  <task JUnitClass="org.mybank.MyFirstTest" JUnitMethod="testDipositMoney" wait="10"/>
+  <task JUnitClass="org.mybank.MyFirstTest" JUnitMethod="testWithdrawMoney" wait="50"/>
+</scenario>
+
+This script defines the common work of a cashier. That is to say create an
+account, disposit and withdraw money on it. When launched, JUnitScenario will
+create 20 users executing the defined tasks and will stop when every user will
+have done it 500 times.
+
+== More states besides success/fail/error
+
+* Broken test
+* Known failure (to be fixed later / can't be fixed)
+
+Can be set with special fail strings, etc.
+Probably just a reporter/formatter item.
+
+Idea from http://junitour.sourceforge.net/index.html
+
+== Automated testing
+
+Automatic test stubs
+
+== Separate reporting/formatting interface
+
+Allow richer and easier output options vs. subclassing TestResult
+
+== HASTE framework
+
+Ideas from http://atomicobject.com/haste/
+
+Terms:
+* StoryBook:
+    contains a group of Stories that can all be ran automatically. Analogous
+    to a test suite: a collection of individual tests that can be run as a
+    group.
+
+* Story:
+    A single test case that is composed of Steps being ran in a certain order.
+    It represents an acceptance test for a single user story, such as "The user
+    can add a new Widget to the Doodads List". The Story contains a set of
+    steps that, when run in order, accomplish the task.
+
+* Step:
+    The basic unit of a Story. Can perform actions and test the results of said
+    action. If an assertion fails the rest of the Story is aborted and it
+    reports the failure to standard output. You can place all of the familiar
+    old jUnit assertions in the Step.
+
+Tools:
+* Pilots:
+    Pilot interfaces wrap the complex behavior of GUI components into simpler
+    interfaces that, together with a specific GUI manipulation toolkit, allow
+    for test step classes to be written at a more abstract level. Each Pilot
+    has a one-to-one relationship with a particular class of GUI component. A
+    pilot can do this such as: clickItem() or typeString("hi")  
+
+* Droids:
+    A Droid is a Robot with higher level methods. It includes timing issues
+    that synchronizes with the Swing event queue. 
+
+* Narcs:
+    A Narc, short for Narcitecture, is a help object used for testing only.
+    It's purpose is to allow access to private data so that testing is easier.
+    This is better than simply accessing the data directly because it operates
+    at a higher level: a single narc can allow one to verify the state of
+    multiple objects. That is, a narc is used in system testing to determine
+    the state of the whole system. 
+
+* NarcGenerator:
+    The NarcGenerator was created to make writing narc classes simpler. It is a
+    simple utility that can automatically generate a Java source file
+    containing a narc. The generated class will have get methods for every
+    member of the narcified class. 
+
+e.g.
+
+protected Vector steps() {
+    // Construct a List to hold Steps
+    Vector steps = new Vector();
+
+    app = new StepStartStopApp();
+    
+    // Add Steps to the List
+    steps.addElement( app );
+    steps.addElement( new StepClickNewAccount() );
+    steps.addElement( new StepEnterData() );
+    steps.addElement( new StepCheckLedger() );
+    
+    return steps;		
+}
+
+== Test attributes
+
+Idea from http://xtest.netbeans.org
+
+Allow test cases/suites/fixtures to have attributes, whic can influence
+running/testing/selection etc.
+
+e.g. : "run all tests that don't require the DB".
+
+Check python idioms for attaching attributes to methods/classes.
+
+== Separate data from test code
+
+Instead of having data examples hard-coded in test cases.
+
+Ideas from:
+http://jtestcase.sourceforge.net/
+http://www.nolacom.com/avignon/index.asp
+
+Create test cases that accept parameters (e.g. input and expected output).
+Write files that script the test cases with the parameters.
+
+Simplified JTestCase examples:
+
+* Global Parameters: (like a registry, can influence the tests)
+
+<tests "URI of jtestcase.xsd">
+  <params>
+    <param name="variable name" type="variable type">variable value</param>
+    //..other control parameters
+  </params>
+  //.. class tags
+</tests>
+
+Accessible as:
+class MyTestCase ... {
+    void testSomething() {
+        globalParams = _jtestcase.getGlobalParams();
+        ...
+    }
+}
+
+* Classes and Methods:
+
+<tests "URI of jtestcase.xsd">
+    <class name="MyTestCase">
+        //.. some other stuff
+        <method name="testSomething" test-case="Test something negative">
+                //.. some other stuff
+            <param name="theInput" type="int">-1000</param>
+            <asserts>
+                <assert name="k1" type="String" action="EQUALS">value1</assert>
+                <assert name="k2" type="Integer" action="LT">42</assert>
+            </asserts>
+        </method>
+        <method name="testSomething" test-case="Test something positive">
+                //.. some other stuff
+            <param name="theInput" type="int">1000</param>
+        </method>
+        //.. other methods
+    </class>
+    //..other classes
+</tests>
+
+Accessible as:
+class MyTestCase ... {
+    public void testSomething() {
+        // get the test cases from XML
+        Vector testCases = _jtestcase.getNameOfTestCases("testSomething");
+        // for each test case
+        for (int i=0; i<testCases.size(); i++) {
+            // retrieve name of test case
+            String testCase = (String)testCases.elementAt(i);
+            
+            // get hashed params for this test case
+            Hashtable params = _jtestcase.getTestCaseParams("testCalculate", testCase);
+            int var1 = ((Integer)params.get("var1")).intValue();
+            String var2 = (String)params.get("var2");
+            
+            // Now comes to what we need to test.
+        }
+    }
+}
+
+== Non-fatal tests
+
+Idea from http://jfunc.sourceforge.net
+Failures can be marked as non-fatal, so the test case continues running.
+
+== More output options
+* Color text output
+* Curses text output
+
+== Verbose assertions
+Idea from http://jfunc.sourceforge.net
+
+Code: vassert_equals("message_length", 25, msg.length())
+Output: [ PASSED good old numbers: EXPECTED(25) ACTUAL(25) ]
+
+Testing is always performs, but output is generated only when requested (e.g.
+'--verbose')
+
+== More metrics
+Metrics:
+* Time (System/CPU/etc.)
+* CPU Load
+
+Granularity:
+* All tests
+* Per test / suite
+
+Transformations:
+* Total
+* Average
+* Mean
+
+== Concise feature examples
+
+Cool JFunc "examples" page describing features:
+http://jfunc.sourceforge.net/examples.html
+
+== Concise code usage examples
+Right on the front page.
+
+== Running options
+* Wait between tests (param: interval)
+
+== Stress testing
+Idea from http://junitpp.sourceforge.net/
+
+* Repeat tests (param: num repeats)
+* Run each test in parallel threads (param: num threads)
+  Not for faster execution, but for simultaneously running the same test.
+
+== Distribute tests
+For huge test suites (e.g. huge regression testing).
+Use distribution frameworks
+ * generic batch systems?
+ * Language-specific? (e.g. CORBA/Ice)
+
+== GUI testing
+
+Ideas from http://abbot.sourceforge.net/
+
+* Find gui widgets by properties
+  e.g.
+  button = finder.find do |component|
+             component instanceof JButton && component.text == "OK"
+           end
+
+* Create GUI interaction scripts automatically (record user actions)
+
+== Systems testing
+
+Systir: http://atomicobject.com/systir.page
+
+== Automating UI tests
+
+Record UI interaction and be able to replay it.
+
+e.g. http://maxq.tigris.org/ (for web site interaction)
+
