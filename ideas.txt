@@ -265,3 +265,23 @@ e.g. http://maxq.tigris.org/ (for web site interaction)
 
 == Handlers for errors
 e.g. register a "don't do anything" handler for NotImplementedError
+
+== Process values before comparison
+(e.g. normalize the values).
+Possibly add an assertEquals that receives modifiers that normalize the
+arguments.
+Example: disregard different amount of whitespaces in strings, like 'diff -b'
+
+== Process error output
+This should cause the error string to be different, so it can be used with
+different reporting objects.
+
+Possibly allow keywords to an assertEquals.
+
+Exmaple: diff output for text (regular/unified/context/side-by-side)
+
+== Allow more than on reporting object
+Make reporting objects observers
+
+== Allow several modifiers in different layers
+Make pipes of modifiers (they could be decorators).
