@@ -263,3 +263,5 @@ Record UI interaction and be able to replay it.
 
 e.g. http://maxq.tigris.org/ (for web site interaction)
 
+== Handlers for errors
+e.g. register a "don't do anything" handler for NotImplementedError
