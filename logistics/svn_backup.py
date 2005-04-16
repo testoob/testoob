@@ -20,12 +20,13 @@ def login(projectname, password):
     opener.open(form.click())
 
 def backup_svn(r1, r2):
+    "backup subversion repository from r1 to r2."
     filename = "testoob-%s-%s.gz" % (r1, r2)
     url = "https://opensvn.csie.org/getbackup.pl/" + filename
     open(filename, "wb").write( opener.open(url).read() )
 
 PROJECT = "testoob"
-PASSWORD = "Jiec4joc"
+PASSWORD = "XXXXXXXX"
 
 print "logging in...",
 login(PROJECT, PASSWORD)
