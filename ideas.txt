@@ -285,3 +285,25 @@ Make reporting objects observers
 
 == Allow several modifiers in different layers
 Make pipes of modifiers (they could be decorators).
+
+== py.test
+Cool package!!!
+Collaborate with it, or copy mercilessly :-)
+http://codespeak.net/py/current/doc/test.html
+
+== Multiple Python versions
+To ensure compatibility across versions.
+a-la py.test's --exec=EXECUTABLE
+
+== Multiple runs of test
+Limit by no. of times or total time, like CXXTest's hack.
+Maybe by test names or attributes.
+
+== debug w/stdout
+Like py.test
+Cache stdout output, and display only if a test fails.
+Can be disabled via cmdline (like --nocapture).
+Question: provide a different immediate logging mechanism?
+
+== Guarantee order of execution
+Do we care?
