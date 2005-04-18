@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 Automatic backups of projects hosted at OpenSVN.
 
@@ -63,7 +64,46 @@ class OpenSVNBackups:
         open(filename, "wb").write( self.urlopen(url).read() )
 
 def backup(projectname, password):
-    backups = OpenSVNBackups(projectname)
-    backups.login(password)
-    backups.backup_svn(1, "HEAD")
-    backups.backup_trac()
+    import sys
+    def log(msg):
+        sys.stdout.write(msg)
+        sys.stdout.flush()
+
+    try:
+        backups = OpenSVNBackups(projectname)
+        log("logging in... ")
+        backups.login(password)
+        log("done\n")
+        log("backing up Subversion... ")
+        backups.backup_svn(1, "HEAD")
+        log("done\n")
+        log("backing up Trac... ")
+        backups.backup_trac()
+        log("done\n")
+    except LoginFailedError:
+        print >>sys.stderr, "login failed, possibly bad projectname or password"
+        sys.exit(1)
+
+def interactive():
+    "interactive() -> (projectname, pasword)"
+    import optparse
+    parser = optparse.OptionParser("usage: %prog [options] projectname")
+    parser.add_option("-p", "--password", dest="password",
+                      help="The project's password (default: prompt the user)")
+    options, args = parser.parse_args()
+    if len(args) != 1:
+        parser.error("project name not specified")
+    projectname = args[0]
+
+    password = options.password
+    if password is None:
+        from getpass import getpass
+        password = getpass("Enter password for project '%s': " % projectname)
+
+    return projectname, password
+
+if __name__ == "__main__":
+    # command-line usage
+    projectname, password = interactive()
+    backup(projectname, password)
+
