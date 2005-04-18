@@ -62,8 +62,8 @@ class OpenSVNBackups:
     def save_url(self, url, filename):
         open(filename, "wb").write( self.urlopen(url).read() )
 
-def backup(projectname, password, max_svn_revision):
+def backup(projectname, password):
     backups = OpenSVNBackups(projectname)
     backups.login(password)
-    backups.backup_svn(1, max_svn_revision)
+    backups.backup_svn(1, "HEAD")
     backups.backup_trac()
