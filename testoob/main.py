@@ -29,5 +29,8 @@ def main():
     else:
         suites = TestLoader().loadTestsFromNames(args, __main__)
 
+    kwargs = {}
+    kwargs["verbosity"] = verbosity
+
     import running
-    running.text_run(suites=suites, verbosity=verbosity)
+    running.text_run(suites=suites, **kwargs)

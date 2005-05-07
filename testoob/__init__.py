@@ -29,7 +29,7 @@ def examples(suite):
     text_run(suite)
 
     print "== threaded =="
-    try: text_run(suite, ThreadedRunner)
+    try: text_run(suite, runner_class=ThreadedRunner)
     except Exception, e: print "Got error:", str(e)
 
     print "== filtered =="

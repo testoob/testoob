@@ -132,22 +132,15 @@ def _print_results(result, timeTaken):
     else:
         stream.writeln("OK")
 
-class _TextTestResult(_unittest._TextTestResult):
-    """provide defaults for unittest._TextTestResult"""
-    def __init__(self, stream = None, descriptions=1, verbosity=1):
-        if stream is None:
-            import sys
-            stream = sys.stderr
-        stream = _unittest._WritelnDecorator(stream)
-        _unittest._TextTestResult.__init__(self, stream, descriptions, verbosity)
-
-def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1, test_extractor=extract_fixtures):
-    """Run a suite and generate output similar to unittest.TextTestRunner's"""
+def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1,
+             test_extractor=extract_fixtures):
+    "Run a suite and generate output similar to unittest.TextTestRunner's"
 
     if suite is None and suites is None:
         raise TypeError("either suite or suites must be specified")
     if suite is not None and suites is not None:
         raise TypeError("only one of suite or suites may be specified")
+
     if suites is None:
         suites = [suite]
 
@@ -158,6 +151,7 @@ def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1, te
                          verbosity=verbosity,
                          descriptions=1,
                          stream=_unittest._WritelnDecorator(sys.stderr))
+
     import time
     runner = runner_class(result_class=result_class)
 
