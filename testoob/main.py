@@ -15,8 +15,8 @@ examples:
     p.add_option("-r", "--regex", help="Filtering regular expression")
     return p.parse_args()
 
-def main():
-    options, args = _parse_args()
+def main(suite=None, defaultTest=None):
+    options, test_names = _parse_args()
 
     verbosity = 1
     if options.quiet: verbosity = 0
@@ -24,10 +24,16 @@ def main():
 
     from unittest import TestLoader
     import __main__
-    if len(args) == 0:
+    if suite is not None:
+        # an explicit suite always wins
+        suites = [suite]
+    elif len(test_names) == 0 and defaultTest is None:
+        # load all tests from __main__
         suites = TestLoader().loadTestsFromModule(__main__)
     else:
-        suites = TestLoader().loadTestsFromNames(args, __main__)
+        if len(test_names) == 0:
+            test_names = [defaultTest]
+        suites = TestLoader().loadTestsFromNames(test_names, __main__)
 
     kwargs = {}
     kwargs["verbosity"] = verbosity
