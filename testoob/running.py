@@ -3,36 +3,11 @@ import unittest as _unittest
 ###############################################################################
 # apply_runner
 ###############################################################################
-# David Eppstein's breadth_first
-# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/231503
-def _breadth_first(tree,children=iter):
-    """Traverse the nodes of a tree in breadth-first order.
-    The first argument should be the tree root; children
-    should be a function taking as argument a tree node and
-    returning an iterator of the node's children.
-    """
-    yield tree
-    last = tree
-    for node in _breadth_first(tree,children):
-	for child in children(node):
-	    yield child
-	    last = child
-	if last == node:
-	    return
-
-def extract_fixtures(suite, recursive_iterator=_breadth_first):
-    """Extract the text fixtures from a suite.
-    Descends recursively into sub-suites."""
-    def test_children(node):
-        if isinstance(node, _unittest.TestSuite): return iter(node)
-        return []
-
-    from itertools import ifilter
-    return ifilter(lambda test: isinstance(test, _unittest.TestCase),
-                   recursive_iterator(suite, children=test_children))
-
-def apply_runner(suites, runner, test_extractor=extract_fixtures):
+def apply_runner(suites, runner, test_extractor=None):
     """Runs the suite."""
+    if test_extractor is None:
+        from extractors import extract_fixtures
+        test_extractor = extract_fixtures
 
     for suite in suites:
         for fixture in test_extractor(suite):
@@ -133,7 +108,7 @@ def _print_results(result, timeTaken):
         stream.writeln("OK")
 
 def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1,
-             test_extractor=extract_fixtures):
+             test_extractor=None):
     "Run a suite and generate output similar to unittest.TextTestRunner's"
 
     if suite is None and suites is None:

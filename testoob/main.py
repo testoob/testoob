@@ -31,6 +31,9 @@ def main():
 
     kwargs = {}
     kwargs["verbosity"] = verbosity
+    if options.regex is not None:
+        from extractors import regex_extractor
+        kwargs["test_extractor"]  = regex_extractor(options.regex)
 
     import running
     running.text_run(suites=suites, **kwargs)
