@@ -31,10 +31,8 @@ def extract_fixtures(suite, recursive_iterator=_breadth_first):
     return ifilter(lambda test: isinstance(test, _unittest.TestCase),
                    recursive_iterator(suite, children=test_children))
 
-def apply_runner(suite, runner_class, result_class=_unittest.TestResult,
-          test_extractor=extract_fixtures):
+def apply_runner(suite, runner, test_extractor=extract_fixtures):
     """Runs the suite."""
-    runner = runner_class(result_class)
 
     for fixture in test_extractor(suite):
         runner.run(fixture)
@@ -46,8 +44,11 @@ def apply_runner(suite, runner_class, result_class=_unittest.TestResult,
 ###############################################################################
 
 class SimpleRunner:
-    def __init__(self, result_class):
-        self._result = result_class()
+    def __init__(self, result_class=None, result=None):
+        if result is not None:         self._result = result
+        elif result_class is not None: self._result = result_class()
+        else:
+            raise TypeError("neither result or result_class given")
         self._done = False
 
     def run(self, fixture):
@@ -150,7 +151,7 @@ def text_run(suite, runner_class=SimpleRunner, verbosity=1, **kwargs):
                          stream=_unittest._WritelnDecorator(sys.stderr))
     import time
     start = time.time()
-    result = apply_runner(suite, runner_class, result_class=result_class)
+    result = apply_runner(suite, runner_class(result_class=result_class))
     timeTaken = time.time() - start
     
     _print_results(result, timeTaken)
