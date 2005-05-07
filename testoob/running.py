@@ -31,11 +31,12 @@ def extract_fixtures(suite, recursive_iterator=_breadth_first):
     return ifilter(lambda test: isinstance(test, _unittest.TestCase),
                    recursive_iterator(suite, children=test_children))
 
-def apply_runner(suite, runner, test_extractor=extract_fixtures):
+def apply_runner(suites, runner, test_extractor=extract_fixtures):
     """Runs the suite."""
 
-    for fixture in test_extractor(suite):
-        runner.run(fixture)
+    for suite in suites:
+        for fixture in test_extractor(suite):
+            runner.run(fixture)
 
     return runner.result()
 
@@ -140,8 +141,16 @@ class _TextTestResult(_unittest._TextTestResult):
         stream = _unittest._WritelnDecorator(stream)
         _unittest._TextTestResult.__init__(self, stream, descriptions, verbosity)
 
-def text_run(suite, runner_class=SimpleRunner, verbosity=1, **kwargs):
+def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1, test_extractor=extract_fixtures):
     """Run a suite and generate output similar to unittest.TextTestRunner's"""
+
+    if suite is None and suites is None:
+        raise TypeError("either suite or suites must be specified")
+    if suite is not None and suites is not None:
+        raise TypeError("only one of suite or suites may be specified")
+    if suites is None:
+        suites = [suite]
+
     import sys
     class result_class(_unittest._TextTestResult):
         def __init__(self):
@@ -150,8 +159,12 @@ def text_run(suite, runner_class=SimpleRunner, verbosity=1, **kwargs):
                          descriptions=1,
                          stream=_unittest._WritelnDecorator(sys.stderr))
     import time
+    runner = runner_class(result_class=result_class)
+
     start = time.time()
-    result = apply_runner(suite, runner_class(result_class=result_class))
+    result = apply_runner(suites=suites,
+                          runner=runner,
+                          test_extractor=test_extractor)
     timeTaken = time.time() - start
     
     _print_results(result, timeTaken)

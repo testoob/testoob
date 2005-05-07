@@ -30,5 +30,4 @@ def main():
         suites = TestLoader().loadTestsFromNames(args, __main__)
 
     import running
-    for suite in suites:
-        running.text_run(suite=suite, verbosity=verbosity)
+    running.text_run(suites=suites, verbosity=verbosity)
