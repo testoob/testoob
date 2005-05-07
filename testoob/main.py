@@ -1,4 +1,4 @@
-def parse_args():
+def _parse_args():
     import optparse
     usage="""%prog [options] [test1 [test2 [...]]]
 
@@ -16,8 +16,19 @@ examples:
     return p.parse_args()
 
 def main():
-    options, args = parse_args()
-    print options
-    print args
+    options, args = _parse_args()
 
-if __name__ == "__main__": main()
+    verbosity = 1
+    if options.quiet: verbosity = 0
+    if options.verbose: verbosity = 2
+
+    from unittest import TestLoader
+    import __main__
+    if len(args) == 0:
+        suites = TestLoader().loadTestsFromModule(__main__)
+    else:
+        suites = TestLoader().loadTestsFromNames(args, __main__)
+
+    import running
+    for suite in suites:
+        running.text_run(suite=suite, verbosity=verbosity)
