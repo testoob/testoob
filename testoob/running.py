@@ -13,27 +13,49 @@ def apply_runner(suites, runner, test_extractor=None):
         for fixture in test_extractor(suite):
             runner.run(fixture)
 
-    return runner.result()
+###############################################################################
+# results proxy
+###############################################################################
+def ObserverProxy(method_names):
+    class Proxy:
+        def __init__(self):
+            self._observers = []
+        def add_observer(self, observer):
+            self._observers.append(observer)
+        def remove_observer(self, observer):
+            self._observers.remove(observer)
+
+    def create_method_proxy(method_name):
+        def method_proxy(self, *args, **kwargs):
+            for observer in self._observers:
+                getattr(observer, method_name)(*args, **kwargs)
+        return method_proxy
+            
+    for method_name in method_names:
+        setattr(Proxy, method_name, create_method_proxy(method_name))
+
+    return Proxy
+
+ProxyingTestResult = ObserverProxy([
+    "startTest", "stopTest", "addError", "addFailure", "addSuccess"
+])
+
 
 ###############################################################################
 # Runners
 ###############################################################################
 
 class SimpleRunner:
-    def __init__(self, result_class=None, result=None):
-        if result is not None:         self._result = result
-        elif result_class is not None: self._result = result_class()
-        else:
-            raise TypeError("neither result or result_class given")
-        self._done = False
+    def __init__(self, results = []):
+        self._result = ProxyingTestResult()
+        for result in results:
+            self.add_result(result)
 
     def run(self, fixture):
-        assert not self._done
         fixture(self._result)
 
-    def result(self):
-        self._done = True
-        return self._result
+    def add_result(self, result):
+        self._result.add_observer(result)
 
 ###############################################################################
 # text_run
@@ -73,7 +95,7 @@ def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1,
         suites = [suite]
 
     import sys
-    class result_class(_unittest._TextTestResult):
+    class MyTextTestResult(_unittest._TextTestResult):
         def __init__(self):
             _unittest._TextTestResult.__init__(self,
                          verbosity=verbosity,
@@ -81,12 +103,11 @@ def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1,
                          stream=_unittest._WritelnDecorator(sys.stderr))
 
     import time
-    runner = runner_class(result_class=result_class)
+    result = MyTextTestResult()
+    runner = runner_class(results = [result])
 
     start = time.time()
-    result = apply_runner(suites=suites,
-                          runner=runner,
-                          test_extractor=test_extractor)
+    apply_runner(suites=suites, runner=runner, test_extractor=test_extractor)
     timeTaken = time.time() - start
     
     _print_results(result, timeTaken)
