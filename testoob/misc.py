@@ -2,7 +2,7 @@
 
 # Connelly Barnes's (connellybarnes at yahoo.com) threadclass
 # http://mail.python.org/pipermail/python-list/2004-June/225478.html
-import types, threading
+import types as _types
 def _threadclass(C):
   """Returns a 'threadsafe' copy of class C.
      All public methods are modified to lock the
@@ -10,6 +10,7 @@ def _threadclass(C):
 
   class D(C):
     def __init__(self, *args, **kwargs):
+      import threading
       self.lock = threading.RLock()
       C.__init__(self, *args, **kwargs)
 
@@ -24,11 +25,12 @@ def _threadclass(C):
 
   for a in dir(D):
     f = getattr(D, a)
-    if isinstance(f, types.UnboundMethodType) and a[:2] != '__':
+    if isinstance(f, _types.UnboundMethodType) and a[:2] != '__':
       setattr(D, a, ubthreadfunction(f))
   return D
 
-class ThreadedRunner(SimpleRunner):
+from running import SimpleRunner as _SimpleRunner
+class ThreadedRunner(_SimpleRunner):
     """Run tests using a threadpool.
     Uses TwistedPython's thread pool"""
     def __init__(self, result_class):
