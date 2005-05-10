@@ -144,4 +144,4 @@ if __name__ == "__main__":
         try:
             backup(projectname, password, options)
             raise SystemExit
-        except urllib2.URLError: pass
+        except: pass
