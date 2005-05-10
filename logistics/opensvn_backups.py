@@ -16,13 +16,15 @@ class LoginFailedError(RuntimeError): pass
 class OpenSVNBackups:
     "Automatic backups of projects hosted at OpenSVN."
 
-    def __init__(self, projectname):
+    def __init__(self, projectname, options):
         "__init__(projectname) -> initialize a backups object for the project"
         self.projectname = projectname
+        self.options = options
         self.opener = self.new_opener()
 
     def login(self, password):
         "login(password) -> log into OpenSVN"
+        if self.options.dry_run: return
         from ClientForm import ParseResponse
         forms = ParseResponse(self.urlopen("https://opensvn.csie.org"))
         form = self.choose_form("login", forms)
@@ -35,13 +37,13 @@ class OpenSVNBackups:
 
     def backup_svn(self, r1, r2):
         "backup_svn(r1, r2) -> backup subversion repository from r1 to r2"
-        filename = "%s-%s-%s.gz" % (self.projectname, r1, r2)
+        filename = "%s-svn-%s.gz" % (self.projectname, self.options.suffix)
         url = "https://opensvn.csie.org/getbackup.pl/" + filename
         self.save_url(url, filename)
 
     def backup_trac(self):
         "backup_trac() -> backup trac repository"
-        filename = "%s-trac.tgz" % self.projectname
+        filename = "%s-trac-%s.tgz" % (self.projectname, self.options.suffix)
         url = "https://opensvn.csie.org/getbackup.pl/%s?action=trac" % filename
         self.save_url(url, filename)
 
@@ -61,16 +63,18 @@ class OpenSVNBackups:
                 return form
 
     def save_url(self, url, filename):
-        open(filename, "wb").write( self.urlopen(url).read() )
+        if self.options.dry_run: return
+        file(filename, "wb").write( self.urlopen(url).read() )
 
-def backup(projectname, password):
+def backup(projectname, password, options):
     import sys
     def log(msg):
+        if options.quiet: return
         sys.stdout.write(msg)
         sys.stdout.flush()
 
     try:
-        backups = OpenSVNBackups(projectname)
+        backups = OpenSVNBackups(projectname, options)
         log("logging in... ")
         backups.login(password)
         log("done\n")
@@ -80,16 +84,36 @@ def backup(projectname, password):
         log("backing up Trac... ")
         backups.backup_trac()
         log("done\n")
+
     except LoginFailedError:
         print >>sys.stderr, "login failed, possibly bad projectname or password"
         sys.exit(1)
 
 def interactive():
-    "interactive() -> (projectname, pasword)"
+    "interactive() -> (projectname, password, options)"
     import optparse
     parser = optparse.OptionParser("usage: %prog [options] projectname")
-    parser.add_option("-p", "--password", dest="password",
-                      help="The project's password (default: prompt the user)")
+
+    parser.add_option(
+        "-p", "--password",
+        help="The project's password (default: prompt the user)")
+
+    parser.add_option(
+        "-q", "--quiet", action="store_true", default=False,
+        help="Suppress output (default: %default)")
+
+    parser.add_option(
+        "-t", "--timestamp", default="%Y-%m-%d-%H_%M_%S",
+        help="The suffix to use, in strftime(3) format (default: '%default')")
+
+    parser.add_option(
+        "-d", "--dry-run", action="store_true", default=False,
+        help="Don't actually do do anything (for testing, default: %default)")
+
+    parser.add_option(
+        "-r", "--retries", type="int", default=5,
+        help="Number of times to retry the backup (default: %default)")
+
     options, args = parser.parse_args()
     if len(args) != 1:
         parser.error("project name not specified")
@@ -99,11 +123,25 @@ def interactive():
     if password is None:
         from getpass import getpass
         password = getpass("Enter password for project '%s': " % projectname)
+    del options.password
 
-    return projectname, password
+    import time
+    options.suffix = time.strftime(options.timestamp)
+
+    return projectname, password, options
 
 if __name__ == "__main__":
     # command-line usage
-    projectname, password = interactive()
-    backup(projectname, password)
+    projectname, password, options = interactive()
 
+    counter = 0
+    while True:
+        counter += 1
+        if counter > options.retries:
+            print >>sys.stderr, "too many failures, exiting"
+            sys.exit(1)
+
+        try:
+            backup(projectname, password, options)
+            raise SystemExit
+        except urllib2.URLError: pass
