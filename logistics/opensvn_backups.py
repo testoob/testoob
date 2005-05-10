@@ -37,14 +37,16 @@ class OpenSVNBackups:
 
     def backup_svn(self, r1, r2):
         "backup_svn(r1, r2) -> backup subversion repository from r1 to r2"
+        remote_file = "%s-%s-%s.gz" % (self.projectname, r1, r2)
         filename = "%s-svn-%s.gz" % (self.projectname, self.options.suffix)
-        url = "https://opensvn.csie.org/getbackup.pl/" + filename
+        url = "https://opensvn.csie.org/getbackup.pl/" + remote_file
         self.save_url(url, filename)
 
     def backup_trac(self):
         "backup_trac() -> backup trac repository"
+        remote_file = "%s-trac.tgz" % self.projectname
         filename = "%s-trac-%s.tgz" % (self.projectname, self.options.suffix)
-        url = "https://opensvn.csie.org/getbackup.pl/%s?action=trac" % filename
+        url = "https://opensvn.csie.org/getbackup.pl/%s?action=trac" % remote_file
         self.save_url(url, filename)
 
     # helper methods
@@ -141,7 +143,8 @@ if __name__ == "__main__":
             print >>sys.stderr, "too many failures, exiting"
             sys.exit(1)
 
+        import urllib2
         try:
             backup(projectname, password, options)
             raise SystemExit
-        except: pass
+        except urllib2.URLError: pass
