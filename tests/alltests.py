@@ -24,19 +24,37 @@ def capture_output(code):
 
     return out, err
 
-def list_equals(a, b):
-    a.sort()
-    b.sort()
-    assert a == b
+def check(expected, actual):
+    if expected is None: return
+    if type(expected) == type([]):
+        expected.sort()
+        actual.sort()
+    if expected != actual:
+        print "[x] check failed, expected=%(expected)s, actual=%(actual)s" % vars()
 
-def helper_run(code, expected_successes=None):
+def helper_run(code,
+    verbose=False,
+    expected_successes=None,
+    expected_errors=None,
+    expected_failures=None,
+    expected_stdout=None,
+    expected_stderr=None):
 
     from regular_suite import run_log
     run_log.clear()
 
     run_log.stdout, run_log.stderr = capture_output(code)
 
-    if expected_successes: list_equals(expected_successes, run_log.successes)
+    check(expected_successes, run_log.successes)
+    check(expected_errors,    run_log.errors)
+    check(expected_failures,  run_log.failures)
+    check(expected_stdout,    run_log.stdout)
+    check(expected_stderr,    run_log.stderr)
+    if verbose:
+        print "stdout:"
+        print run_log.stdout
+        print "stderr:"
+        print run_log.stderr
 
 def helper_main_with_args(*args, **kwargs):
     old_argv = sys.argv
@@ -64,6 +82,19 @@ def test_main_quiet():
 
 def test_main_regex():
     helper_main_with_args("--regex=1|B", expected_successes = ["testB", "test1"])
+
+def helper_run_mixed(**kwargs):
+    helper_run(lambda : testoob.main(suite=regular_suite.CaseMixed.suite()),
+            **kwargs)
+
+def test_main_error():
+    helper_run_mixed(expected_errors=["testError"])
+
+def test_main_failure():
+    helper_run_mixed(expected_failures=["testFailure"])
+
+def test_main_success():
+    helper_run_mixed(expected_errors=["testSuccess"])
 
 def test_main_suite():
     helper_run(lambda : testoob.main(suite=regular_suite.suite()))

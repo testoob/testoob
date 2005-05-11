@@ -6,6 +6,8 @@ class RunLog:
     def clear(self):
         self.started = []
         self.successes = []
+        self.errors = []
+        self.failures = []
         self.finished = []
         self.stdout = ""
         self.stderr = ""
@@ -61,6 +63,16 @@ class CaseDigits(unittest.TestCase):
     def test7(self): logged_run("test7", self.assertEquals, "7" + "7", "77")
     def test8(self): logged_run("test8", self.assertEquals, "8" + "8", "88")
     def test9(self): logged_run("test9", self.assertEquals, "9" + "9", "99")
+
+class CaseMixed(unittest.TestCase):
+    def testSuccess(self): logged_run("testSuccess", lambda:None)
+    def testFailure(self): logged_run("testFailure", self.fail)
+    def testError(self):
+        def error(): raise RuntimeError
+        logged_run("testError", error)
+    @staticmethod
+    def suite():
+        return unittest.makeSuite(CaseMixed)
 
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
