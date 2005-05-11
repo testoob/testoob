@@ -24,6 +24,11 @@ def capture_output(code):
 
     return out, err
 
+def list_equals(a, b):
+    a.sort()
+    b.sort()
+    assert a == b
+
 def helper_run(code, expected_successes=None):
 
     from regular_suite import run_log
@@ -31,10 +36,7 @@ def helper_run(code, expected_successes=None):
 
     run_log.stdout, run_log.stderr = capture_output(code)
 
-    if expected_successes:
-        expected_successes.sort()
-        run_log.successes.sort()
-        assert expected_successes == run_log.successes
+    if expected_successes: list_equals(expected_successes, run_log.successes)
 
 def helper_main_with_args(*args, **kwargs):
     old_argv = sys.argv
