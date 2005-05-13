@@ -82,3 +82,9 @@ def suite():
     result.addTest( unittest.makeSuite(CaseLetters) )
     result.addTest( unittest.makeSuite(CaseDigits) )
     return result
+
+if __name__ == "__main__":
+    import sys, os
+    sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), ".."))
+    import testoob
+    testoob.main()
