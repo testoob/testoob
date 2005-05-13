@@ -3,15 +3,18 @@ import unittest as _unittest
 ###############################################################################
 # apply_runner
 ###############################################################################
-def apply_runner(suites, runner, test_extractor=None):
+from extractors import extract_fixtures as _extract_fixtures
+def apply_runner(suites, runner, reporter, test_extractor=None):
     """Runs the suite."""
-    if test_extractor is None:
-        from extractors import extract_fixtures
-        test_extractor = extract_fixtures
+    if test_extractor is None: test_extractor = _extract_fixtures
 
+    runner.set_result(reporter)
+
+    reporter.start()
     for suite in suites:
         for fixture in test_extractor(suite):
             runner.run(fixture)
+    reporter.done()
 
 ###############################################################################
 # results proxy
@@ -46,46 +49,21 @@ ProxyingTestResult = ObserverProxy([
 ###############################################################################
 
 class SimpleRunner:
-    def __init__(self, results = []):
-        self._result = ProxyingTestResult()
-        for result in results:
-            self.add_result(result)
+    def __init__(self):
+        self._result = None
 
     def run(self, fixture):
         fixture(self._result)
 
-    def add_result(self, result):
-        self._result.add_observer(result)
+    def set_result(self, result):
+        self._result = result
 
 ###############################################################################
 # text_run
 ###############################################################################
 
-def _print_results(result, timeTaken):
-    # code modified from Python 2.4's standard unittest module
-    stream = result.stream
-    result.printErrors()
-    stream.writeln(result.separator2)
-    run = result.testsRun
-    stream.writeln("Ran %d test%s in %.3fs" %
-                   (run, run != 1 and "s" or "", timeTaken))
-    stream.writeln()
-    if not result.wasSuccessful():
-        stream.write("FAILED (")
-        failed, errored = map(len, (result.failures, result.errors))
-        if failed:
-            stream.write("failures=%d" % failed)
-        if errored:
-            if failed: stream.write(", ")
-            stream.write("errors=%d" % errored)
-        stream.writeln(")")
-    else:
-        stream.writeln("OK")
-
-def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1,
-             test_extractor=None):
-    "Run a suite and generate output similar to unittest.TextTestRunner's"
-
+def text_run(suite=None, suites=None, **kwargs):
+    "Convenience frontend for text_run_suites"
     if suite is None and suites is None:
         raise TypeError("either suite or suites must be specified")
     if suite is not None and suites is not None:
@@ -94,22 +72,19 @@ def text_run(suite=None, suites=None, runner_class=SimpleRunner, verbosity=1,
     if suites is None:
         suites = [suite]
 
+    text_run_suites(suites, **kwargs)
+
+
+def text_run_suites(suites, runner_class=SimpleRunner, verbosity=1,
+                    test_extractor=None):
+    "Run suites and generate output similar to unittest.TextTestRunner's"
+
     import sys
-    class MyTextTestResult(_unittest._TextTestResult):
-        def __init__(self):
-            _unittest._TextTestResult.__init__(self,
-                         verbosity=verbosity,
-                         descriptions=1,
-                         stream=_unittest._WritelnDecorator(sys.stderr))
-
-    import time
-    result = MyTextTestResult()
-    runner = runner_class(results = [result])
-
-    start = time.time()
-    apply_runner(suites=suites, runner=runner, test_extractor=test_extractor)
-    timeTaken = time.time() - start
-    
-    _print_results(result, timeTaken)
-
+    from reporting import TextStreamReporter
+    apply_runner(suites=suites,
+                 runner=runner_class(),
+                 reporter=TextStreamReporter(verbosity=verbosity,
+                                             descriptions=1,
+                                             stream=sys.stderr),
+                 test_extractor=test_extractor)
 
