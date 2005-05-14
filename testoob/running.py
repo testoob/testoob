@@ -17,34 +17,6 @@ def apply_runner(suites, runner, reporter, test_extractor=None):
     reporter.done()
 
 ###############################################################################
-# results proxy
-###############################################################################
-def ObserverProxy(method_names):
-    class Proxy:
-        def __init__(self):
-            self._observers = []
-        def add_observer(self, observer):
-            self._observers.append(observer)
-        def remove_observer(self, observer):
-            self._observers.remove(observer)
-
-    def create_method_proxy(method_name):
-        def method_proxy(self, *args, **kwargs):
-            for observer in self._observers:
-                getattr(observer, method_name)(*args, **kwargs)
-        return method_proxy
-            
-    for method_name in method_names:
-        setattr(Proxy, method_name, create_method_proxy(method_name))
-
-    return Proxy
-
-ProxyingTestResult = ObserverProxy([
-    "startTest", "stopTest", "addError", "addFailure", "addSuccess"
-])
-
-
-###############################################################################
 # Runners
 ###############################################################################
 
@@ -76,15 +48,21 @@ def text_run(suite=None, suites=None, **kwargs):
 
 
 def text_run_suites(suites, runner_class=SimpleRunner, verbosity=1,
-                    test_extractor=None):
+                    reporters = [], **kwargs):
     "Run suites and generate output similar to unittest.TextTestRunner's"
 
+    from reporting import ReporterProxy, TextStreamReporter
     import sys
-    from reporting import TextStreamReporter
+    reporter_proxy = ReporterProxy()
+    reporter_proxy.add_observer(
+            TextStreamReporter(verbosity=verbosity,
+                               descriptions=1,
+                               stream=sys.stderr))
+
+    for reporter in reporters:
+        reporter_proxy.add_observer(reporter)
+
     apply_runner(suites=suites,
                  runner=runner_class(),
-                 reporter=TextStreamReporter(verbosity=verbosity,
-                                             descriptions=1,
-                                             stream=sys.stderr),
-                 test_extractor=test_extractor)
-
+                 reporter=reporter_proxy,
+                 **kwargs)

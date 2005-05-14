@@ -33,6 +33,31 @@ class IReporter:
         "Called when a test has completed successfully"
         pass
 
+# Constructing meaningful report strings from exception info
+
+def _exc_info_to_string(err, test):
+    "Converts a sys.exc_info()-style tuple of values into a string."
+    import traceback
+    exctype, value, tb = err
+    # Skip test runner traceback levels
+    while tb and _is_relevant_tb_level(tb):
+        tb = tb.tb_next
+    if exctype is test.failureException:
+        # Skip assert*() traceback levels
+        length = _count_relevant_tb_levels(tb)
+        return ''.join(traceback.format_exception(exctype, value, tb, length))
+    return ''.join(traceback.format_exception(exctype, value, tb))
+
+def _is_relevant_tb_level(tb):
+    return tb.tb_frame.f_globals.has_key('__unittest')
+
+def _count_relevant_tb_levels(tb):
+    length = 0
+    while tb and not _is_relevant_tb_level(tb):
+        length += 1
+        tb = tb.tb_next
+    return length
+
 import time as _time
 class BaseReporter(IReporter):
     "Interface for reporters"
@@ -57,10 +82,10 @@ class BaseReporter(IReporter):
         pass
 
     def addError(self, test, err):
-        self.errors.append((test, self._exc_info_to_string(err, test)))
+        self.errors.append((test, _exc_info_to_string(err, test)))
 
     def addFailure(self, test, err):
-        self.failures.append((test, self._exc_info_to_string(err, test)))
+        self.failures.append((test, _exc_info_to_string(err, test)))
 
     def addSuccess(self, test):
         pass
@@ -69,30 +94,6 @@ class BaseReporter(IReporter):
         "Tells whether or not this result was a success"
         return len(self.failures) == len(self.errors) == 0
 
-    # Constructing meaningful report strings from exception info
-
-    def _exc_info_to_string(self, err, test):
-        "Converts a sys.exc_info()-style tuple of values into a string."
-        import traceback
-        exctype, value, tb = err
-        # Skip test runner traceback levels
-        while tb and self._is_relevant_tb_level(tb):
-            tb = tb.tb_next
-        if exctype is test.failureException:
-            # Skip assert*() traceback levels
-            length = self._count_relevant_tb_levels(tb)
-            return ''.join(traceback.format_exception(exctype, value, tb, length))
-        return ''.join(traceback.format_exception(exctype, value, tb))
-
-    def _is_relevant_tb_level(self, tb):
-        return tb.tb_frame.f_globals.has_key('__unittest')
-
-    def _count_relevant_tb_levels(self, tb):
-        length = 0
-        while tb and not self._is_relevant_tb_level(tb):
-            length += 1
-            tb = tb.tb_next
-        return length
 
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
@@ -181,4 +182,98 @@ class TextStreamReporter(BaseReporter):
             return test.shortDescription() or str(test)
         else:
             return str(test)
+
+class XMLReporter(BaseReporter):
+    def __init__(self, filename):
+        BaseReporter.__init__(self)
+
+        self.filename = filename
+
+        from cStringIO import StringIO
+        self._sio = StringIO()
+        from elementtree.SimpleXMLWriter import XMLWriter
+        self.writer = XMLWriter(self._sio, "utf-8")
+
+        self.test_starts = {}
+
+    def start(self):
+        BaseReporter.start(self)
+        self.writer.start("testsuites")
+
+    def done(self):
+        BaseReporter.done(self)
+        self.writer.end("testsuites")
+
+        f = file(self.filename, "w")
+        try: f.write(self.get_xml())
+        finally: f.close()
+
+        assert len(self.test_starts) == 0
+
+    def get_xml(self):
+        return self._sio.getvalue()
+
+    def startTest(self, test):
+        BaseReporter.startTest(self, test)
+        self.test_starts[test] = _time.time()
+
+    def addError(self, test, err):
+        BaseReporter.addError(self, test, err)
+        self._add_unsuccessful_testcase("error", test, err)
+
+    def addFailure(self, test, err):
+        BaseReporter.addFailure(self, test, err)
+        self._add_unsuccessful_testcase("failure", test, err)
+
+    def addSuccess(self, test):
+        BaseReporter.addSuccess(self, test)
+        self._start_testcase_tag(test)
+        self.writer.end("testcase")
+
+    def _add_unsuccessful_testcase(self, failure_type, test, err):
+        self._start_testcase_tag(test)
+        self.writer.element(failure_type, _exc_info_to_string(err, test))
+        self.writer.end("testcase")
+
+    def _start_testcase_tag(self, test):
+        self.writer.start("testcase", name=str(test), time=self._test_time(test))
+
+    def _test_time(self, test):
+        result = _time.time() - self.test_starts[test]
+        del self.test_starts[test]
+        return "%.4f" % result
+
+###############################################################################
+# Reporter proxy
+###############################################################################
+def ObserverProxy(method_names):
+    class Proxy:
+        def __init__(self):
+            self._observers = []
+        def add_observer(self, observer):
+            self._observers.append(observer)
+        def remove_observer(self, observer):
+            self._observers.remove(observer)
+
+    def create_method_proxy(method_name):
+        def method_proxy(self, *args, **kwargs):
+            for observer in self._observers:
+                getattr(observer, method_name)(*args, **kwargs)
+        return method_proxy
+            
+    for method_name in method_names:
+        setattr(Proxy, method_name, create_method_proxy(method_name))
+
+    return Proxy
+
+ReporterProxy = ObserverProxy([
+    "start",
+    "done",
+    "startTest",
+    "stopTest",
+    "addError",
+    "addFailure",
+    "addSuccess",
+])
+
 

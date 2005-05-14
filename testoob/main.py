@@ -13,6 +13,7 @@ examples:
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("-r", "--regex", help="Filtering regular expression")
+    p.add_option("--xml", metavar="FILE", help="output results in XML")
     return p.parse_args()
 
 def main(suite=None, defaultTest=None):
@@ -40,6 +41,9 @@ def main(suite=None, defaultTest=None):
     if options.regex is not None:
         from extractors import regex_extractor
         kwargs["test_extractor"]  = regex_extractor(options.regex)
+    if options.xml is not None:
+        from reporting import XMLReporter
+        kwargs["reporters"] = [XMLReporter(options.xml)]
 
     import running
     running.text_run(suites=suites, **kwargs)
