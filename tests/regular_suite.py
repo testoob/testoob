@@ -84,7 +84,5 @@ def suite():
     return result
 
 if __name__ == "__main__":
-    import sys, os
-    sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), ".."))
     import testoob
     testoob.main()

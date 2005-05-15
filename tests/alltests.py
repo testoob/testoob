@@ -1,7 +1,4 @@
-# Fix path to use development version
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), ".."))
-
+import sys
 import testoob
 
 import regular_suite
