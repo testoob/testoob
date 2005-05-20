@@ -1,0 +1,48 @@
+Lets assume we're releasing version 6.2
+
+* Update the source tree
+
+   svn update
+
+* Check that nothing's dangling
+
+   svn status -u
+
+* Update the version in src/setup.py
+    ...
+    'version'          : '6.2',
+    ...
+
+* commit
+
+    svn commit -m "updated version"
+
+* TODO: create release notes
+* TODO: create a changelog
+
+* Branch the release:
+
+  svn copy https://opensvn.csie.org/testoob/trunk https://opensvn.csie.org/testoob/branches/RB-6.2
+
+* Create the distfile
+
+  make dist
+
+* Upload the distfile to SourceForge
+
+  ncftpput distfile.tar.gz ftp://upload.sourceforge.net/incoming
+
+* Create a SourceForge release
+  (Admin -> File Releases -> Add Release)
+  Or directly:
+  http://sourceforge.net/project/admin/newrelease.php?package_id=152827&group_id=138557
+
+  Call the release '6.2', choose the distfile
+
+* Update some news file somewhere (where?)
+
+* Update PyPi:
+
+  python src/setup.py register
+
+* Celebrate
