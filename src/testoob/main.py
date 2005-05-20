@@ -12,7 +12,7 @@ examples:
     p = optparse.OptionParser(usage=usage, formatter=formatter)
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
-    p.add_option("-r", "--regex", help="Filtering regular expression")
+    p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     return p.parse_args()
 
@@ -42,8 +42,8 @@ def main(suite=None, defaultTest=None):
         from extractors import regex_extractor
         kwargs["test_extractor"]  = regex_extractor(options.regex)
     if options.xml is not None:
-        from reporting import XMLReporter
-        kwargs["reporters"] = [XMLReporter(options.xml)]
+        from reporting import XMLFileReporter
+        kwargs["reporters"] = [XMLFileReporter(filename=options.xml)]
 
     import running
     running.text_run(suites=suites, **kwargs)

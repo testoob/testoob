@@ -184,10 +184,8 @@ class TextStreamReporter(BaseReporter):
             return str(test)
 
 class XMLReporter(BaseReporter):
-    def __init__(self, filename):
+    def __init__(self):
         BaseReporter.__init__(self)
-
-        self.filename = filename
 
         from cStringIO import StringIO
         self._sio = StringIO()
@@ -203,10 +201,6 @@ class XMLReporter(BaseReporter):
     def done(self):
         BaseReporter.done(self)
         self.writer.end("testsuites")
-
-        f = file(self.filename, "w")
-        try: f.write(self.get_xml())
-        finally: f.close()
 
         assert len(self.test_starts) == 0
 
@@ -242,6 +236,18 @@ class XMLReporter(BaseReporter):
         result = _time.time() - self.test_starts[test]
         del self.test_starts[test]
         return "%.4f" % result
+
+class XMLFileReporter(XMLReporter):
+    def __init__(self, filename):
+        XMLReporter.__init__(self)
+        self.filename = filename
+
+    def done(self):
+        XMLReporter.done(self)
+
+        f = file(self.filename, "w")
+        try: f.write(self.get_xml())
+        finally: f.close()
 
 ###############################################################################
 # Reporter proxy
