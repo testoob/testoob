@@ -1,5 +1,5 @@
 PYTHON ?= python
-DISTDIR = tarballs
+DISTDIR = dist
 
 .PHONY: all
 all:
@@ -18,4 +18,4 @@ clean:
 DISTUTILS_SDIST_OPTIONS = --formats=bztar --dist-dir=../$(DISTDIR)
 .PHONY: dist
 dist:
-	cd dist; $(PYTHON) ./setup.py -q sdist $(DISTUTILS_SDIST_OPTIONS)
+	cd src; $(PYTHON) ./setup.py -q sdist $(DISTUTILS_SDIST_OPTIONS)
