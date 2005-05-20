@@ -30,7 +30,7 @@ Lets assume we're releasing version 6.2
 
 * Upload the distfile to SourceForge
 
-  ncftpput distfile.tar.gz ftp://upload.sourceforge.net/incoming
+  ncftpput upload.sourceforge.net incoming dist/testoob-6.2.tar.gz
 
 * Create a SourceForge release
   (Admin -> File Releases -> Add Release)
