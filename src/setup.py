@@ -8,6 +8,7 @@ kwargs = {
     'author'           : 'Ori Peleg',
     'author_email'     : 'testoob@gmail.com',
     'url'              : 'http://testoob.sourceforge.net',
+    'download_url'     : 'http://sourceforge.net/project/showfiles.php?group_id=138557',
     'license'          : 'LGPL',
     'platforms'        : ['any'],
     'description'      : 'TestOOB - An advanced unit testing framework',
