@@ -2,7 +2,7 @@ Lets assume we're releasing version 6.2
 
 * Update the source tree
 
-   svn update
+   svn update .
 
 * Check that nothing's dangling
 
@@ -38,6 +38,8 @@ Lets assume we're releasing version 6.2
   http://sourceforge.net/project/admin/newrelease.php?package_id=152827&group_id=138557
 
   Call the release '6.2', choose the distfile
+
+* Download the release, see that it works
 
 * Update some news file somewhere (where?)
 
