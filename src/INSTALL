@@ -1,0 +1,33 @@
+
+             ----=========================----
+        == Installation instructions for TestOOB ==
+             ----=========================----
+
+===========================================================
+                        Quick Start
+===========================================================
+
+Run the following from the command line:
+
+    python setup.py install
+
+This may require root privileges.
+
+If you upgrade or reinstall Python, don't forget to
+reinstall TestOOB.
+
+
+===========================================================
+                          General
+===========================================================
+
+TestOOB is distributed using distutils.
+
+For help, run:
+
+    python setup.py --help
+
+For full instructions on installing distutil packages, see:
+
+    http://www.python.org/doc/current/inst/inst.html
+

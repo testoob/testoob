@@ -1,0 +1,34 @@
+TestOOB - Testing Out Of (The) Box
+
+===========================================================================
+= Description:
+===========================================================================
+
+TestOOB is a bundle of extensions to Python's built-in unit
+testing framework (module unittest).
+
+===========================================================================
+= Features:
+===========================================================================
+
+- Easy to use, simply replace unittest.main() with testoob.main()!
+- Extensible filtering (see testoob/extractors.py)
+- Advanced reporting   (see testoob/reporting.py)
+- Extra testing facilities
+
+See the sources for more details.
+
+===========================================================================
+= Installation:
+===========================================================================
+
+See file INSTALL
+
+===========================================================================
+= Credits:
+===========================================================================
+
+TestOOB has been created with the help of:
+
+- Ori Peleg (orispammerpel at users.sourceforge.net, remove spammer)
+

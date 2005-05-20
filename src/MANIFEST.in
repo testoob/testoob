@@ -1,0 +1,2 @@
+include README INSTALL COPYING lgpl.txt
+global-include *.py
