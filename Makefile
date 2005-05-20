@@ -15,7 +15,7 @@ clean:
 	$(RM) `find . -name "*.pyc"`
 	$(RM) -r $(DISTDIR)
 
-DISTUTILS_SDIST_OPTIONS = --formats=bztar --dist-dir=../$(DISTDIR)
+DISTUTILS_SDIST_OPTIONS = --formats=gztar --dist-dir=../$(DISTDIR)
 .PHONY: dist
 dist:
 	cd src; $(PYTHON) ./setup.py -q sdist $(DISTUTILS_SDIST_OPTIONS)
