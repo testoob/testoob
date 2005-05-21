@@ -14,6 +14,7 @@ examples:
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
+    p.add_option("--html", metavar="FILE", help="output results in HTML")
     p.add_option("--color", action="store_true", help="Color output")
     return p.parse_args()
 
@@ -53,7 +54,11 @@ def main(suite=None, defaultTest=None):
     if options.xml is not None:
         from reporting import XMLFileReporter
         kwargs["reporters"].append( XMLFileReporter(filename=options.xml) )
-
+    
+    if options.html is not None:
+        from reporting import HTMLReporter
+        kwargs["reporters"].append( HTMLReporter(filename=options.html) )
+    
     if options.color is not None:
         from reporting import ColoredTextReporter
         kwargs["reporter_class"] = ColoredTextReporter
