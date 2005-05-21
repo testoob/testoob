@@ -242,8 +242,9 @@ class XMLReporter(BaseReporter):
 
     def done(self):
         BaseReporter.done(self)
+        self.writer.element("total_time", value="%.4f"%self.total_time)
         self.writer.end("testsuites")
-
+        
         assert len(self.test_starts) == 0
 
     def get_xml(self):
