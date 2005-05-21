@@ -118,21 +118,21 @@ class TextStreamReporter(BaseReporter):
     def addSuccess(self, test):
         BaseReporter.addSuccess(self, test)
         if self.showAll:
-            self._writeln("ok")
+            self._writeln(self._decorateSuccess("ok"))
         elif self.dots:
             self._write('.')
 
     def addError(self, test, err):
         BaseReporter.addError(self, test, err)
         if self.showAll:
-            self._writeln("ERROR")
+            self._writeln(self._decorateFailure("ERROR"))
         elif self.dots:
             self._write('E')
 
     def addFailure(self, test, err):
         BaseReporter.addFailure(self, test, err)
         if self.showAll:
-            self._writeln("FAIL\n")
+            self._writeln(self._decorateFailure("FAIL\n"))
         elif self.dots:
             self._write('F')
 
@@ -148,7 +148,7 @@ class TextStreamReporter(BaseReporter):
                 (self.testsRun, testssuffix, self.total_time))
 
         if self._wasSuccessful():
-            self._writeln("OK")
+            self._writeln(self._decorateSuccess("OK"))
         else:
             strings = []
             if len(self.failures) > 0:
@@ -156,7 +156,13 @@ class TextStreamReporter(BaseReporter):
             if len(self.errors) > 0:
                 strings.append("errors=%d" % len(self.errors))
 
-            self._writeln("FAILED (%s)" % ", ".join(strings))
+            self._writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
+    
+    def _decorateFailure(self, errString):
+        return errString
+    
+    def _decorateSuccess(self, sccString):
+        return sccString
 
     def _printErrors(self):
         if self.dots or self.showAll:
@@ -167,7 +173,7 @@ class TextStreamReporter(BaseReporter):
     def _printErrorList(self, flavour, errors):
         for test, err in errors:
             self._writeln(self.separator1)
-            self._writeln("%s: %s" % (flavour,self._getDescription(test)))
+            self._writeln(self._decorateFailure("%s: %s" % (flavour,self._getDescription(test))))
             self._writeln(self.separator2)
             self._writeln("%s" % err)
 
@@ -183,6 +189,42 @@ class TextStreamReporter(BaseReporter):
         else:
             return str(test)
 
+
+class ColoredTextReporter(TextStreamReporter):
+    "Uses ANSI escape sequences to color the output of a text reporter"
+    codes = {"reset":"\x1b[0m",
+               "bold":"\x1b[01m",
+               "teal":"\x1b[36;06m",
+               "turquoise":"\x1b[36;01m",
+               "fuscia":"\x1b[35;01m",
+               "purple":"\x1b[35;06m",
+               "blue":"\x1b[34;01m",
+               "darkblue":"\x1b[34;06m",
+               "green":"\x1b[32;01m",
+               "darkgreen":"\x1b[32;06m",
+               "yellow":"\x1b[33;01m",
+               "brown":"\x1b[33;06m",
+               "red":"\x1b[31;01m",
+               "darkred":"\x1b[31;06m"}
+
+    def __init__(self, stream, descriptions, verbosity):
+        TextStreamReporter.__init__(self, stream, descriptions, verbosity)
+    
+    def _red(self, str):
+        "Make it red!"
+        return ColoredTextReporter.codes['red'] + str + ColoredTextReporter.codes['reset']
+    
+    def _green(self, str):
+        "make it green!"
+        return ColoredTextReporter.codes['green'] + str + ColoredTextReporter.codes['reset']
+    
+    def _decorateFailure(self, errString):
+        return self._red(errString)
+    
+    def _decorateSuccess(self, sccString):
+        return self._green(sccString)
+
+    
 class XMLReporter(BaseReporter):
     def __init__(self):
         BaseReporter.__init__(self)
