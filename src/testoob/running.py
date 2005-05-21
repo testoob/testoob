@@ -30,11 +30,7 @@ class SimpleRunner:
     def set_result(self, result):
         self._result = result
 
-###############################################################################
-# text_run
-###############################################################################
-
-def text_run(suite=None, suites=None, **kwargs):
+def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
     if suite is None and suites is None:
         raise TypeError("either suite or suites must be specified")
@@ -44,21 +40,13 @@ def text_run(suite=None, suites=None, **kwargs):
     if suites is None:
         suites = [suite]
 
-    text_run_suites(suites, **kwargs)
+    run_suites(suites, **kwargs)
 
+def run_suites(suites, reporters, runner_class=SimpleRunner, **kwargs):
+    "Run the test suites"
 
-def text_run_suites(suites, runner_class=SimpleRunner, verbosity=1,
-                    reporters = [], **kwargs):
-    "Run suites and generate output similar to unittest.TextTestRunner's"
-
-    from reporting import ReporterProxy, TextStreamReporter
-    import sys
+    from reporting import ReporterProxy
     reporter_proxy = ReporterProxy()
-    reporter_proxy.add_observer(
-            TextStreamReporter(verbosity=verbosity,
-                               descriptions=1,
-                               stream=sys.stderr))
-
     for reporter in reporters:
         reporter_proxy.add_observer(reporter)
 
@@ -66,3 +54,29 @@ def text_run_suites(suites, runner_class=SimpleRunner, verbosity=1,
                  runner=runner_class(),
                  reporter=reporter_proxy,
                  **kwargs)
+
+###############################################################################
+# text_run
+###############################################################################
+
+def text_run(*args, **kwargs):
+    """
+    Run suites with a TextStreamReporter.
+    Accepts keyword 'verbosity' (0, 1, or 2, default is 1)
+    """
+
+    verbosity = kwargs.pop("verbosity", 1)
+
+    kwargs.setdefault("reporters", [])
+
+    import sys, reporting
+    reporter_class = kwargs.pop("reporter_class", reporting.TextStreamReporter)
+    kwargs["reporters"].append( reporter_class(
+            verbosity=verbosity,
+            descriptions=1,
+            stream=sys.stderr) )
+
+    run(*args, **kwargs)
+
+
+
