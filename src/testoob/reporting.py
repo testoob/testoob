@@ -269,7 +269,7 @@ class XMLReporter(BaseReporter):
 
     def _add_unsuccessful_testcase(self, failure_type, test, err):
         self._start_testcase_tag(test)
-        self.writer.element(failure_type, _exc_info_to_string(err, test))
+        self.writer.element(failure_type, _exc_info_to_string(err, test), type=str(err[0]), message=str(err[1]))
         self.writer.end("testcase")
 
     def _start_testcase_tag(self, test):
