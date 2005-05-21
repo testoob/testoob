@@ -14,6 +14,7 @@ examples:
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
+    p.add_option("--color", action="store_true", help="Color output")
     return p.parse_args()
 
 def _get_verbosity(options):
@@ -44,12 +45,18 @@ def main(suite=None, defaultTest=None):
         "verbosity" : _get_verbosity(options),
         "reporters" : [],
     }
+
     if options.regex is not None:
         from extractors import regex_extractor
         kwargs["test_extractor"]  = regex_extractor(options.regex)
+
     if options.xml is not None:
         from reporting import XMLFileReporter
         kwargs["reporters"].append( XMLFileReporter(filename=options.xml) )
+
+    if options.color is not None:
+        from reporting import ColoredTextReporter
+        kwargs["reporter_class"] = ColoredTextReporter
 
     import running
     running.text_run(**kwargs)
