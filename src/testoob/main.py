@@ -39,23 +39,10 @@ def _get_suites(suite, defaultTest, test_names):
 def main(suite=None, defaultTest=None):
     options, test_names = _parse_args()
 
-    from unittest import TestLoader
-    import __main__
-    if suite is not None:
-        # an explicit suite always wins
-        suites = [suite]
-    elif len(test_names) == 0 and defaultTest is None:
-        # load all tests from __main__
-        suites = TestLoader().loadTestsFromModule(__main__)
-    else:
-        if len(test_names) == 0:
-            test_names = [defaultTest]
-        suites = TestLoader().loadTestsFromNames(test_names, __main__)
-
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
-        "reporters" : []
+        "reporters" : [],
     }
     if options.regex is not None:
         from extractors import regex_extractor
