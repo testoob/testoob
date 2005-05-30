@@ -224,7 +224,9 @@ class ColoredTextReporter(TextStreamReporter):
     def _decorateSuccess(self, sccString):
         return self._green(sccString)
 
-class HTMLReporter(BaseReporter):
+
+
+class OldHTMLReporter(BaseReporter):
     def __init__(self, filename):
         BaseReporter.__init__(self)
 
@@ -344,10 +346,12 @@ class XMLReporter(BaseReporter):
     def addSuccess(self, test):
         BaseReporter.addSuccess(self, test)
         self._start_testcase_tag(test)
+        self.writer.element("result", "success")
         self.writer.end("testcase")
 
     def _add_unsuccessful_testcase(self, failure_type, test, err):
         self._start_testcase_tag(test)
+        self.writer.element("result", failure_type)
         self.writer.element(failure_type, _exc_info_to_string(err, test), type=str(err[0]), message=str(err[1]))
         self.writer.end("testcase")
 
@@ -371,6 +375,36 @@ class XMLFileReporter(XMLReporter):
         try: f.write(self.get_xml())
         finally: f.close()
 
+
+class HTMLReporter(XMLReporter):
+    "This HTML reporter uses an XSL transformation scheme to convert an XML output to HTML"
+    import xslconverters
+    def __init__(self, filename, converter=xslconverters.BASIC_CONVERTER):
+        XMLReporter.__init__(self)
+        self.filename = filename
+        self.converter = converter
+    def done(self):
+        import time 
+        XMLReporter.done(self)
+
+        #The processor class is the core of the XSLT API
+        try:
+            from Ft.Xml.Xslt import Processor
+            processor = Processor.Processor()
+            #4XSLT uses the InputSource architecture
+            from Ft.Xml import InputSource
+            #Prepare an InputSource for the transform
+            transform = InputSource.DefaultFactory.fromString(self.converter, "CONVERTER")
+            #Prepare an InputSource for the source document
+            source = InputSource.DefaultFactory.fromString(self.get_xml(), "XML")
+            processor.appendStylesheet(transform)
+            params = {u'date': unicode(time.asctime())}
+            result = processor.run(source,topLevelParams=params)
+            #result is a string with the serialized transform result
+            open(self.filename, "wt").write(result)
+        except ImportError:
+            raise Exception("Unable to import 4Suite XSLT engine, make sure 4suite is properly installed")
+        
 ###############################################################################
 # Reporter proxy
 ###############################################################################
