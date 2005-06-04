@@ -8,7 +8,7 @@ Lets assume we're releasing version 6.2
 
    svn status -u
 
-* Update the version in src/setup.py
+* Update the version in setup.py
 
     VERSION='6.2'
 
@@ -57,9 +57,9 @@ Lets assume we're releasing version 6.2
 * Download the release, see that it works
 
 * Upload news announcement:
-  - Sourceforge
-  - Freshmeat
-  - PyPi ('python src/setup.py register')
+  - Sourceforge (http://sourceforge.net/news/submit.php?group_id=138557)
+  - Freshmeat (http://freshmeat.net/add-project)
+  - PyPi ('python setup.py register')
   - Vaults of Parnassus (http://py.vaults.ca/submit)
 
 * Celebrate
