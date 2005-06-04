@@ -1,6 +1,7 @@
 
 kwargs = {
     'packages' : ['testoob'],
+    'package_dir' : {'': 'src'},
 
     # meta-data
     'name'             : 'testoob',

@@ -1,2 +1,0 @@
-include README docs/INSTALL docs/COPYING docs/lgpl.txt docs/CHANGELOG
-global-include *.py
