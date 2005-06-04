@@ -1,34 +1,62 @@
-TestOOB - Testing Out Of (The) Box
 
-===========================================================================
+              ----========================----
+         -== TestOOB - Testing Out Of (The) Box ==-
+              ----========================----
+
+===========================================================
 = Description:
-===========================================================================
+===========================================================
 
 TestOOB is a bundle of extensions to Python's built-in unit
 testing framework (module unittest).
 
-===========================================================================
+It's designed and built to be easy to use and extend.
+
+===========================================================
+= Documentation:
+===========================================================
+
+See TestOOB's homepage:
+
+  http://testoob.sourceforge.net
+
+===========================================================
 = Features:
-===========================================================================
+===========================================================
 
 - Easy to use, simply replace unittest.main() with testoob.main()!
 - Extensible filtering (see testoob/extractors.py)
 - Advanced reporting   (see testoob/reporting.py)
 - Extra testing facilities
 
-See the sources for more details.
+See the documentation for more details, and run your tests with '--help'.
+For the full nitty-gritty, see the sources.
 
-===========================================================================
+===========================================================
 = Installation:
-===========================================================================
+===========================================================
 
-See file INSTALL
+See docs/INSTALL
 
-===========================================================================
+===========================================================
+= License:
+===========================================================
+
+TestOOB is distributed under the terms of the GNU Lesser
+General Public License (LGPL). See docs/COPYING and
+docs/lgpl.txt for more information.
+
+===========================================================
 = Credits:
-===========================================================================
+===========================================================
 
 TestOOB has been created with the help of:
 
-- Ori Peleg (orispammerpel at users.sourceforge.net, remove spammer)
+- Ori Peleg (orispammerpel at users.sourceforge.net)
+- Barak Schiller (bspamalotschiller at gmail.com)
+
+To mail us, remove spam-related words from the user names.
+
+Have fun testing!
+The TestOOB team.
 
