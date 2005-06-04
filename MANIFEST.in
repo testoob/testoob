@@ -7,3 +7,4 @@ include docs/INSTALL
 include docs/lgpl.txt
 
 recursive-include tests *.py
+prune tests/testoob
