@@ -23,6 +23,11 @@ Lets assume we're releasing version 6.2
 
     svn log -v -r322:HEAD https://opensvn.csie.org/testoob/trunk
 
+* Create the distfile, check the file list for obvious errors
+
+  make dist
+  tar jtf dist/testoob-6.2.tar.bz2
+
 * Create a news announcement from the most recent changelog entry.
 
 * commit
@@ -33,7 +38,7 @@ Lets assume we're releasing version 6.2
 
   svn copy https://opensvn.csie.org/testoob/trunk https://opensvn.csie.org/testoob/branches/RB-6.2
 
-* Create the distfile
+* Recreate the distfile
 
   make dist
 
