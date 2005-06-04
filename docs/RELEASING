@@ -13,12 +13,22 @@ Lets assume we're releasing version 6.2
     'version'          : '6.2',
     ...
 
+* Update docs/CHANGELOG
+  - Check the revision of the previous release branch
+
+      svn list -v https://opensvn.csie.org/testoob/branches
+      
+      Let's assume it's r322
+
+  - Edit the log and prepend it to the changelog
+
+    svn log -v -r322:HEAD https://opensvn.csie.org/testoob/trunk
+
+* Create a news announcement from the most recent changelog entry.
+
 * commit
 
-    svn commit -m "updated version"
-
-* TODO: create release notes
-* TODO: create a changelog
+    svn commit -m "updates for release 6.2"
 
 * Branch the release:
 
@@ -41,10 +51,10 @@ Lets assume we're releasing version 6.2
 
 * Download the release, see that it works
 
-* Update some news file somewhere (where?)
-
-* Update PyPi:
-
-  python src/setup.py register
+* Upload news announcement:
+  - Sourceforge
+  - Freshmeat
+  - PyPi ('python src/setup.py register')
+  - Vaults of Parnassus (http://py.vaults.ca/submit)
 
 * Celebrate
