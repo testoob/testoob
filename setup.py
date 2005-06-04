@@ -34,7 +34,7 @@ See the homepage for details!
 """.strip()
 
 kwargs['classifiers'] = """
-Development Status :: 4 - Beta
+Development Status :: 5 - Production/Stable
 Environment :: Console
 Intended Audience :: Developers
 License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
