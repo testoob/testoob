@@ -33,6 +33,13 @@ class IReporter:
         "Called when a test has completed successfully"
         pass
 
+    ########################################
+    # Additional reporter's methods.
+    ########################################
+    def getDescription(self, test):
+        "Get a nice printable description of the test"
+        pass
+
 # Constructing meaningful report strings from exception info
 
 def _exc_info_to_string(err, test):
@@ -114,7 +121,7 @@ class TextStreamReporter(BaseReporter):
     def startTest(self, test):
         BaseReporter.startTest(self, test)
         if self.showAll:
-            self._write(self._getDescription(test))
+            self._write(self.getDescription(test))
             self._write(" ... ")
 
     def addSuccess(self, test):
@@ -175,7 +182,7 @@ class TextStreamReporter(BaseReporter):
     def _printErrorList(self, flavour, errors):
         for test, err in errors:
             self._writeln(self.separator1)
-            self._writeln(self._decorateFailure("%s: %s" % (flavour,self._getDescription(test))))
+            self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test))))
             self._writeln(self.separator2)
             self._writeln("%s" % err)
 
@@ -185,7 +192,7 @@ class TextStreamReporter(BaseReporter):
         self.stream.write(s)
         self.stream.write("\n")
 
-    def _getDescription(self, test):
+    def getDescription(self, test):
         default_description = test._TestCase__testMethodName + " (" + self.re.sub("^__main__.", "", test.id()) + ")"
         if self.descriptions:
             return test.shortDescription() or default_description
