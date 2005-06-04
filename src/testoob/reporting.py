@@ -120,21 +120,21 @@ class TextStreamReporter(BaseReporter):
         if self.showAll:
             self._writeln(self._decorateSuccess("ok"))
         elif self.dots:
-            self._write('.')
+            self._write(self._decorateSuccess('.'))
 
     def addError(self, test, err):
         BaseReporter.addError(self, test, err)
         if self.showAll:
             self._writeln(self._decorateFailure("ERROR"))
         elif self.dots:
-            self._write('E')
+            self._write(self._decorateFailure('E'))
 
     def addFailure(self, test, err):
         BaseReporter.addFailure(self, test, err)
         if self.showAll:
             self._writeln(self._decorateFailure("FAIL\n"))
         elif self.dots:
-            self._write('F')
+            self._write(self._decorateFailure('F'))
 
     def done(self):
         BaseReporter.done(self)
