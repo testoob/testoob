@@ -1,20 +1,26 @@
-                           -== TestOOB Changelog ==-
+                 -== TestOOB Changelog ==-
+
+TestOOB is an advanced testing framework for Python. It is
+designed to integrate effortlessly with existing PyUnit
+(standard module 'unittest') test suites.
 
 == TestOOB 0.2, June 4, 2005
 
-Focus: Better reporting
+Release Focus: Better reporting
 
-Dedicated to Barak Schiller, who is leaving for South America. Have fun!
+Dedicated to Barak Schiller, who is leaving for South
+America. Have fun!
 
 Features:
  * Color output with ANSI codes [barak, orip]
    (changeset:64 + changeset:68, ticket:14)
  * XML output additions: [barak]
-   - Total time element to XML output (incomplete, changeset:69, ticket:46)
+   - Total time element to XML output
+     (incomplete, changeset:69, ticket:46)
    - Failure message and type (changeset:70, ticket:47)
  * HTML output [barak]
-   - Converting XML with XSLT, requires 4Suite, '--html' cmdline option
-     (changeset:74)
+   - Converting XML with XSLT, requires 4Suite, '--html'
+     cmdline option (changeset:74)
    - Direct HTML output (OldHTMLReporter) (changeset:71)
 
 Bugfixes:
@@ -28,11 +34,12 @@ Internal:
 
 == TestOOB 0.1, May 20, 2005
 
-Focus: A drop-in enhancement to unittest.main()
+Release Focus: A drop-in enhancement to unittest.main()
 
 Features:
  * Reproducing unittest.main()'s features [orip]
-   (ticket:1, ticket:2, ticket:3, ticket:4, changeset:19, changeset:21)
+   (ticket:1, ticket:2, ticket:3, ticket:4, changeset:19,
+   changeset:21)
  * XML reporting, requires ElementTree [orip]
    (ticket:5, changeset:41)
 
