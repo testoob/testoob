@@ -28,8 +28,6 @@ Lets assume we're releasing version 6.2
   make dist
   tar jtf dist/testoob-6.2.tar.bz2
 
-* Create a news announcement from the most recent changelog entry.
-
 * commit
 
     svn commit -m "updates for release 6.2"
@@ -41,6 +39,8 @@ Lets assume we're releasing version 6.2
 * Recreate the distfile
 
   make dist
+
+* Create a news announcement from the most recent changelog entry.
 
 * Upload the distfile to SourceForge
 
