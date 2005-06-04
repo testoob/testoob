@@ -17,6 +17,7 @@ examples:
     p.add_option("--html", metavar="FILE", help="output results in HTML")
     p.add_option("--color", action="store_true", help="Color output")
     p.add_option("--interval", type="float", default=0, help="Add interval between tests")
+    p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
     return p.parse_args()
 
 def _get_verbosity(options):
@@ -64,6 +65,16 @@ def main(suite=None, defaultTest=None):
     if options.color is not None:
         from reporting import ColoredTextReporter
         kwargs["reporter_class"] = ColoredTextReporter
+
+    if options.debug is not None:
+        import pdb
+        import re
+        def addError(test, err, reporter, real_addError):
+            real_addError(test, err)
+            print
+            print "Debugging for error in test:", reporter.getDescription(test)
+            pdb.post_mortem(err[2])
+        kwargs["addError"] = addError
 
     import running
     running.text_run(**kwargs)
