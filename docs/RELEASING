@@ -28,13 +28,14 @@ Lets assume we're releasing version 6.2
   make dist
   tar jtf dist/testoob-6.2.tar.bz2
 
-* commit
+* commit and update
 
     svn commit -m "updates for release 6.2"
+    svn update
 
 * Branch the release:
 
-  svn copy https://opensvn.csie.org/testoob/trunk https://opensvn.csie.org/testoob/branches/RB-6.2
+  svn copy https://opensvn.csie.org/testoob/{trunk,branches/RB-6.2} -m "Branching release 6.2"
 
 * Recreate the distfile
 
