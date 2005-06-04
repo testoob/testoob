@@ -103,6 +103,8 @@ class TextStreamReporter(BaseReporter):
     separator2 = '-' * 70
     
     def __init__(self, stream, descriptions, verbosity):
+        import re
+        self.re = re
         BaseReporter.__init__(self)
         self.stream = stream
         self.showAll = verbosity > 1
@@ -184,10 +186,11 @@ class TextStreamReporter(BaseReporter):
         self.stream.write("\n")
 
     def _getDescription(self, test):
+        default_description = test._TestCase__testMethodName + " (" + self.re.sub("^__main__.", "", test.id()) + ")"
         if self.descriptions:
-            return test.shortDescription() or str(test)
+            return test.shortDescription() or default_description
         else:
-            return str(test)
+            return default_description
 
 
 class ColoredTextReporter(TextStreamReporter):
