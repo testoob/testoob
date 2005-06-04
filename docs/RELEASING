@@ -9,9 +9,8 @@ Lets assume we're releasing version 6.2
    svn status -u
 
 * Update the version in src/setup.py
-    ...
-    'version'          : '6.2',
-    ...
+
+    VERSION='6.2'
 
 * Update docs/CHANGELOG
   - Check the revision of the previous release branch
