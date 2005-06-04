@@ -4,7 +4,7 @@
              ----=========================----
 
 ===========================================================
-                        Quick Start
+= Quick Start:
 ===========================================================
 
 Run the following from the command line:
@@ -16,9 +16,8 @@ This may require root privileges.
 If you upgrade or reinstall Python, don't forget to
 reinstall TestOOB.
 
-
 ===========================================================
-                          General
+= General:
 ===========================================================
 
 TestOOB is distributed using distutils.
