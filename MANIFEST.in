@@ -1,5 +1,9 @@
 include README
 include MANIFEST.in
-graft docs
-graft tests
-global-exclude */.svn/*
+
+include docs/CHANGELOG
+include docs/COPYING
+include docs/INSTALL
+include docs/lgpl.txt
+
+recursive-include tests *.py
