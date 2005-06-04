@@ -80,6 +80,16 @@ def test_main_quiet():
 def test_main_regex():
     helper_main_with_args("--regex=1|B", expected_successes = ["testB", "test1"])
 
+def test_main_interval():
+    import time
+    interval_to_test = 0.01
+    start_time = time.time()
+    helper_main_with_args("--interval=%f" % interval_to_test, expected_successes = regular_suite.all_test_names)
+    tests_time = time.time() - start_time
+    should_take = (interval_to_test * len(regular_suite.all_test_names))
+    if not (should_take + 0.5) > tests_time > should_take:
+        check(should_take, tests_time)
+
 def helper_run_mixed(**kwargs):
     helper_run(lambda : testoob.main(suite=regular_suite.CaseMixed.suite()),
             **kwargs)

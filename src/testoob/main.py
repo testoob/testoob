@@ -16,6 +16,7 @@ examples:
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
     p.add_option("--color", action="store_true", help="Color output")
+    p.add_option("--interval", type="float", default=0, help="Add interval between tests")
     return p.parse_args()
 
 def _get_verbosity(options):
@@ -45,6 +46,7 @@ def main(suite=None, defaultTest=None):
         "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
         "reporters" : [],
+        "interval" : options.interval
     }
 
     if options.regex is not None:
