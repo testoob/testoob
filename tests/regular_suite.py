@@ -82,7 +82,3 @@ def suite():
     result.addTest( unittest.makeSuite(CaseLetters) )
     result.addTest( unittest.makeSuite(CaseDigits) )
     return result
-
-if __name__ == "__main__":
-    import testoob
-    testoob.main()

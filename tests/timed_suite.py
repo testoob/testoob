@@ -57,7 +57,3 @@ class SleepingTestCase(unittest.TestCase):
 def suite():
     tests = [StateSensitiveTestCase, SleepingTestCase]
     return unittest.TestSuite(map(unittest.makeSuite,tests))
-
-if __name__ == "__main__":
-    import testoob
-    testoob.main()
