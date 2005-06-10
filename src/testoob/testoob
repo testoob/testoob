@@ -1,0 +1,29 @@
+#!python
+
+import sys
+
+def printUsage():
+    print "Usage"
+    print "====="
+    print "  %s TestFileName" % sys.argv[0]
+    print 
+    print "example:"
+    print "  %s my_test_file.py - Runs the tests from the given file." % sys.argv[0]
+    sys.exit()
+
+try:
+    if (sys.argv[1] == "-h" or sys.argv[1] == "--help"):
+        printUsage()
+    name = __name__
+    __name__ = "__testoob_runner__"
+    execfile(sys.argv[1])
+    __name__ = name
+    del sys.argv[1]
+except IndexError, e:
+    printUsage()
+except IOError, e:
+    print e
+else:
+    import testoob
+    testoob.main()
+

@@ -3,6 +3,7 @@ VERSION='0.2'
 kwargs = {
     'packages' : ['testoob'],
     'package_dir' : {'': 'src'},
+    'scripts'  : ['src/testoob/testoob'],
 
     # meta-data
     'name'             : 'testoob',
