@@ -193,7 +193,7 @@ class TextStreamReporter(BaseReporter):
         self.stream.write("\n")
 
     def getDescription(self, test):
-        default_description = test._TestCase__testMethodName + " (" + self.re.sub("^__(main|testoob_runner)__.", "", test.id()) + ")"
+        default_description = test._TestCase__testMethodName + " (" + self.re.sub("^__main__.", "", test.id()) + ")"
         if self.descriptions:
             return test.shortDescription() or default_description
         else:

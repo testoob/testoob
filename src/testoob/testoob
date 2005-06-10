@@ -11,14 +11,20 @@ def printUsage():
     print "  %s my_test_file.py - Runs the tests from the given file." % sys.argv[0]
     sys.exit()
 
+argument = ""
 try:
-    if (sys.argv[1] == "-h" or sys.argv[1] == "--help"):
+    argument = sys.argv[1]
+    del sys.argv[1]
+except IndexError, e:
+    printUsage()
+
+try:
+    if (argument == "-h" or argument == "--help"):
         printUsage()
     name = __name__
-    __name__ = "__testoob_runner__"
-    execfile(sys.argv[1])
+    __name__ = "".join(argument.split("/")[-1].split(".")[0])
+    execfile(argument)
     __name__ = name
-    del sys.argv[1]
 except IndexError, e:
     printUsage()
 except IOError, e:
