@@ -1,12 +1,17 @@
-"Code that isn't currently filed or"
+"""Stuff that hasn't been used in a while.
+It worked fine the last time we checked though :-)"""
 
 # Connelly Barnes's (connellybarnes at yahoo.com) threadclass
 # http://mail.python.org/pipermail/python-list/2004-June/225478.html
 import types as _types
 def _threadclass(C):
-  """Returns a 'threadsafe' copy of class C.
-     All public methods are modified to lock the
-     object when called."""
+  """
+  Returns a 'threadsafe' copy of class C.
+  All public methods are modified to lock the object when called.
+
+  Written by Connelly Barnes (connellybarnes at yahoo.com)
+  Origin: http://mail.python.org/pipermail/python-list/2004-June/225478.html
+  """
 
   class D(C):
     def __init__(self, *args, **kwargs):

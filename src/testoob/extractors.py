@@ -1,3 +1,5 @@
+"Extracting tests from a test suite"
+
 from itertools import ifilter as _ifilter
 
 # David Eppstein's breadth_first

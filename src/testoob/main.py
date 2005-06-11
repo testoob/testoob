@@ -1,3 +1,5 @@
+"main() implementation"
+
 def _parse_args():
     import optparse
     usage="""%prog [options] [test1 [test2 [...]]]

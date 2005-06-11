@@ -1,4 +1,7 @@
+"Reporting facilities"
+
 class IReporter:
+    "Interface for reporters"
     def start(self):
         "Called when the testing is about to start"
         pass
@@ -67,8 +70,9 @@ def _count_relevant_tb_levels(tb):
 
 import time as _time
 class BaseReporter(IReporter):
-    "Interface for reporters"
-    # Borrows most of its code from unittest.TestResult
+    """Base class for most reporters, with a sensible default implementation
+    for most of the reporter methods"""
+    # borrows a lot of code from unittest.TestResult
     
     def __init__(self):
         self.testsRun = 0
@@ -203,19 +207,19 @@ class TextStreamReporter(BaseReporter):
 class ColoredTextReporter(TextStreamReporter):
     "Uses ANSI escape sequences to color the output of a text reporter"
     codes = {"reset":"\x1b[0m",
-               "bold":"\x1b[01m",
-               "teal":"\x1b[36;06m",
-               "turquoise":"\x1b[36;01m",
-               "fuscia":"\x1b[35;01m",
-               "purple":"\x1b[35;06m",
-               "blue":"\x1b[34;01m",
-               "darkblue":"\x1b[34;06m",
-               "green":"\x1b[32;01m",
-               "darkgreen":"\x1b[32;06m",
-               "yellow":"\x1b[33;01m",
-               "brown":"\x1b[33;06m",
-               "red":"\x1b[31;01m",
-               "darkred":"\x1b[31;06m"}
+             "bold":"\x1b[01m",
+             "teal":"\x1b[36;06m",
+             "turquoise":"\x1b[36;01m",
+             "fuscia":"\x1b[35;01m",
+             "purple":"\x1b[35;06m",
+             "blue":"\x1b[34;01m",
+             "darkblue":"\x1b[34;06m",
+             "green":"\x1b[32;01m",
+             "darkgreen":"\x1b[32;06m",
+             "yellow":"\x1b[33;01m",
+             "brown":"\x1b[33;06m",
+             "red":"\x1b[31;01m",
+             "darkred":"\x1b[31;06m"}
 
     def __init__(self, stream, descriptions, verbosity):
         TextStreamReporter.__init__(self, stream, descriptions, verbosity)
@@ -234,9 +238,8 @@ class ColoredTextReporter(TextStreamReporter):
     def _decorateSuccess(self, sccString):
         return self._green(sccString)
 
-
-
 class OldHTMLReporter(BaseReporter):
+    "Direct HTML reporting. Deprecated in favor of XSLT reporting"
     def __init__(self, filename):
         BaseReporter.__init__(self)
 
@@ -317,6 +320,8 @@ class OldHTMLReporter(BaseReporter):
 
     
 class XMLReporter(BaseReporter):
+    """Reports test results in XML, in a format resembling Ant's JUnit xml
+    formatting output."""
     def __init__(self):
         BaseReporter.__init__(self)
 
@@ -419,6 +424,10 @@ class HTMLReporter(XMLReporter):
 # Reporter proxy
 ###############################################################################
 def ObserverProxy(method_names):
+    """
+    Create an proxy that forwards methods to a group of observers.
+    See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/413701.
+    """
     class Proxy:
         def __init__(self):
             self._observers = []
