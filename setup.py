@@ -1,5 +1,3 @@
-VERSION='0.2'
-
 kwargs = {
     'packages' : ['testoob'],
     'package_dir' : {'': 'src'},
@@ -7,7 +5,7 @@ kwargs = {
 
     # meta-data
     'name'             : 'testoob',
-    'version'          : VERSION,
+    'version'          : '__TESTOOB_VERSION__',
     'author'           : 'Ori Peleg',
     'author_email'     : 'testoob@gmail.com',
     'url'              : 'http://testoob.sourceforge.net',
