@@ -66,7 +66,9 @@ class OpenSVNBackups:
 
     def save_url(self, url, filename):
         if self.options.dry_run: return
-        file(filename, "wb").write( self.urlopen(url).read() )
+        import os
+        dest_filename = os.path.join(self.options.dest_dir, filename)
+        file(dest_filename, "wb").write( self.urlopen(url).read() )
 
 def backup(projectname, password, options):
     import sys
@@ -105,11 +107,15 @@ def interactive():
         help="Suppress output (default: %default)")
 
     parser.add_option(
+        "-d", "--dest-dir", default=".",
+        help="Destination directory (default: %default)")
+
+    parser.add_option(
         "-t", "--timestamp", default="%Y-%m-%d-%H_%M_%S",
         help="The suffix to use, in strftime(3) format (default: '%default')")
 
     parser.add_option(
-        "-d", "--dry-run", action="store_true", default=False,
+        "--dry-run", action="store_true", default=False,
         help="Don't actually do do anything (for testing, default: %default)")
 
     parser.add_option(
