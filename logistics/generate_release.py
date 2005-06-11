@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import re
+import re, sys, os
 
 def parse_args():
     import optparse
@@ -47,7 +47,7 @@ def get_command_output(cmd):
         return commands.getoutput(cmd)
 
 def run_command(cmd):
-    print "Running '%s'" % cmd
+    print "* Running '%s'..." % cmd
     if dry_run(): return
     os.system(cmd)
 
@@ -58,10 +58,17 @@ def svn_url():
     regexp = r"URL: (?P<url>(http|https|svn|file)://\S+)"
     return re.search(regexp, svn_info()).group("url")
 
+def die(msg):
+    print>>sys.stderr, msg
+    sys.exit(1)
+
 def version():
     return options().version
 
-def create_branch(
+def create_branch():
+    os.chdir(root_dir())
+    run_command("svn update")
+    
 
 print options()
 print root_dir()
