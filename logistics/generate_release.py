@@ -3,16 +3,14 @@
 import re, sys, os
 
 def once(func):
-    "A decorator that runs a function only once."
-    class Wrapper:
-        def __init__(self, func):
-            self.func = func
-        def __call__(self, *args, **kwargs):
-            result = self.func(*args, **kwargs)
-            def new_call(*args, **kwargs): return result
-            self.__call__ = new_call
-            return result
-    return Wrapper(func)
+    """A decorator that runs a function only once.
+    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/425445"""
+    def save_result(*args, **kwargs):
+        result = func(*args, **kwargs)
+        func_list[0] = lambda *args, **kwargs: result
+        return result
+    func_list = [save_result]
+    return lambda *args, **kwargs: func_list[0](*args, **kwargs)
 
 def parse_args():
     "parse the cmdline args"
