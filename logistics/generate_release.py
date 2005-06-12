@@ -147,6 +147,9 @@ def create_release_branch():
     commit("updated version string")
     switch_to_trunk()
 
+def release_dir(): return "~/release"
+def distfile(): return release_dir() + "/testoob-%s.tar.bz2" % version()
+
 def create_distribution():
     import tempfile
     dir = tempfile.mkdtemp(suffix=".generate_release")
@@ -164,6 +167,9 @@ def create_distribution():
 def run_tests():
     pass # TODO
 
+def upload_to_sourceforge():
+    run_command("ncftpput upload.sourceforge.net incoming %s" % distfile())
+
 if options().update_changelog:
     update_changelog()
 
@@ -171,6 +177,7 @@ elif options().release:
     create_release_branch()
     create_distribution()
     run_tests()
+    upload_to_sourceforge()
 
 else:
     print >>sys.stderr, "Bad arguments, run with '-h' for usage"
