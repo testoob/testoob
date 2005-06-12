@@ -91,7 +91,8 @@ def base_url():
 
 def branch_name(): return "RB-%s" % version()
 def trunk_url(): return base_url() + "/trunk"
-def release_branch_url(): return base_url() + "/branches/%s" % branch_name()
+def branches_url(): return base_url() + "/branches"
+def release_branch_url(): return branches_url() + "/%s" % branch_name()
 
 @once
 def last_branch_revision():
