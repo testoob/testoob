@@ -4,6 +4,27 @@ TestOOB is an advanced testing framework for Python. It is
 designed to integrate effortlessly with existing PyUnit
 (standard module 'unittest') test suites.
 
+== TestOOB 0.3, June 12, 2005
+
+New committer: Misha Seltzer
+
+New Features:
+ * New 'testoob' executable, run tests with no changes at all!
+   (changeset:103, ticket:65)
+ * '--debug' command line option - run pdb post-mortem on test errors!
+   (changeset:101, ticket:60)
+ * Printed test names are now copy-paste friendly (changeset:99, ticket:59)
+ * '--interval' command line option - define a sleep interval between tests
+   (changeset:98, ticket:20)
+ * Improved color output when using '--color' (changeset:97, ticket:63)
+
+Bugfixes:
+ NONE
+
+Internal:
+ * Added logistics/generate_release.py
+ * API documentation is included in the distribution via epydoc
+
 == TestOOB 0.2, June 4, 2005
 
 Release Focus: Better reporting
