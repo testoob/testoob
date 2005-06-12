@@ -22,8 +22,9 @@ clean:
 api:
 	cd src; epydoc -o ../$(APIDIR) testoob
 
-DISTUTILS_SDIST_OPTIONS = --formats=bztar --dist-dir=$(DISTDIR)
+DISTUTILS_CMD = $(PYTHON) ./setup.py -q sdist --dist-dir=$(DISTDIR)
 .PHONY: dist
 dist: api
 	$(RM) MANIFEST
-	$(PYTHON) ./setup.py -q sdist $(DISTUTILS_SDIST_OPTIONS)
+	$(DISTUTILS_CMD) --formats=bztar
+	$(DISTUTILS_CMD) --formats=gztar
