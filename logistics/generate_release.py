@@ -150,7 +150,9 @@ def create_release_branch():
     switch_to_trunk()
 
 def release_dir(): return "/tmp"
-def distfile(): return release_dir() + "/testoob-%s.tar.bz2" % version()
+def distfiles():
+    return [release_dir() + "/testoob-%s.tar.%s" % (version(), ext)
+            for ext in ("gz", "bz2")]
 
 def create_distribution():
     import tempfile
@@ -171,17 +173,13 @@ def run_tests():
 
 def upload_to_sourceforge():
     print "You should run:"
-    print "ncftpput upload.sourceforge.net incoming %s" % distfile()
-
-def remove_distribution():
-    os.unlink(distfile())
+    print "ncftpput upload.sourceforge.net incoming %s" % " ".join(distfiles())
 
 def perform_release():
     create_release_branch()
     create_distribution()
     run_tests()
     upload_to_sourceforge()
-    remove_distribution()
 
 if options().update_changelog:
     update_changelog()
