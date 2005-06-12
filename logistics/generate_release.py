@@ -81,6 +81,7 @@ def get_field(line, field_index):
     "get_field(line, field_index): the field in the index of the line (starts with 0)"
     return line.split()[field_index]
 
+@once
 def svn_info():
     return get_command_output("svn info %s" % root_dir())
 
@@ -88,8 +89,9 @@ def base_url():
     regexp = r"URL: (?P<url>(http|https|svn|file)://\S+)/trunk"
     return re.search(regexp, svn_info()).group("url")
 
+def branch_name(): return "RB-%s" % version()
 def trunk_url(): return base_url() + "/trunk"
-def release_branch_url(): return base_url() + "/branches/RB-%s" % version()
+def release_branch_url(): return base_url() + "/branches/%s" % branch_name()
 
 @once
 def last_branch_revision():
@@ -116,8 +118,8 @@ def replace_version_string():
 def branch_release():
     os.chdir(root_dir())
     run_command("svn update")
-    if not up_to_date(): die("problem updating with svn")
-    run_command("svn copy %s %s" % (trunk_url(), release_branch_url()))
+    if not up_to_date(): die("svn tree isn't up-to-date!")
+    run_command("svn copy %s %s -m 'Branching release %s'" % (trunk_url(), release_branch_url(), version()))
 
 def changelog():
     return norm_join(root_dir(), "docs/CHANGELOG")
@@ -147,22 +149,28 @@ def create_release_branch():
 
 def create_distribution():
     import tempfile
-    dir = tempfile.mkdtemp(suffix="testoob.generate_release")
+    dir = tempfile.mkdtemp(suffix=".generate_release")
     try:
         os.chdir(dir)
-        run_command("svn co %s" % release_branch_url())
-        run_command("make dist")
-        run_command("mkdir -p ~/testoob-releases")
-        run_command("cp dist/* ~/testoob-releases")
+        run_command("svn co %s %s" % (release_branch_url(), branch_name()))
+        os.chdir(branch_name())
+        run_command("gmake dist")
+        run_command("mkdir -p ~/releases")
+        run_command("cp dist/* ~/releases")
     finally:
         os.chdir("/")
         run_command("rm -fr %s" % dir)
+
+def run_tests():
+    pass # TODO
 
 if options().update_changelog:
     update_changelog()
 
 elif options().release:
     create_release_branch()
+    create_distribution()
+    run_tests()
 
 else:
     print >>sys.stderr, "Bad arguments, run with '-h' for usage"
