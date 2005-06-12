@@ -94,6 +94,7 @@ def branch_name(): return "RB-%s" % version()
 def trunk_url(): return base_url() + "/trunk"
 def branches_url(): return base_url() + "/branches"
 def release_branch_url(): return branches_url() + "/%s" % branch_name()
+def release_tag_url(): return base_url() + "/tags/REL-%s" % version
 
 @once
 def last_branch_revision():
@@ -123,6 +124,9 @@ def branch_release():
     if not up_to_date(): die("svn tree isn't up-to-date!")
     run_command("svn copy %s %s -m 'Branching release %s'" % (trunk_url(), release_branch_url(), version()))
 
+def tag_release():
+    run_command("svn copy %s %s -m 'Tagging release %s'" % (release_branch_url(), release_tag_url(), version()))
+
 def changelog():
     return norm_join(root_dir(), "docs/CHANGELOG")
 
@@ -146,7 +150,8 @@ def create_release_branch():
     branch_release()
     switch_to_branch()
     replace_version_string()
-    commit("updated version string")
+    commit("updated version string for release %s" % version())
+    tag_release()
     switch_to_trunk()
 
 def release_dir(): return "/tmp"
