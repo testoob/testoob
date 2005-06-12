@@ -19,17 +19,9 @@ kwargs = {
 kwargs['long_description'] = """
 TestOOB - Testing Out Of (The) Box
 
-TestOOB is a bundle of extensions to Python's built-in unit
-testing framework (module unittest).
-
-It provides advanced features, like easy and extensible filtering
-and reporting options.
-
-It can be used as a drop-in replacement for unittest: simply
-replace unittest.main() with testoob.main()!
-
-Even more options are available if you use testoob in your tests.
-See the homepage for details!
+TestOOB is an advanced testing framework for Python. It is
+designed to integrate effortlessly with existing PyUnit
+(standard module 'unittest') test suites.
 """.strip()
 
 kwargs['classifiers'] = """
