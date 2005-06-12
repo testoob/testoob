@@ -70,6 +70,7 @@ def get_command_output(cmd):
 
 def run_command(cmd):
     print "* Running '%s'..." % cmd
+    sys.stdout.flush()
     if dry_run(): return
     os.system(cmd)
 
