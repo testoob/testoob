@@ -1,51 +1,16 @@
 Lets assume we're releasing version 6.2
 
-* Update the source tree
-
-   svn update .
-
-* Check that nothing's dangling
-
-   svn status -u
-
-* Update the version in setup.py
-
-    VERSION='6.2'
-
 * Update docs/CHANGELOG
-  - Check the revision of the previous release branch
 
-      svn list -v https://opensvn.csie.org/testoob/branches
-      
-      Let's assume it's r322
+    ./logistics/generate_release.py --for-keeps --update-changelog
 
-  - Edit the log and prepend it to the changelog
+  edit the changes and commit.
 
-    svn log -v -r322:HEAD https://opensvn.csie.org/testoob/trunk
+* Generate the release (branches, creates distfile, uploads to sourceforge)
 
-* Create the distfile, check the file list for obvious errors
-
-  make dist
-  tar jtf dist/testoob-6.2.tar.bz2
-
-* commit and update
-
-    svn commit -m "updates for release 6.2"
-    svn update
-
-* Branch the release:
-
-  svn copy https://opensvn.csie.org/testoob/{trunk,branches/RB-6.2} -m "Branching release 6.2"
-
-* Recreate the distfile
-
-  make dist
+    ./logistics/generate_release --for-keeps --release=6.2
 
 * Create a news announcement from the most recent changelog entry.
-
-* Upload the distfile to SourceForge
-
-  ncftpput upload.sourceforge.net incoming dist/testoob-6.2.tar.gz
 
 * Create a SourceForge release
   (Admin -> File Releases -> Add Release)
