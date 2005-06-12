@@ -170,7 +170,8 @@ def run_tests():
     pass # TODO
 
 def upload_to_sourceforge():
-    run_command("ncftpput upload.sourceforge.net incoming %s" % distfile())
+    print "You should run:"
+    print "ncftpput upload.sourceforge.net incoming %s" % distfile()
 
 def remove_distribution():
     os.unlink(distfile())
