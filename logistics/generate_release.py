@@ -147,7 +147,7 @@ def create_release_branch():
     commit("updated version string")
     switch_to_trunk()
 
-def release_dir(): return "~/release"
+def release_dir(): return "/tmp"
 def distfile(): return release_dir() + "/testoob-%s.tar.bz2" % version()
 
 def create_distribution():
@@ -155,11 +155,11 @@ def create_distribution():
     dir = tempfile.mkdtemp(suffix=".generate_release")
     try:
         os.chdir(dir)
-        run_command("svn co %s %s" % (release_branch_url(), branch_name()))
+        run_command("svn co -q %s %s" % (release_branch_url(), branch_name()))
         os.chdir(branch_name())
         run_command("gmake dist")
-        run_command("mkdir -p ~/releases")
-        run_command("cp dist/* ~/releases")
+        run_command("mkdir -p %s" % release_dir())
+        run_command("cp dist/* %s" % release_dir())
     finally:
         os.chdir("/")
         run_command("rm -fr %s" % dir)
@@ -170,14 +170,21 @@ def run_tests():
 def upload_to_sourceforge():
     run_command("ncftpput upload.sourceforge.net incoming %s" % distfile())
 
-if options().update_changelog:
-    update_changelog()
+def remove_distribution():
+    os.unlink(distfile())
 
-elif options().release:
+def perform_release():
     create_release_branch()
     create_distribution()
     run_tests()
     upload_to_sourceforge()
+    remove_distribution()
+
+if options().update_changelog:
+    update_changelog()
+
+elif options().release:
+    perform_release()
 
 else:
     print >>sys.stderr, "Bad arguments, run with '-h' for usage"
