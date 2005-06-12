@@ -62,7 +62,7 @@ def norm_join(*args):
 
 def root_dir():
     "the project's root dir"
-    return options().root_dir()
+    return options().root_dir
 
 def get_command_output(cmd):
     import commands
@@ -89,12 +89,11 @@ def base_url():
     return re.search(regexp, svn_info()).group("url")
 
 def trunk_url(): return base_url() + "/trunk"
-def branches_url(): return base_url() + "/branches"
-def tags_url(): return base_url() + "/tags"
+def release_branch_url(): return base_url() + "/branches/RB-%s" % version()
 
 @once
 def last_branch_revision():
-    branch_list = get_command_output("svn list -v %s|grep '^RB-'" % branches_url())
+    branch_list = get_command_output("svn list -v %s|grep ' RB-'" % branches_url())
     return get_field(tail(branch_list, 1), 0)
 
 def die(msg):
@@ -108,17 +107,17 @@ def up_to_date():
 
 def replace_string(from_str, to_str, files):
     for file in files:
-        run_command("""sed -i 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
+        run_command("""sed -i "" 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
 
 def replace_version_string():
     files = [norm_join(root_dir(), file) for file in ("setup.py", "src/testoob/__init__.py")]
     replace_string("__TESTOOB_VERSION__", version(), files)
 
-def create_branch():
+def branch_release():
     os.chdir(root_dir())
     run_command("svn update")
     if not up_to_date(): die("problem updating with svn")
-    update_changelog()
+    run_command("svn copy %s %s" % (trunk_url(), release_branch_url()))
 
 def changelog():
     return norm_join(root_dir(), "docs/CHANGELOG")
@@ -139,15 +138,31 @@ def switch_to_trunk():
 def commit(msg):
     run_command("svn commit %s -m '%s'" % (root_dir(), msg))
 
-if options().update_changelog:
-    update_changelog()
-
-elif options().release:
-    create_branch()
+def create_release_branch():
+    branch_release()
     switch_to_branch()
     replace_version_string()
     commit("updated version string")
     switch_to_trunk()
+
+def create_distribution():
+    import tempfile
+    dir = tempfile.mkdtemp(suffix="testoob.generate_release")
+    try:
+        os.chdir(dir)
+        run_command("svn co %s" % release_branch_url())
+        run_command("make dist")
+        run_command("mkdir -p ~/testoob-releases")
+        run_command("cp dist/* ~/testoob-releases")
+    finally:
+        os.chdir("/")
+        run_command("rm -fr %s" % dir)
+
+if options().update_changelog:
+    update_changelog()
+
+elif options().release:
+    create_release_branch()
 
 else:
     print >>sys.stderr, "Bad arguments, run with '-h' for usage"
