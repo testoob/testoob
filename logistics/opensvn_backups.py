@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#! /usr/bin/env python
 """
 Automatic backups of projects hosted at OpenSVN.
 
