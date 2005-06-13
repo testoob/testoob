@@ -1,0 +1,159 @@
+= TestOOB Usage Examples =
+
+We'll assume we have the following file, named {{{suite.py}}}:
+{{{
+#!python
+# suite.py
+import unittest
+class MyTestCase(unittest.TestCase):
+  def setUp(self):   # ...
+  def testFoo(self): # ...
+  def testBar(self): # ...
+  def testBaz(self): # ...
+
+if __name__ == "__main__":
+  unittest.main()
+}}}
+
+== Replacing unittest.main() ==
+
+Change the end of {{{suite.py}}} from:
+{{{
+#!python
+if __name__ == "__main__":
+  unittest.main()
+}}}
+
+To:
+{{{
+#!python
+if __name__ == "__main__":
+  import testoob
+  testoob.main()
+}}}
+
+== Running tests ==
+This behaves precisely like {{{unittest}}}.
+
+ * Regular:
+{{{
+prompt> python suite.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+OK
+prompt>
+}}}
+ * Quiet:
+{{{
+prompt> python suite.py -q
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+OK
+prompt>
+}}}
+ * Verbose:
+{{{
+prompt> python suite.py -v
+testBar (__main__.MyTestCase) ... ok
+testBaz (__main__.MyTestCase) ... ok
+testFoo (__main__.MyTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.006s
+OK
+prompt>
+}}}
+
+== Filtering tests ==
+=== Specific tests ===
+{{{
+prompt> python suite.py -v MyTestCase.testFoo MyTestCase.testBaz
+testFoo (__main__.MyTestCase) ... ok
+testBaz (__main__.MyTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.004s
+OK
+prompt>
+}}}
+=== Using regular expressions ===
+{{{
+prompt> python suite.py -v --regex=Ba
+testBar (__main__.MyTestCase) ... ok
+testBaz (__main__.MyTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.002s
+OK
+prompt>
+}}}
+
+== XML Output ==
+Let's modify the suite so we'll get an interesting report:
+{{{
+#!python
+def testBar(self): self.fail('bla')
+}}}
+Now we get:
+{{{
+prompt> python suite.py --xml=testresults.xml
+F..
+======================================================================
+FAIL: testBar (__main__.MyTestCase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "suite.py", line 5, in testBar
+    def testBar(self): self.fail('bla')
+AssertionError: bla
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.027s
+FAILED (failures=1)
+prompt>
+}}}
+
+And {{{testresults.xml}}}'s contents are as follows (prettified to be more human-readable):
+{{{
+#!xml
+<testsuites>
+  <testcase name="testBar (__main__.MyTestCase)" time="0.0170">
+    <failure>Traceback (most recent call last):
+File "suite.py", line 5, in testBar
+  def testBar(self): self.fail('bla')
+AssertionError: bla</failure>
+  </testcase>
+  <testcase name="testBaz (__main__.MyTestCase)" time="0.0000" />
+  <testcase name="testFoo (__main__.MyTestCase)" time="0.0000" />
+</testsuites>
+}}}
+
+== Command-line usage ==
+The command line usage can be obtained by:
+{{{
+prompt> python suite.py -h
+}}}
+
+Currently this is what it looks like (but this may change):
+{{{
+Usage
+=====
+  suite.py [options] [test1 [test2 [...]]]
+
+examples:
+  suite.py                          - run default set of tests
+  suite.py MyTestSuite              - run suite 'MyTestSuite'
+  suite.py MyTestCase.testSomething - run MyTestCase.testSomething
+  suite.py MyTestCase               - run all 'test*' test methods in MyTestCase
+
+
+options
+=======
+--help, -h     show this help message and exit
+--quiet, -q    Minimal output
+--verbose, -v  Verbose output
+--regex=REGEX  Filtering regular expression
+--xml=FILE     output results in XML
+
+.. more options if available ..
+}}}

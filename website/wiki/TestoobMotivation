@@ -1,0 +1,5 @@
+= Motivation Behind TestOOB =
+
+The idea behind TestOOB is providing simple interfaces to testing facilities that will make using and writing tests more enjoyable.
+
+We hope that one day TestOOB will be a base for cross-language testing ideas. If you want to port some TestOOB functionality to another language, drop us a line.

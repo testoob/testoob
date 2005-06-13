@@ -1,0 +1,23 @@
+= TestOOB: Testing Out Of (The) Box =
+
+TestOOB is currently a bundle of extensions to Python's built-in unit testing framework (module {{{unittest}}}).
+
+== Download ==
+
+[http://sourceforge.net/project/showfiles.php?group_id=138557 Download TestOOB] from !SourceForge.
+
+== Documentation ==
+
+See the UsageExamples.
+
+== More Info ==
+ * [wiki:TestoobMotivation Motivation]
+ * [wiki:TestoobLicense License]
+ * [wiki:TestoobTickets Requesting features and reporting bugs]
+ * [wiki:TestoobCommunity Want to help?]
+ * [http://sourceforge.net/projects/testoob SourceForge project page]
+
+== What's this site? ==
+
+This is TestOOB's Trac installation, provided by [http://opensvn.csie.org OpenSVN]. [http://trac.edgewall.com Trac] is a web-based tool for managing software development projects, developed by [http://www.edgewall.com Edgewall]. To learn more about using Trac, see the TracGuide.
+
