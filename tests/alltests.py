@@ -2,6 +2,7 @@ import unittest
 from types import ModuleType
 
 import runningtests
+import extractingtests
 
 def suite():
     result = unittest.TestSuite()
