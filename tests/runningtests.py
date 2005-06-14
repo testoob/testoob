@@ -1,27 +1,8 @@
 import helpers
-helpers.fix_include_path()
-
 import unittest
-import testoob.running
 import suites
 
-class TestoobBaseTestCase(unittest.TestCase):
-    def setUp(self):
-        self.reporter = helpers.ReporterWithMemory()
-    def tearDown(self):
-        del self.reporter
-    def _check_reporter(self, **kwargs):
-        for attr, expected in kwargs.items():
-            actual = getattr(self.reporter, attr)
-            if type(expected) == type([]):
-                expected.sort()
-                actual.sort()
-            self.assertEqual(expected, actual)
-
-    def _run(self, **kwargs):
-        testoob.running.run(reporters=[self.reporter], **kwargs)
-
-class RunningTestCase(TestoobBaseTestCase):
+class RunningTestCase(helpers.TestoobBaseTestCase):
     def testSuccessfulRun(self):
         self._run(suite=suites.suite())
         self._check_reporter(

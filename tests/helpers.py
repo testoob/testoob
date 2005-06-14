@@ -2,7 +2,10 @@ def fix_include_path():
     from os.path import dirname, join, normpath
     module_path = normpath(join(dirname(__file__), "..", "src"))
     import sys
-    sys.path.insert(0, module_path)
+    if module_path not in sys.path:
+        sys.path.insert(0, module_path)
+
+fix_include_path()
 
 class ReporterWithMemory:
     "A reporter that remembers info on the test fixtures run"
@@ -39,4 +42,22 @@ class ReporterWithMemory:
     def __str__(self):
         attrs = ("started","successes","errors","failures","finished","stdout","stderr")
         return "\n".join(["%s = %s" % (attr, getattr(self,attr)) for attr in attrs])
+
+import unittest
+import testoob.running
+class TestoobBaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.reporter = ReporterWithMemory()
+    def tearDown(self):
+        del self.reporter
+    def _check_reporter(self, **kwargs):
+        for attr, expected in kwargs.items():
+            actual = getattr(self.reporter, attr)
+            if type(expected) == type([]):
+                expected.sort()
+                actual.sort()
+            self.assertEqual(expected, actual)
+
+    def _run(self, **kwargs):
+        testoob.running.run(reporters=[self.reporter], **kwargs)
 
