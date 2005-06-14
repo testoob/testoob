@@ -5,7 +5,7 @@ import unittest as _unittest
 ###############################################################################
 # apply_runner
 ###############################################################################
-from extractors import extract_fixtures as _extract_fixtures
+from extracting import extract_fixtures as _extract_fixtures
 import time
 def apply_runner(suites, runner, reporter, interval=None, test_extractor=None):
     """Runs the suite."""

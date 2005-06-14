@@ -53,7 +53,7 @@ def main(suite=None, defaultTest=None):
     }
 
     if options.regex is not None:
-        from extractors import regex_extractor
+        from extracting import regex_extractor
         kwargs["test_extractor"]  = regex_extractor(options.regex)
 
     if options.xml is not None:
