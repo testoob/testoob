@@ -45,19 +45,27 @@ import unittest
 import testoob.running
 import regular_suite
 
-class RunningTestCase(unittest.TestCase):
+class TestoobBaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.reporter = ReporterWithMemory()
+    def tearDown(self):
+        del self.reporter
+    def _check_reporter(self, **kwargs):
+        for attr, expected in kwargs.items():
+            self.assertEqual(expected, getattr(self.reporter, attr))
+
+class RunningTestCase(TestoobBaseTestCase):
     def testRun(self):
-        reporter = ReporterWithMemory()
-
-        testoob.running.run(suite=regular_suite.suite(), reporters=[reporter])
-
-        self.assertEqual(regular_suite.all_test_names, reporter.started)
-        self.assertEqual(regular_suite.all_test_names, reporter.finished)
-
-        self.assertEqual(regular_suite.all_test_names, reporter.successes)
-        self.assertEqual(0, len(reporter.errors))
-        self.assertEqual(0, len(reporter.failures))
-        self.assertEqual(0, len(reporter.stdout))
-        self.assertEqual(0, len(reporter.stderr))
+        testoob.running.run(suite=regular_suite.suite(),
+                            reporters=[self.reporter])
+        self._check_reporter(
+                started   = regular_suite.all_test_names,
+                finished  = regular_suite.all_test_names,
+                successes = regular_suite.all_test_names,
+                failures  = [],
+                errors    = [],
+                stdout    = "",
+                stderr    = "",
+            )
 
 if __name__ == "__main__": unittest.main()
