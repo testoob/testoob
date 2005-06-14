@@ -39,7 +39,7 @@ class ReporterWithMemory:
 
 import unittest
 import testoob.running
-import regular_suite
+import suites
 
 class TestoobBaseTestCase(unittest.TestCase):
     def setUp(self):
@@ -59,11 +59,11 @@ class TestoobBaseTestCase(unittest.TestCase):
 
 class RunningTestCase(TestoobBaseTestCase):
     def testSuccessfulRun(self):
-        self._run(suite=regular_suite.suite())
+        self._run(suite=suites.suite())
         self._check_reporter(
-                started   = regular_suite.all_test_names,
-                finished  = regular_suite.all_test_names,
-                successes = regular_suite.all_test_names,
+                started   = suites.all_test_names,
+                finished  = suites.all_test_names,
+                successes = suites.all_test_names,
                 failures  = [],
                 errors    = [],
                 stdout    = "",
@@ -71,7 +71,7 @@ class RunningTestCase(TestoobBaseTestCase):
             )
 
     def testFailureRun(self):
-        self._run(suite=regular_suite.CaseFailure.suite())
+        self._run(suite=suites.CaseFailure.suite())
         self._check_reporter(
                 started   = ["testFailure"],
                 finished  = ["testFailure"],
@@ -83,7 +83,7 @@ class RunningTestCase(TestoobBaseTestCase):
             )
 
     def testErrorRun(self):
-        self._run(suite=regular_suite.CaseError.suite())
+        self._run(suite=suites.CaseError.suite())
         self._check_reporter(
                 started   = ["testError"],
                 finished  = ["testError"],
@@ -95,7 +95,7 @@ class RunningTestCase(TestoobBaseTestCase):
             )
 
     def testMixedRun(self):
-        self._run(suite=regular_suite.CaseMixed.suite())
+        self._run(suite=suites.CaseMixed.suite())
         self._check_reporter(
                 started   = ["testError", "testSuccess", "testFailure"],
                 finished  = ["testError", "testSuccess", "testFailure"],

@@ -4,8 +4,8 @@ helpers.fix_include_path()
 import sys
 import testoob
 
-import regular_suite
-from regular_suite import CaseDigits, CaseLetters
+import suites
+from suites import CaseDigits, CaseLetters
 
 def capture_output(code):
     from cStringIO import StringIO
@@ -40,7 +40,7 @@ def helper_run(code,
     expected_stdout=None,
     expected_stderr=None):
 
-    from regular_suite import run_log
+    from suites import run_log
     run_log.clear()
 
     run_log.stdout, run_log.stderr = capture_output(code)
@@ -68,17 +68,17 @@ def helper_main_with_args(*args, **kwargs):
         sys.argv = old_argv
 
 def suite():
-    return regular_suite.suite()
+    return suites.suite()
 
 def test_main_noargs():
     helper_main_with_args(
-        expected_successes = regular_suite.all_test_names)
+        expected_successes = suites.all_test_names)
 
 def test_main_verbose():
-    helper_main_with_args("-v", expected_successes = regular_suite.all_test_names)
+    helper_main_with_args("-v", expected_successes = suites.all_test_names)
 
 def test_main_quiet():
-    helper_main_with_args("-q", expected_successes = regular_suite.all_test_names)
+    helper_main_with_args("-q", expected_successes = suites.all_test_names)
 
 def test_main_regex():
     helper_main_with_args("--regex=1|B", expected_successes = ["testB", "test1"])
@@ -87,14 +87,14 @@ def test_main_interval():
     import time
     interval_to_test = 0.01
     start_time = time.time()
-    helper_main_with_args("--interval=%f" % interval_to_test, expected_successes = regular_suite.all_test_names)
+    helper_main_with_args("--interval=%f" % interval_to_test, expected_successes = suites.all_test_names)
     tests_time = time.time() - start_time
-    should_take = (interval_to_test * len(regular_suite.all_test_names))
+    should_take = (interval_to_test * len(suites.all_test_names))
     if not (should_take + 0.5) > tests_time > should_take:
         check(should_take, tests_time)
 
 def helper_run_mixed(**kwargs):
-    helper_run(lambda : testoob.main(suite=regular_suite.CaseMixed.suite()),
+    helper_run(lambda : testoob.main(suite=suites.CaseMixed.suite()),
             **kwargs)
 
 def test_main_error():
@@ -107,10 +107,10 @@ def test_main_success():
     helper_run_mixed(expected_errors=["testSuccess"])
 
 def test_main_suite():
-    helper_run(lambda : testoob.main(suite=regular_suite.suite()))
+    helper_run(lambda : testoob.main(suite=suites.suite()))
 
 def test_main_defaultTest():
-    helper_run(lambda : testoob.main(defaultTest="suite"), expected_successes = regular_suite.all_test_names)
+    helper_run(lambda : testoob.main(defaultTest="suite"), expected_successes = suites.all_test_names)
 
 if __name__ == "__main__":
     for name, value in globals().items():
