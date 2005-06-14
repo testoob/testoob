@@ -70,5 +70,17 @@ class RunningTestCase(TestoobBaseTestCase):
                 stderr    = "",
             )
 
+    def testEmptyRun(self):
+        self._run(suite=suites.CaseEmpty.suite())
+        self._check_reporter(
+                started   = [],
+                finished  = [],
+                successes = [],
+                failures  = [],
+                errors    = [],
+                stdout    = "",
+                stderr    = "",
+            )
+
 def suite(): return unittest.makeSuite(RunningTestCase)
 if __name__ == "__main__": unittest.main()

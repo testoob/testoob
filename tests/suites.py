@@ -88,6 +88,11 @@ class CaseError(unittest.TestCase):
     def suite():
         return unittest.makeSuite(CaseError)
 
+class CaseEmpty(unittest.TestCase):
+    @staticmethod
+    def suite():
+        return unittest.makeSuite(CaseEmpty)
+
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 
