@@ -74,6 +74,20 @@ class CaseMixed(unittest.TestCase):
     def suite():
         return unittest.makeSuite(CaseMixed)
 
+class CaseFailure(unittest.TestCase):
+    def testFailure(self): logged_run("testFailure", self.fail)
+    @staticmethod
+    def suite():
+        return unittest.makeSuite(CaseFailure)
+
+class CaseError(unittest.TestCase):
+    def testError(self):
+        def error(): raise RuntimeError
+        logged_run("testError", error)
+    @staticmethod
+    def suite():
+        return unittest.makeSuite(CaseError)
+
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 

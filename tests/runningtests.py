@@ -70,6 +70,30 @@ class RunningTestCase(TestoobBaseTestCase):
                 stderr    = "",
             )
 
+    def testFailureRun(self):
+        self._run(suite=regular_suite.CaseFailure.suite())
+        self._check_reporter(
+                started   = ["testFailure"],
+                finished  = ["testFailure"],
+                successes = [],
+                failures  = ["testFailure"],
+                errors    = [],
+                stdout    = "",
+                stderr    = "",
+            )
+
+    def testErrorRun(self):
+        self._run(suite=regular_suite.CaseError.suite())
+        self._check_reporter(
+                started   = ["testError"],
+                finished  = ["testError"],
+                successes = [],
+                failures  = [],
+                errors    = ["testError"],
+                stdout    = "",
+                stderr    = "",
+            )
+
     def testMixedRun(self):
         self._run(suite=regular_suite.CaseMixed.suite())
         self._check_reporter(
@@ -81,6 +105,5 @@ class RunningTestCase(TestoobBaseTestCase):
                 stdout    = "",
                 stderr    = "",
             )
-
 
 if __name__ == "__main__": unittest.main()
