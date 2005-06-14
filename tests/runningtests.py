@@ -106,4 +106,5 @@ class RunningTestCase(TestoobBaseTestCase):
                 stderr    = "",
             )
 
+def suite(): return unittest.makeSuite(RunningTestCase)
 if __name__ == "__main__": unittest.main()
