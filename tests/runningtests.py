@@ -52,12 +52,18 @@ class TestoobBaseTestCase(unittest.TestCase):
         del self.reporter
     def _check_reporter(self, **kwargs):
         for attr, expected in kwargs.items():
-            self.assertEqual(expected, getattr(self.reporter, attr))
+            actual = getattr(self.reporter, attr)
+            if type(expected) == type([]):
+                expected.sort()
+                actual.sort()
+            self.assertEqual(expected, actual)
+
+    def _run(self, **kwargs):
+        testoob.running.run(reporters=[self.reporter], **kwargs)
 
 class RunningTestCase(TestoobBaseTestCase):
-    def testRun(self):
-        testoob.running.run(suite=regular_suite.suite(),
-                            reporters=[self.reporter])
+    def testSuccessfulRun(self):
+        self._run(suite=regular_suite.suite())
         self._check_reporter(
                 started   = regular_suite.all_test_names,
                 finished  = regular_suite.all_test_names,
@@ -67,5 +73,18 @@ class RunningTestCase(TestoobBaseTestCase):
                 stdout    = "",
                 stderr    = "",
             )
+
+    def testMixedRun(self):
+        self._run(suite=regular_suite.CaseMixed.suite())
+        self._check_reporter(
+                started   = ["testError", "testSuccess", "testFailure"],
+                finished  = ["testError", "testSuccess", "testFailure"],
+                successes = ["testSuccess"],
+                failures  = ["testFailure"],
+                errors    = ["testError"],
+                stdout    = "",
+                stderr    = "",
+            )
+
 
 if __name__ == "__main__": unittest.main()
