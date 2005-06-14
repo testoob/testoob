@@ -7,7 +7,7 @@ import unittest as _unittest
 ###############################################################################
 from extractors import extract_fixtures as _extract_fixtures
 import time
-def apply_runner(suites, runner, reporter, interval, test_extractor=None):
+def apply_runner(suites, runner, reporter, interval=None, test_extractor=None):
     """Runs the suite."""
     if test_extractor is None: test_extractor = _extract_fixtures
 
@@ -17,7 +17,7 @@ def apply_runner(suites, runner, reporter, interval, test_extractor=None):
     first = True
     for suite in suites:
         for fixture in test_extractor(suite):
-            if not first:
+            if not first and interval is not None:
                 time.sleep(interval)
             first = False
             runner.run(fixture)
