@@ -2,8 +2,9 @@ Python Syntax Highlighting:
 - http://silvercity.sourceforge.net/
   - http://fauskes.net/nb/syntaxhighlighting/
 
-DocBook Webpage:
+Other:
 - http://www.sagehill.net/docbookxsl
+- http://diveintoaccesibility.org
 
 Python API documentation:
 - epydoc
