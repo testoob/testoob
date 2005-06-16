@@ -149,8 +149,9 @@ if __name__ == "__main__":
             print >>sys.stderr, "too many failures, exiting"
             sys.exit(1)
 
-        import urllib2
+        import urllib2, httplib
         try:
             backup(projectname, password, options)
             raise SystemExit
         except urllib2.URLError: pass
+        except httplib.IncompleteRead: pass
