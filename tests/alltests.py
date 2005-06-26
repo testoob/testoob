@@ -5,6 +5,7 @@ from types import ModuleType
 
 import runningtests
 import extractingtests
+import systemtests
 
 def imported_test_modules():
     for val in globals().values():
