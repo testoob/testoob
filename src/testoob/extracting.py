@@ -19,17 +19,20 @@ def _breadth_first(tree,children=iter):
 	if last == node:
 	    return
 
+def suite_iter(suite):
+    """suite_iter(suite) -> an iterator on its direct sub-suites.
+    For compatibility with Python versions before 2.4"""
+    try:
+        return iter(suite)
+    except TypeError:
+        return iter(suite._tests) # Before 2.4, test suites weren't iterable
+
 def extract_fixtures(suite, recursive_iterator=_breadth_first):
     """Extract the text fixtures from a suite.
     Descends recursively into sub-suites."""
     import unittest
     def test_children(node):
-        if isinstance(node, unittest.TestSuite):
-            try:
-                return iter(node)
-            except TypeError:
-                # Pre-2.4 compatibility
-                return iter(node._tests)
+        if isinstance(node, unittest.TestSuite): return suite_iter(node)
         return []
 
     return _ifilter(lambda test: isinstance(test, unittest.TestCase),

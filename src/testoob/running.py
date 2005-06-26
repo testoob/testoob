@@ -1,6 +1,7 @@
 "test running logic"
 
 import unittest as _unittest
+from extracting import suite_iter as _suite_iter
 
 ###############################################################################
 # apply_runner
@@ -15,7 +16,7 @@ def apply_runner(suites, runner, reporter, interval=None, test_extractor=None):
 
     reporter.start()
     first = True
-    for suite in suites:
+    for suite in _suite_iter(suites):
         for fixture in test_extractor(suite):
             if not first and interval is not None:
                 time.sleep(interval)
