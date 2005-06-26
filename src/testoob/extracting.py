@@ -24,7 +24,12 @@ def extract_fixtures(suite, recursive_iterator=_breadth_first):
     Descends recursively into sub-suites."""
     import unittest
     def test_children(node):
-        if isinstance(node, unittest.TestSuite): return iter(node)
+        if isinstance(node, unittest.TestSuite):
+            try:
+                return iter(node)
+            except TypeError:
+                # Pre-2.4 compatibility
+                return iter(node._tests)
         return []
 
     return _ifilter(lambda test: isinstance(test, unittest.TestCase),
