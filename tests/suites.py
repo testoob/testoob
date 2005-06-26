@@ -70,28 +70,28 @@ class CaseMixed(unittest.TestCase):
     def testError(self):
         def error(): raise RuntimeError
         logged_run("testError", error)
-    @staticmethod
     def suite():
         return unittest.makeSuite(CaseMixed)
+    suite = staticmethod(suite)
 
 class CaseFailure(unittest.TestCase):
     def testFailure(self): logged_run("testFailure", self.fail)
-    @staticmethod
     def suite():
         return unittest.makeSuite(CaseFailure)
+    suite = staticmethod(suite)
 
 class CaseError(unittest.TestCase):
     def testError(self):
         def error(): raise RuntimeError
         logged_run("testError", error)
-    @staticmethod
     def suite():
         return unittest.makeSuite(CaseError)
+    suite = staticmethod(suite)
 
 class CaseEmpty(unittest.TestCase):
-    @staticmethod
     def suite():
         return unittest.makeSuite(CaseEmpty)
+    suite = staticmethod(suite)
 
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
