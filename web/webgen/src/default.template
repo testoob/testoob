@@ -8,7 +8,13 @@
   </head>
   <body>
     <div id="header">
-      <h1>{title: }</h1>
+      <table>
+        <tr>
+            <td><img src="{resource: {name: testoob-logo, insert: graphics/testoob_logo.gif}}" alt="TestOOB Logo" title="TestOOB Logo" /></td>
+          <td><h1>TestOOB<span style="font-size: 90%"> - Testing Out Of (The) Box</span></h1>
+          <p>Python testing made fun!</p></td>
+        </tr>
+      </table>
     </div>
 
     <div id="headerbar" class="bar">
