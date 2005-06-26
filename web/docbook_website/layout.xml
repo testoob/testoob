@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE layout PUBLIC "-//Norman Walsh//DTD Website Layout V2.5.0//EN"
+    "http://docbook.sourceforge.net/release/website/current/schema/dtd/layout.dtd">
+<layout>
+  <config param="text-prefix" value="n-"/>
+
+  <config param="homebanner-tabular" value="graphics/testoob_logo.gif" altval="TestOOB"/>
+  <config param="banner-tabular"     value="graphics/testoob_logo.gif" altval="TestOOB"/>
+
+  <config param="homebanner" value="graphics/testoob_logo.gif" altval="TestOOB"/>
+  <config param="banner"     value="graphics/icons/iconhome.gif" altval="TestOOB"/>
+  <config param="navbgcolor" value="Aquamarine"/>
+
+  <copyright>
+    <year>2005</year>
+    <holder role="http://testoob.sourceforge.net">Ori Peleg</holder>
+  </copyright>
+
+  <!-- orip change <headlink rel="icon" href="http://nwalsh.com/images/nwalsh-icon16.png" type="image/png"/> -->
+  <style src="example.css" type="text/css"/>
+  <headlink rel="author" href="mailto:orispammerpel at users.sourceforge.net" title="Ori Peleg"/>
+
+  <toc page="frontpage.xml" filename="index.html">
+    <tocentry id="download" href="http://sourceforge.net/project/showfiles.php?group_id=138557">
+        <title>Download</title>
+    </tocentry>
+    <tocentry page="usage_examples.xml" filename="usage_examples.html"/>
+    <tocentry page="motivation.xml" filename="motivation.html"/>
+    <tocentry page="community.xml" filename="community.html"/>
+    <tocentry page="license.xml" filename="license.html"/>
+    <tocentry page="tickets.xml" filename="tickets.html"/>
+    <!-- <tocentry page="news.xml" filename="news.html"/> -->
+    <tocentry page="credits.xml" filename="credits.html"/>
+    <tocentry id="sf_project" href="http://www.sourceforge.net/projects/testoob">
+      <title>SF.net Project Page</title>
+    </tocentry>
+  </toc>
+</layout>
+

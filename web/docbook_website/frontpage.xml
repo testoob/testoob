@@ -1,0 +1,27 @@
+<!DOCTYPE webpage SYSTEM "http://docbook.sourceforge.net/release/website/current/schema/dtd/website.dtd">
+<webpage id="frontpage">
+<config param="desc" value="TestOOB Front Page"/>
+<head>
+<title>TestOOB - Python Testing Out Of (The) Box</title>
+<!--<summary>What's a summary?</summary>-->
+<keywords>TestOOB, Testing, Python, Unit Testing, Function Testing, System Testing</keywords>
+</head>
+
+<section>
+    <title>About</title>
+    <para>TestOOB is an advanced testing framework for Python. It is designed
+        to integrate effortlessly with existing PyUnit (standard module
+        'unittest') test suites.</para>
+</section>
+
+<section>
+    <title>Download</title>
+    <para><ulink url="http://sourceforge.net/project/showfiles.php?group_id=138557">Download TestOOB</ulink> from SourceForge.</para>
+</section>
+
+<section>
+    <title>Documentation</title>
+    <para>See the <ulink url="usage_examples.html">Usage Examples</ulink></para>
+</section>
+
+</webpage>

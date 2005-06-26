@@ -1,0 +1,17 @@
+<!DOCTYPE webpage SYSTEM "http://docbook.sourceforge.net/release/website/current/schema/dtd/website.dtd">
+<webpage id="credits">
+<head>
+    <title>Credits</title>
+    <summary>Who's Responsible?</summary>
+</head>
+
+<section>
+    <title>In chronological order</title>
+    <itemizedlist>
+        <listitem><para>Ori Peleg</para></listitem>
+        <listitem><para>Barak Schiller</para></listitem>
+        <listitem><para>Misha Seltzer</para></listitem>
+    </itemizedlist>
+</section>
+
+</webpage>
