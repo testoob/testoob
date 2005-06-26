@@ -1,6 +1,5 @@
-import helpers
 import unittest
-import suites
+import helpers, suites
 
 class RunningTestCase(helpers.TestoobBaseTestCase):
     def testSuccessfulRun(self):
