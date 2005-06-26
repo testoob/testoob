@@ -11,7 +11,7 @@ pre.python {
   #header {
     border-bottom: 1px solid black;
     padding: 1ex;
-    background-color: #888888;
+    background-color: Aquamarine;
     font-family: verdana;
   }
   #header h1 {
@@ -22,9 +22,14 @@ pre.python {
     text-align: center;
   }
 
-
-, #headerbar { border-bottom: 1px solid black; }
-  #footer { border-top: 1px solid black; }
+  #headerbar {
+    border-bottom: 1px solid black;
+    background-color: LightSeaGreen;
+  }
+  #footer {
+      border-top: 1px solid black;
+      background-color: Aquamarine;
+  }
 
   #body {
     margin-left: 250px;
@@ -66,7 +71,7 @@ pre.python {
   #menu a {
 	text-decoration: none;
 	font-weight: bold;
-	font-size: 130%;
+	font-size: 100%;
   }
 
   #menu a:hover {
