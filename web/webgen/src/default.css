@@ -1,11 +1,19 @@
 
-pre.python {
-    background-color: PapayaWhip;
+pre {
     color: #1F2F2F;
     font-size: 100%;
     padding: 0.2cm;
     border: thin solid black;
 }
+
+pre.python {
+    background-color: PapayaWhip;
+}
+
+pre.output {
+    background-color: #BBFEFE;
+}
+
   #all { background-color: #CCCCCC; }
 
   #header {
