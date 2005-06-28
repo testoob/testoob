@@ -8,12 +8,14 @@
   </head>
   <body>
     <div id="header">
-        <div id="logo">
-            <img src="images/testoob_logo.gif" alt="TestOOB Logo" title="TestOOB Logo" />
-        </div>
-        <div id="title">
-            <h1 class="title">{title: }</h1>
-        </div>
+        <table width="60%"><tr>
+            <td id=logo>
+                <img src="images/testoob_logo.gif" alt="TestOOB Logo" title="TestOOB Logo" />
+            </td>
+            <td id="title">
+                <h1 class="title">{title: }</h1>
+            </td>
+        </tr></table>
     </div>
 
     <div id="headerbar" class="bar">

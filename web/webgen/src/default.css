@@ -20,18 +20,12 @@ pre.output {
     border-bottom: 1px solid black;
     padding: 1ex;
     background-color: Aquamarine;
-    font-family: verdana;
   }
 
   #title {
-    margin: 0ex;
-	font-size: 200%;
-	font-weight: bold;
-    position: absolute;
+    font-weight: bold;
+    font-size: 120%;
     font-family: sans-serif;
-    top: -20px;
-    left: 30%;
-    text-align: center;
   }
 
   #headerbar {
