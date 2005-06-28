@@ -37,6 +37,10 @@ pre.output {
       background-color: #7FFFD4; /* Aquamarine */
   }
 
+  img {
+      border-style: none;
+  }
+
   #body {
     margin-left: 250px;
     margin-right: 20px;
