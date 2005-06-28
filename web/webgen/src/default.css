@@ -7,7 +7,7 @@ pre {
 }
 
 pre.python {
-    background-color: PapayaWhip;
+    background-color: #FFEFD5; /* PapayaWhip */
 }
 
 pre.output {
@@ -19,22 +19,22 @@ pre.output {
   #header {
     border-bottom: 1px solid black;
     padding: 1ex;
-    background-color: Aquamarine;
+    background-color: #7FFFD4; /* Aquamarine */
   }
 
   #title {
     font-weight: bold;
     font-size: 110%;
-    font-family: sans-serif;
+    font-family: Helvetica, sans-serif;
   }
 
   #headerbar {
     border-bottom: 1px solid black;
-    background-color: LightSeaGreen;
+    background-color: #20B2AA; /* LightSeaGreen */
   }
   #footer {
       border-top: 1px solid black;
-      background-color: Aquamarine;
+      background-color: #7FFFD4; /* Aquamarine */
   }
 
   #body {
@@ -45,13 +45,13 @@ pre.output {
   }
 
   #menu {
-    font: 120%;
+    font-size: 120%;
 	float: left;
     padding-right: 10px;
     padding-left: 20px;
     margin: 20px;
     border: thick ridge DimGray;
-    background-color: Thistle;
+    background-color: #D8BFD8; /* Thistle */
     color: black; /* TODO */
   }
 
