@@ -10,7 +10,7 @@
     <div id="header">
       <table>
         <tr>
-            <td><img src="graphics/testoob_logo.gif" alt="TestOOB Logo" title="TestOOB Logo" /></td>
+            <td><img src="images/testoob_logo.gif" alt="TestOOB Logo" title="TestOOB Logo" /></td>
             <td><h1 class="title">{title: }</h1></td>
         </tr>
       </table>
