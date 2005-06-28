@@ -45,7 +45,7 @@ pre.output {
     margin-left: 250px;
     margin-right: 20px;
     padding: 10px;
-    font: 100% georgia; 
+    font: 100% Georgia, Serif; 
   }
 
   #menu {
@@ -54,7 +54,7 @@ pre.output {
     padding-right: 10px;
     padding-left: 20px;
     margin: 20px;
-    border: thick ridge DimGray;
+    border: thick ridge #696969; /* DimGray */
     background-color: #D8BFD8; /* Thistle */
     color: black; /* TODO */
   }
@@ -97,7 +97,7 @@ pre.output {
   }
 
   #menu .webgen-menu-item-selected A {
-      background: LightCoral;
+      background: #F08080; /* LightCoral */
       border: thin solid black;
   }
 
