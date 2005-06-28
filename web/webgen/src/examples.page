@@ -162,8 +162,3 @@ h3. Wait Between Tests
 
 '--interval=INTERVAL' command line option, sleeps the given interval between
 tests.
-
-<pre class="python">
-<code>
-</code>
-</pre>
