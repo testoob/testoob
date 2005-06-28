@@ -1,0 +1,23 @@
+---
+title: Helping TestOOB
+inMenu: true
+directoryName: TestOOB
+---
+
+h2. How To Contribute
+
+Hey, thanks for wanting to help! Here are what we'd really appreciate:
+* "Request features and report bugs":tickets.html - this is the most important thing!!!
+* Pick an "active ticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/report/1, fix/resolve it, and attach the patch to the ticket. Don't forget to read the note below.
+
+h2. Repository URL
+
+Our "Subversion":http://subversion.tigris.org repository's URL is http://opensvn.csie.org/testoob/trunk.
+
+h2. A note on submitting patches
+
+To prevent licensing woes in the future, we request that patches be released
+under the "Apache License, Version 2.0":http://opensource.org/licenses/apache2.0.php . This will allow us to re-release
+TestOOB under a different license in the future, for example one that can "be
+contributed":http://www.python.org/psf/contrib.html to the Python Software Foundation, if TestOOB is ever considered
+for inclusion as a standard Python module.

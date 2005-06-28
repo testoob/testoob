@@ -1,0 +1,32 @@
+---
+title: Found a Bug?
+inMenu: true
+directoryName: TestOOB
+---
+
+h2. Should I Bother?
+
+Please, if you have a feature you need or would like, request it! We will be
+indebted. Remember that our "motivation":motivation.html is to make writing
+tests a happy and productive process. :-)
+
+h2. Guidelines for Submission
+
+Please fill the short summary and full description, don't worry about the rest
+of the fields.
+
+If you also enter your email address we will be able to get back to you if we
+have questions.
+
+We encourage you to check out the
+"active tickets":https://opensvn.csie.org/traccgi/testoob/trac.cgi/report/1
+before you submit - your feature or bug may already be there, with helpful
+comments. In this case, it would be better to add a comment to the existing
+ticket.
+
+h2. Submit a Ticket
+
+* "Request a feature":https://opensvn.csie.org/traccgi/testoob/trac.cgi/newticket?component=feature_requests
+* "Report a bug":https://opensvn.csie.org/traccgi/testoob/trac.cgi/newticket?component=bugs
+
+Thanks!

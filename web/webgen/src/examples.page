@@ -1,0 +1,169 @@
+---
+title: Examples
+inMenu: true
+directoryName: TestOOB
+---
+
+h2. Sample Test Suite
+
+We'll assume we have the following file, named <code>suite.py</code>
+
+<pre class="python">
+<code># suite.py
+import unittest
+class MyTestCase(unittest.TestCase):
+  def setUp(self):   # ...
+  def testFoo(self): # ...
+  def testBar(self): # ...
+  def testBaz(self): # ...
+
+if __name__ == "__main__":
+  unittest.main()</code>
+</pre>
+
+h2. Using the Command Line
+
+Run your test suites with '-h' to get usage information. Currently the output
+is:
+
+<pre class="output">
+prompt> python suite.py -h
+Usage
+=====
+  suite.py [options] [test1 [test2 [...]]]
+
+examples:
+  testoob                          - run default set of tests
+  testoob MyTestSuite              - run suite 'MyTestSuite'
+  testoob MyTestCase.testSomething - run MyTestCase.testSomething
+  testoob MyTestCase               - run all test methods in MyTestCase
+
+options
+=======
+--help, -h           show this help message and exit
+--quiet, -q          Minimal output
+--verbose, -v        Verbose output
+--regex=REGEX        Filtering regular expression
+--xml=FILE           output results in XML
+--html=FILE          output results in HTML
+--color              Color output
+--interval=INTERVAL  Add interval between tests
+--debug              Run pdb on tests that fail on Error
+</pre>
+
+h2. Replacing <code>unittest.main()</code>
+
+Change the end of <code>suite.py</code> from:
+<pre class="python">
+<code>if __name__ == "__main__":
+  unittest.main()</code>
+</pre>
+
+To:
+<pre class="python">
+<code>if __name__ == "__main__":
+  import testoob
+  testoob.main()</code>
+</pre>
+
+h2. Running Tests
+
+Just run the suite:
+
+<pre class="output">
+prompt> python suite.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+OK
+prompt>
+</pre>
+
+h2. Output Options
+
+h3. Verbose
+
+<pre class="output">
+prompt> python suite.py -v
+testBar (__main__.MyTestCase) ... ok
+testBaz (__main__.MyTestCase) ... ok
+testFoo (__main__.MyTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.006s
+OK
+prompt>
+</pre>
+
+h3. Quiet
+
+<pre class="output">
+prompt> python suite.py -q
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+OK
+prompt>
+</pre>
+
+h3. Color
+
+'--color' command line option, uses ANSI escape sequences.
+
+h3. HTML
+
+'--html=FILENAME' command line option, writes HTML output to the file, requires
+"4Suite":http://4suite.org
+
+h3. XML
+
+'--xml=FILENAME' command line option, writes XML output to the file. The XML
+structure resembles Ant's JUnit-task XML formatter's output. Requires
+"ElementTree":http://effbot.org/zone/element-index.htm
+
+h2. Filtering Options
+
+h3. Regular Expressions
+
+'--regex=REGEX' command line option, matches test names to a Perl-style regular
+expression.
+
+<pre class="output">
+prompt> python suite.py -v --regex=Ba
+testBar (__main__.MyTestCase) ... ok
+testBaz (__main__.MyTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.002s
+OK
+prompt>
+</pre>
+
+h3. Specific Tests
+
+<pre class="output">
+prompt> python suite.py -v MyTestCase.testFoo MyTestCase.testBaz
+testFoo (__main__.MyTestCase) ... ok
+testBaz (__main__.MyTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.004s
+OK
+prompt>
+</pre>
+
+h2. More Options
+
+h3. Debugging Failing Tests
+
+'--debug' command line option, if a test fails pdb will run on the failed
+assertion in post-mortem mode.
+
+h3. Wait Between Tests
+
+'--interval=INTERVAL' command line option, sleeps the given interval between
+tests.
+
+<pre class="python">
+<code>
+</code>
+</pre>

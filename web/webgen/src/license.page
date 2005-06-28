@@ -1,0 +1,7 @@
+---
+title: License
+inMenu: true
+directoryName: TestOOB
+---
+
+TestOOB is released under the "GNU LGPL":http://www.fsf.org/licensing/licenses/lgpl.html. For full details, see the <code>COPYING</code> and <code>lgpl.txt</code> files that are included in the distribution.
