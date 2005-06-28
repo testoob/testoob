@@ -17,3 +17,10 @@ h2. Download
 h2. Documentation
 
 See the "usage examples":examples.html.
+
+h2. Where Can I Learn About Unit Testing?
+
+"Dive Into Python":http://diveintopython.org has excellent tutorials:
+* "Unit Testing":http://diveintopython.org/unit_testing/index.html
+* "Test-First Programming":http://diveintopython.org/unit_testing/stage_1.html
+
