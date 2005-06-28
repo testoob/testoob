@@ -1,0 +1,17 @@
+index.page:
+  orderInfo: -20
+
+download.html:
+  title: Download
+  dest: http://sourceforge.net/project/showfiles.php?group_id=138557
+  inMenu: true
+  orderInfo: -19
+
+examples.page:
+  orderInfo: -18
+
+sourceforge.html:
+ title: SF.net Project Page
+ dest: http://www.sourceforge.net/projects/testoob
+ inMenu: true
+ orderInfo: 20
