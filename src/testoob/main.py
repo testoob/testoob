@@ -1,7 +1,10 @@
 "main() implementation"
 
 def _parse_args():
-    import optparse
+    try:
+        import optparse
+    except ImportError:
+        from compatibility import optparse
     usage="""%prog [options] [test1 [test2 [...]]]
 
 examples:

@@ -70,18 +70,30 @@ def run_suites(suites, reporters, runner_class=SimpleRunner, addError=None, **kw
 # text_run
 ###############################################################################
 
+def _pop(d, key, default):
+    try:
+        return d.pop(key, default)
+    except AttributeError:
+        pass
+
+    # In Python 2.2 we'll implement pop ourselves
+    try:
+        return d.get(key, default)
+    finally:
+        if key in d: del d[key]
+
 def text_run(*args, **kwargs):
     """
     Run suites with a TextStreamReporter.
     Accepts keyword 'verbosity' (0, 1, or 2, default is 1)
     """
 
-    verbosity = kwargs.pop("verbosity", 1)
+    verbosity = _pop(kwargs, "verbosity", 1)
 
     kwargs.setdefault("reporters", [])
 
     import sys, reporting
-    reporter_class = kwargs.pop("reporter_class", reporting.TextStreamReporter)
+    reporter_class = _pop(kwargs, "reporter_class", reporting.TextStreamReporter)
     kwargs["reporters"].append( reporter_class(
             verbosity=verbosity,
             descriptions=1,

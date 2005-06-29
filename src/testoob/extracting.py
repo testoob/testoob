@@ -1,6 +1,10 @@
 "Extracting tests from a test suite"
+from __future__ import generators # Python 2.2 compatibility
 
-from itertools import ifilter as _ifilter
+try:
+    from itertools import ifilter as _ifilter
+except ImportError:
+    from compatibility.itertools import ifilter as _ifilter
 
 # David Eppstein's breadth_first
 # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/231503
