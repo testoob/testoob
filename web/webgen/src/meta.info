@@ -11,6 +11,9 @@ examples.page:
   orderInfo: -18
 
 credits.page:
+  orderInfo: 18
+
+links.page:
   orderInfo: 19
 
 sourceforge.html:
