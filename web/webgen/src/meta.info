@@ -10,7 +10,7 @@ download.html:
 examples.page:
   orderInfo: -18
 
-credits.page:
+info.page:
   orderInfo: 18
 
 links.page:

@@ -1,0 +1,56 @@
+---
+title: More Info
+inMenu: true
+directoryName: TestOOB
+---
+
+h2. Why are we doing this?
+
+The idea behind TestOOB is to provide simple interfaces to testing facilities
+that will make using and writing tests more enjoyable.
+
+We hope that one day TestOOB will be a base for cross-language testing ideas.
+If you want to port some TestOOB functionality to another language, drop us a
+line.
+
+h2. License
+
+TestOOB is released under the "GNU
+LGPL":http://www.fsf.org/licensing/licenses/lgpl.html. For full details, see
+the <code>COPYING</code> and <code>lgpl.txt</code> files that are included in
+the distribution.
+
+!http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://opensource.org/trademarks/open_source_button.png
+
+
+h2. Repository URL
+
+Our "Subversion":http://subversion.tigris.org repository's URL is
+http://opensvn.csie.org/testoob/trunk.
+
+
+h2. How To Contribute
+
+Hey, thanks for wanting to help! Here are what we'd really appreciate:
+
+h3. Request features and report bugs
+
+This is the most important thing! See "here":tickets.html.
+
+h3. Resolve a ticket
+
+# Pick an "active
+ticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/report/1.
+# Fix or resolve the ticket.
+# Attach the patch to the ticket.
+
+We <b>only</b> accept patches licensed under the "Apache License, Version
+2.0":http://opensource.org/licenses/apache2.0.php. To understand why, see
+http://www.python.org/psf/contrib.html.
+
+h2. Credits
+
+(in chronological order)
+* Ori Peleg &lt;orispammerpel at users dot sourceforge dot net&gt;
+* Barak Schiller &lt;bspamalotschiller at gmail dot com&gt;
+* Misha Seltzer &lt;mishadontspamme at seltzer dot com&gt;
