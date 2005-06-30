@@ -63,14 +63,21 @@ def command_line(
         expected_error=None,
         expected_output_regex=None,
         expected_error_regex=None,
-        expected_rc=None):
+        expected_rc=0,):
+
+    # TODO: make errors print full status like working directory, etc.
 
     # run command
     output, error, rc = _run_command(cmd, input)
 
+    if expected_output is None and expected_output_regex is None:
+        expected_output = ""
+    if expected_error is None and expected_error_regex is None:
+        expected_error = ""
+
     # test
+    conditionally_assert_equals(expected_error, error)
     conditionally_assert_equals(expected_output, output)
     conditionally_assert_matches(expected_output_regex, output)
-    conditionally_assert_equals(expected_error, error)
     conditionally_assert_matches(expected_error_regex, error)
     conditionally_assert_equals(expected_rc, rc)
