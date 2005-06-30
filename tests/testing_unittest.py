@@ -20,13 +20,7 @@ class TestingUnitTest(unittest.TestCase):
         cmd = _generate_command(error="def\n")
         self.assertEqual(("", "def\n", 0), testing._run_command(cmd))
 
-    def testRunCommandPopen2Output(self):
-        raise NotImplementedError
-
-    def testRunCommandSubProcess(self):
-        raise NotImplementedError
-        try: import subprocess
-        except ImportError: return
+    # TODO: add explicit testing for popen2 and subprocess implementations
 
 def suite(): return unittest.makeSuite(TestingUnitTest)
 if __name__ == "__main__": unittest.main()
