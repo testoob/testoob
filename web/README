@@ -1,8 +1,10 @@
-These are webgen sources for a site (http://webgen.rubyforge.org).
+These are the sources for the TestOOB website.
+
+It is generated with webgen, http://webgen.rubyforge.org.
 
 To use:
-* First install Ruby and webgen
-  (see http://webgen.rubyforge.org/download.html, I installed with Gems)
+* Install Ruby, webgen, and RedCloth
+  * see http://webgen.rubyforge.org/download.html
 * To create the site, run 'webgen' in this directory
 * More options with 'webgen --help'
 
