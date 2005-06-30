@@ -24,7 +24,7 @@ def _run_command(cmd, input=None):
     """_run_command(cmd, input=None) -> stdoutstring, stderrstring, returncode
     Runs the command, giving the input if any.
     Returns the standard output and error as strings, and the return code"""
-    pass # real implementation below
+    pass # the real implementation is below
 
 # choose the proper implementation
 if _has_subprocess_module(): _run_command = _run_command_subprocess
