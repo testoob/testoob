@@ -19,6 +19,11 @@ def parseArgs():
     except IndexError, e:
         printUsage()
 
+def fixIncludePath():
+    # the testoob executable is often in the same directory as testoob
+    from os.path import dirname, join, normpath
+    module_path = normpath(join(dirname(__file__), ".."))
+    sys.path.insert(0, module_path)
 
 argument = parseArgs()
 if (argument == "-h" or argument == "--help"):
@@ -29,9 +34,14 @@ try:
     __name__ = "".join(argument.split("/")[-1].split(".")[0])
     execfile(argument)
     __name__ = name
-except IOError, e:
-    print e
-else:
-    import testoob
+
+    try:
+        import testoob
+    except ImportError:
+        fixIncludePath()
+        import testoob
     testoob.main()
 
+except IOError, e:
+    print e
+    sys.exit(1)
