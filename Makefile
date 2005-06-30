@@ -1,6 +1,7 @@
 PYTHON ?= python
 DISTDIR = dist
-APIDIR = api
+APIDIR = dist/api
+WEBSITEDIR = dist/website
 
 .PHONY: all
 all:
@@ -14,13 +15,16 @@ test:
 clean:
 	$(RM) `find . -name "*~"`
 	$(RM) `find . -name "*.pyc"`
-	$(RM) -r $(DISTDIR)
-	$(RM) -r $(APIDIR)
+	$(RM) -r $(DISTDIR) $(APIDIR) $(WEBSITEDIR)
 	$(RM) MANIFEST
 
 .PHONY: api
 api:
 	cd src; epydoc -o ../$(APIDIR) testoob
+
+.phony: website
+website:
+	cd web; webgen; mv output ../$(WEBSITEDIR)
 
 DISTUTILS_CMD = $(PYTHON) ./setup.py -q sdist --dist-dir=$(DISTDIR)
 .PHONY: dist
