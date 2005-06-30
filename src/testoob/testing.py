@@ -13,12 +13,22 @@ def _run_command_popen2(cmd, input):
 
     return child.fromchild.read(), child.childerr.read(), rc
 
+def _has_subprocess_module():
+    try:
+        import subprocess
+        return True
+    except ImportError:
+        return False
+
 def _run_command(cmd, input=None):
     """_run_command(cmd, input=None) -> stdoutstring, stderrstring, returncode
     Runs the command, giving the input if any.
     Returns the standard output and error as strings, and the return code"""
-    try:                return _run_command_subprocess(cmd, input)
-    except ImportError: return _run_command_popen2(cmd, input)
+    pass # real implementation below
+
+# choose the proper implementation
+if _has_subprocess_module(): _run_command = _run_command_subprocess
+else:                        _run_command = _run_command_popen2
 
 def command_line(
         cmd,
