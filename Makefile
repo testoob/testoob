@@ -1,7 +1,7 @@
 PYTHON ?= python
 DISTDIR = dist
-APIDIR = dist/api
-WEBSITEDIR = dist/website
+APIDIR = $(DISTDIR)/api
+WEBSITEDIR = $(DISTDIR)/website
 
 .PHONY: all
 all:
@@ -15,7 +15,7 @@ test:
 clean:
 	$(RM) `find . -name "*~"`
 	$(RM) `find . -name "*.pyc"`
-	$(RM) -r $(DISTDIR) $(APIDIR) $(WEBSITEDIR)
+	$(RM) -r $(DISTDIR)
 	$(RM) MANIFEST
 
 .PHONY: api
