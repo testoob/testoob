@@ -1,9 +1,17 @@
-def fix_include_path():
+def project_subpath(*components):
     from os.path import dirname, join, normpath
-    module_path = normpath(join(dirname(__file__), "..", "src"))
+    return normpath(join(dirname(__file__), "..", *components))
+
+def module_path():
+    return project_subpath("src")
+
+def executable_path():
+    return project_subpath("src", "testoob", "testoob")
+
+def fix_include_path():
     import sys
-    if module_path not in sys.path:
-        sys.path.insert(0, module_path)
+    if module_path() not in sys.path:
+        sys.path.insert(0, module_path())
 
 fix_include_path()
 
