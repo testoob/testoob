@@ -23,7 +23,7 @@ Lets assume we're releasing version 6.2
 
 * Upload news announcement:
   - Sourceforge (http://sourceforge.net/news/submit.php?group_id=138557)
-  - Freshmeat (http://freshmeat.net/add-project)
+  - Freshmeat (http://freshmeat.net/projects/testoob)
   - PyPi ('python setup.py register')
   - Vaults of Parnassus (http://py.vaults.ca/submit)
 
