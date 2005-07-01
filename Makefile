@@ -28,7 +28,7 @@ website:
 
 DISTUTILS_CMD = $(PYTHON) ./setup.py -q sdist --dist-dir=$(DISTDIR)
 .PHONY: dist
-dist: api
+dist:
 	$(RM) MANIFEST
 	$(DISTUTILS_CMD) --formats=bztar
 	$(DISTUTILS_CMD) --formats=gztar

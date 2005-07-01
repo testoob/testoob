@@ -5,6 +5,5 @@ include docs/CHANGELOG
 include docs/COPYING
 include docs/INSTALL
 include docs/lgpl.txt
-graft api
 
 recursive-include tests *.py
