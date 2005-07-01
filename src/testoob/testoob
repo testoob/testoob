@@ -19,17 +19,26 @@ def parseArgs():
     except IndexError, e:
         printUsage()
 
+def addPythonPath(path):
+    from os.path import normpath
+    sys.path.insert(0, normpath(path))
+
 def fixIncludePath():
     # the testoob executable is often in the same directory as testoob
-    from os.path import dirname, join, normpath
-    module_path = normpath(join(dirname(__file__), ".."))
-    sys.path.insert(0, module_path)
+    from os.path import dirname, join
+    module_path = join(dirname(__file__), "..")
+    addPythonPath(module_path)
 
 argument = parseArgs()
 if (argument == "-h" or argument == "--help"):
     printUsage()
 
 try:
+    # Add the path of the ran file to the python path, so that includes
+    # from the same directory would work.
+    from os.path import dirname
+    addPythonPath(dirname(argument))
+
     name = __name__
     __name__ = "".join(argument.split("/")[-1].split(".")[0])
     execfile(argument)
