@@ -108,18 +108,19 @@ class BaseReporter(IReporter):
 
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
-    # Modified from unittest._TextTestResult
+    # Modifie from unittest._TextTestResult
 
     separator1 = '=' * 70
     separator2 = '-' * 70
     
-    def __init__(self, stream, descriptions, verbosity):
+    def __init__(self, stream, descriptions, verbosity, immediate = False):
         import re
         self.re = re
         BaseReporter.__init__(self)
         self.stream = stream
         self.showAll = verbosity > 1
         self.dots = verbosity == 1
+        self.immediate = immediate
         self.descriptions = descriptions
 
     def startTest(self, test):
@@ -141,6 +142,9 @@ class TextStreamReporter(BaseReporter):
             self._writeln(self._decorateFailure("ERROR"))
         elif self.dots:
             self._write(self._decorateFailure('E'))
+        if self.immediate:
+            self._immediatePrint(test, err, "ERROR")
+
 
     def addFailure(self, test, err):
         BaseReporter.addFailure(self, test, err)
@@ -148,10 +152,23 @@ class TextStreamReporter(BaseReporter):
             self._writeln(self._decorateFailure("FAIL\n"))
         elif self.dots:
             self._write(self._decorateFailure('F'))
+        if self.immediate:
+            self._immediatePrint(test, err, "FAIL")
+
+    def _immediatePrint(self, test, error, flavour):
+        if self.dots:
+            self._write("\n")
+        self._printOneError(flavour, test,  _exc_info_to_string(error, test))
+        self._writeln(self.separator1)
+        if self.showAll:
+            self._write("\n")
 
     def done(self):
         BaseReporter.done(self)
-        self._printErrors()
+        if not self.immediate:
+            self._printErrors()
+        else:
+            self._write("\n")
         self._writeln(self.separator2)
         self._printResults()
 
@@ -185,10 +202,14 @@ class TextStreamReporter(BaseReporter):
 
     def _printErrorList(self, flavour, errors):
         for test, err in errors:
-            self._writeln(self.separator1)
-            self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test))))
-            self._writeln(self.separator2)
-            self._writeln("%s" % err)
+            self._printOneError(flavour, test, err)
+            self._write("\n")
+
+    def _printOneError(self, flavour, test, err):
+        self._writeln(self.separator1)
+        self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test))))
+        self._writeln(self.separator2)
+        self._write("%s" % err)
 
     def _write(self, s):
         self.stream.write(s)
@@ -221,8 +242,8 @@ class ColoredTextReporter(TextStreamReporter):
              "red":"\x1b[31;01m",
              "darkred":"\x1b[31;06m"}
 
-    def __init__(self, stream, descriptions, verbosity):
-        TextStreamReporter.__init__(self, stream, descriptions, verbosity)
+    def __init__(self, stream, descriptions, verbosity, immediate):
+        TextStreamReporter.__init__(self, stream, descriptions, verbosity, immediate)
     
     def _red(self, str):
         "Make it red!"

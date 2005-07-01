@@ -17,6 +17,7 @@ examples:
     p = optparse.OptionParser(usage=usage, formatter=formatter)
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
+    p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
@@ -51,6 +52,7 @@ def main(suite=None, defaultTest=None):
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
+        "immediate" : options.immediate,
         "reporters" : [],
         "interval" : options.interval
     }

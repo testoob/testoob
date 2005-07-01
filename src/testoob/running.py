@@ -86,9 +86,11 @@ def text_run(*args, **kwargs):
     """
     Run suites with a TextStreamReporter.
     Accepts keyword 'verbosity' (0, 1, or 2, default is 1)
+    and 'immediate' (True or False)
     """
 
     verbosity = _pop(kwargs, "verbosity", 1)
+    immediate = _pop(kwargs, "immediate", False)
 
     kwargs.setdefault("reporters", [])
 
@@ -96,6 +98,7 @@ def text_run(*args, **kwargs):
     reporter_class = _pop(kwargs, "reporter_class", reporting.TextStreamReporter)
     kwargs["reporters"].append( reporter_class(
             verbosity=verbosity,
+            immediate=immediate,
             descriptions=1,
             stream=sys.stderr) )
 
