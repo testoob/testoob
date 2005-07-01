@@ -1,5 +1,5 @@
 kwargs = {
-    'packages' : ['testoob'],
+    'packages' : ['testoob', 'testoob.compatibility'],
     'package_dir' : {'': 'src'},
     'scripts'  : ['src/testoob/testoob'],
 
