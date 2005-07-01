@@ -1,10 +1,29 @@
-                 -== TestOOB Changelog ==-
+                           -== TestOOB Changelog ==-
 
 TestOOB is an advanced testing framework for Python. It is
 designed to integrate effortlessly with existing PyUnit
 (standard module 'unittest') test suites.
 
-== TestOOB 0.3, June 12, 2005
+== TestOOB 0.4, 2 July, 2005
+
+Release Focus: compatibility with older Python versions
+
+New Features:
+ * Now works with Python versions 2.2, 2.3 and 2.4, tickets #73 and #75
+ * Immediate feedback about failed tests with '--immediate'
+ * Special support for testing command-line applications with
+   testoob.testing.command_line, ticket #38
+
+Bugfixes:
+ * The 'testoob' executable now correctly imports modules in the test suite's
+   directory, ticket #85
+
+Internal:
+ * TestOOB's own tests converted to unittest/TestOOB, ticket #72
+ * More self-testing scenarios, ticket #45
+ * New website based on webgen (http://webgen.rubyforge.org)
+
+== TestOOB 0.3, 12 June, 2005
 
 New committer: Misha Seltzer
 
@@ -25,7 +44,7 @@ Internal:
  * Added logistics/generate_release.py
  * API documentation is included in the distribution via epydoc
 
-== TestOOB 0.2, June 4, 2005
+== TestOOB 0.2, 4 June, 2005
 
 Release Focus: Better reporting
 
@@ -53,7 +72,7 @@ API Changes:
 Internal:
  NONE
 
-== TestOOB 0.1, May 20, 2005
+== TestOOB 0.1, 20 May, 2005
 
 Release Focus: A drop-in enhancement to unittest.main()
 
