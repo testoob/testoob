@@ -108,7 +108,7 @@ class BaseReporter(IReporter):
 
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
-    # Modifie from unittest._TextTestResult
+    # Modified from unittest._TextTestResult
 
     separator1 = '=' * 70
     separator2 = '-' * 70
