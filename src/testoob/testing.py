@@ -33,7 +33,7 @@ def assert_matches(regex, actual, msg=None, filter=None):
     if filter is not None:
         actual = filter(actual)
 
-    if re.search(regex, actual) is not None: return
+    if re.search(regex, actual, re.DOTALL) is not None: return
 
     if msg is None:
         msg = "'%(actual)s' doesn't match regular expression '%(regex)s'" % vars()
