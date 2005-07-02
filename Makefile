@@ -2,6 +2,7 @@ PYTHON ?= python
 DISTDIR = dist
 APIDIR = api
 WEBSITEDIR = $(DISTDIR)/website
+SUITEFILE = tests/alltests.py
 
 .PHONY: all
 all:
@@ -9,7 +10,13 @@ all:
 
 .PHONY: test
 test:
-	$(PYTHON) ./tests/alltests.py
+	$(PYTHON) $(SUITEFILE)
+
+.PHONY: testall
+testall:
+	python2.2 $(SUITEFILE)
+	python2.3 $(SUITEFILE)
+	python2.4 $(SUITEFILE)
 
 .PHONY: clean
 clean:
