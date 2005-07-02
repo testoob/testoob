@@ -74,7 +74,7 @@ def main(suite=None, defaultTest=None):
         kwargs["reporter_class"] = ColoredTextReporter
 
     if options.debug is not None:
-        import pdb, re
+        import pdb
         def runDebug(test, err, flavour, reporter, real_add):
             if flavour not in ["error", "failure"]:
                 raise NameError("No such flavour", flavour)
