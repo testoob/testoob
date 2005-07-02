@@ -24,7 +24,18 @@ examples:
     p.add_option("--color", action="store_true", help="Color output")
     p.add_option("--interval", type="float", default=0, help="Add interval between tests")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
-    return p.parse_args()
+
+    def require_modules(option, *modules):
+        missing_modules = []
+        for modulename in modules:
+            try:
+                __import__(modulename)
+            except ImportError:
+                missing_modules.append(modulename)
+        if missing_modules:
+            p.error("option '%(option)s' requires missing modules "
+                    "%(missing_modules)s" % vars())
+    return p.parse_args() + (require_modules,)
 
 def _get_verbosity(options):
     if options.quiet: return 0
@@ -47,7 +58,7 @@ def _get_suites(suite, defaultTest, test_names):
     return TestLoader().loadTestsFromNames(test_names, __main__)
 
 def main(suite=None, defaultTest=None):
-    options, test_names = _parse_args()
+    options, test_names, require_modules = _parse_args()
 
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
@@ -62,10 +73,12 @@ def main(suite=None, defaultTest=None):
         kwargs["test_extractor"]  = regex_extractor(options.regex)
 
     if options.xml is not None:
+        require_modules("--xml", "elementtree")
         from reporting import XMLFileReporter
         kwargs["reporters"].append( XMLFileReporter(filename=options.xml) )
     
     if options.html is not None:
+        require_modules("--html", "elementtree", "Ft.Xml")
         from reporting import HTMLReporter
         kwargs["reporters"].append( HTMLReporter(filename=options.html) )
     
