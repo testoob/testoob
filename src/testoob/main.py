@@ -74,8 +74,7 @@ def main(suite=None, defaultTest=None):
         kwargs["reporter_class"] = ColoredTextReporter
 
     if options.debug is not None:
-        import pdb
-        import re
+        import pdb, re
         def addError(test, err, reporter, real_addError):
             real_addError(test, err)
             print
