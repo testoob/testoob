@@ -1,38 +1,17 @@
-def _run_command_subprocess(args, input=None):
-    from subprocess import Popen, PIPE
-    p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout, stderr = p.communicate(input)
-    return stdout, stderr, p.returncode
-
-def _run_command_popen2(args, input=None):
-    import popen2
-    quoted_args = ["'%s'" % arg for arg in args]
-    child = popen2.Popen3(" ".join(quoted_args), capturestderr=True)
-
-    if input is not None:
-        child.tochild.write(input)
-
-    rc = child.wait()
-
-    return child.fromchild.read(), child.childerr.read(), rc
-
-def _has_subprocess_module():
-    try:
-        import subprocess
-        return True
-    except ImportError:
-        return False
-
 def _run_command(args, input=None):
     """_run_command(args, input=None) -> stdoutstring, stderrstring, returncode
     Runs the command, giving the input if any.
     The command is specified as a list: 'ls -l' would be sent as ['ls', '-l'].
     Returns the standard output and error as strings, and the return code"""
-    pass # the real implementation is below
+    try:
+        from subprocess import Popen, PIPE
+    except ImportError:
+        # Python 2.2 and 2.3 compatibility
+        from compatibility.subprocess import Popen, PIPE
 
-# choose the proper implementation
-if _has_subprocess_module(): _run_command = _run_command_subprocess
-else:                        _run_command = _run_command_popen2
+    p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+    stdout, stderr = p.communicate(input)
+    return stdout, stderr, p.returncode
 
 def assert_equals(expected, actual, msg = None):
     "works like unittest.TestCase.assertEquals"
