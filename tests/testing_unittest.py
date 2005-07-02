@@ -12,13 +12,16 @@ def _generate_command(output=None, error=None, rc=0):
     commands.append("sys.exit(%d)" % rc)
     return ["python", "-c", "; ".join(commands)]
 
+def _get_results(**kwargs):
+    output, error, rc = testing._run_command(_generate_command(**kwargs))
+    return testing._normalize_newlines(output), testing._normalize_newlines(error), rc
+
 class TestingUnitTest(unittest.TestCase):
     def testRunCommandOutput(self):
-        self.assertEqual(("abc\n", "", 0), testing._run_command(["echo", "abc"]))
+        self.assertEqual(("abc\n", "", 0), _get_results(output="abc\n"))
 
     def testRunCommandError(self):
-        cmd = _generate_command(error="def\n")
-        self.assertEqual(("", "def\n", 0), testing._run_command(cmd))
+        self.assertEqual(("", "def\n", 0), _get_results(error="def\n"))
 
     # TODO: add explicit testing for popen2 and subprocess implementations
 
