@@ -75,12 +75,14 @@ def main(suite=None, defaultTest=None):
 
     if options.debug is not None:
         import pdb, re
-        def addError(test, err, reporter, real_addError):
-            real_addError(test, err)
+        def runDebug(test, err, flavour, reporter, real_add):
+            if flavour not in ["error", "failure"]:
+                raise NameError("No such flavour", flavour)
+            real_add(test, err)
             print
-            print "Debugging for error in test:", reporter.getDescription(test)
+            print "Debugging for", flavour, "in test:", reporter.getDescription(test)
             pdb.post_mortem(err[2])
-        kwargs["addError"] = addError
+        kwargs["runDebug"] = runDebug
 
     import running
     running.text_run(**kwargs)

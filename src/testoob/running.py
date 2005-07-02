@@ -50,15 +50,19 @@ def run(suite=None, suites=None, **kwargs):
 
     run_suites(suites, **kwargs)
 
-def run_suites(suites, reporters, runner_class=SimpleRunner, addError=None, **kwargs):
+def run_suites(suites, reporters, runner_class=SimpleRunner, runDebug=None, **kwargs):
     "Run the test suites"
 
     from reporting import ReporterProxy
     reporter_proxy = ReporterProxy()
     for reporter in reporters:
-        if addError != None:
+        if runDebug != None:
             real_addError = reporter.addError
-            reporter.addError = lambda test, err: addError(test, err, reporter, real_addError)
+            real_addFailure = reporter.addFailure
+            reporter.addError = lambda test, err: \
+                runDebug(test, err, "error", reporter, real_addError)
+            reporter.addFailure = lambda test, err: \
+                runDebug(test, err, "failure", reporter, real_addFailure)
         reporter_proxy.add_observer(reporter)
 
     apply_runner(suites=suites,
