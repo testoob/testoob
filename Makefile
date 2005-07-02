@@ -14,9 +14,9 @@ test:
 
 .PHONY: testall
 testall:
-	PYTHON=python2.2 python2.2 $(SUITEFILE)
-	PYTHON=python2.3 python2.3 $(SUITEFILE)
 	PYTHON=python2.4 python2.4 $(SUITEFILE)
+	PYTHON=python2.3 python2.3 $(SUITEFILE)
+	PYTHON=python2.2 python2.2 $(SUITEFILE)
 
 .PHONY: clean
 clean:
