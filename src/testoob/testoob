@@ -23,10 +23,17 @@ def addPythonPath(path):
     from os.path import normpath
     sys.path.insert(0, normpath(path))
 
+def currentFile():
+    try:
+        return __file__
+    except NameError:
+        # Python 2.2 compatibility
+        return sys.argv[0]
+
 def fixIncludePath():
     # the testoob executable is often in the same directory as testoob
     from os.path import dirname, join
-    module_path = join(dirname(__file__), "..")
+    module_path = join(dirname(currentFile()), "..")
     addPythonPath(module_path)
 
 argument = parseArgs()
