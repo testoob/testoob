@@ -6,17 +6,14 @@ directoryName: TestOOB
 
 h2. About
 
-TestOOB is an advanced testing framework for Python. It is designed to
-integrate effortlessly with existing PyUnit (standard module 'unittest') test
-suites.
+TestOOB is an advanced unit testing framework for Python. It integrates
+effortlessly with existing PyUnit (module 'unittest') test suites.
 
-h2. Download
+h2. Requirements
 
-"Download TestOOB":http://sourceforge.net/project/showfiles.php?group_id=138557 from SourceForge.
-
-h2. Documentation
-
-See the "usage examples":examples.html.
+* Python 2.2 or higher
+* "ElementTree":http://effbot.org/zone/element-index.htm for XML output.
+* "ElementTree":http://effbot.org/zone/element-index.htm and "4Suite":http://4suite.org for HTML output.
 
 h2. Where Can I Learn About Unit Testing?
 

@@ -29,9 +29,7 @@ Our "Subversion":http://subversion.tigris.org repository's URL is
 http://opensvn.csie.org/testoob/trunk.
 
 
-h2. How To Contribute
-
-Hey, thanks for wanting to help! Here are what we'd really appreciate:
+h2. Contributing
 
 h3. Request features and report bugs
 
@@ -54,3 +52,17 @@ h2. Credits
 * Ori Peleg &lt;orispammerpel at users dot sourceforge dot net&gt;
 * Barak Schiller &lt;bspamalotschiller at gmail dot com&gt;
 * Misha Seltzer &lt;mishadontspamme at seltzer dot com&gt;
+
+h2. Compatibility
+
+TestOOB is tested with the following Python versions:
+* 2.2.3
+* 2.3.5
+* 2.4.1
+
+and on the following platforms:
+* Linux
+* Windows
+* FreeBSD
+* Cygwin
+
