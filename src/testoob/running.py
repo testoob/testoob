@@ -8,13 +8,8 @@ from extracting import suite_iter as _suite_iter
 ###############################################################################
 from extracting import extract_fixtures as _extract_fixtures
 import time
-def apply_runner(suites, runner, reporter, interval=None, test_extractor=None):
+def apply_runner(suites, runner, interval=None, test_extractor = _extract_fixtures):
     """Runs the suite."""
-    if test_extractor is None: test_extractor = _extract_fixtures
-
-    runner.set_result(reporter)
-
-    reporter.start()
     first = True
     for suite in _suite_iter(suites):
         for fixture in test_extractor(suite):
@@ -22,21 +17,22 @@ def apply_runner(suites, runner, reporter, interval=None, test_extractor=None):
                 time.sleep(interval)
             first = False
             runner.run(fixture)
-    reporter.done()
+    runner.done()
 
 ###############################################################################
 # Runners
 ###############################################################################
 
 class SimpleRunner:
-    def __init__(self):
-        self._result = None
+    def __init__(self, reporter):
+        self._reporter = reporter
+        self._reporter.start()
 
     def run(self, fixture):
-        fixture(self._result)
+        fixture(self._reporter)
 
-    def set_result(self, result):
-        self._result = result
+    def done(self):
+        self._reporter.done()
 
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
@@ -66,8 +62,7 @@ def run_suites(suites, reporters, runner_class=SimpleRunner, runDebug=None, **kw
         reporter_proxy.add_observer(reporter)
 
     apply_runner(suites=suites,
-                 runner=runner_class(),
-                 reporter=reporter_proxy,
+                 runner=runner_class(reporter_proxy),
                  **kwargs)
 
 ###############################################################################
