@@ -53,23 +53,33 @@ def run(suite=None, suites=None, **kwargs):
 
     run_suites(suites, **kwargs)
 
-def run_suites(suites, reporters, runner_class=SimpleRunner, runDebug=None, **kwargs):
-    "Run the test suites"
+def _apply_debug(reporter, runDebug):
+    if runDebug is None:
+        return reporter
 
+    def replace(reporter, flavor, methodname):
+        original = getattr(reporter, methodname)
+        def replacement(test, err):
+            runDebug(test, err, flavor, reporter, original)
+        setattr(reporter, methodname, replacement)
+
+    replace(reporter, "error", "addError")
+    replace(reporter, "failure", "addFailure")
+
+    return reporter
+
+def _create_reporter_proxy(reporters, runDebug):
     from reporting import ReporterProxy
-    reporter_proxy = ReporterProxy()
+    result = ReporterProxy()
     for reporter in reporters:
-        if runDebug != None:
-            real_addError = reporter.addError
-            real_addFailure = reporter.addFailure
-            reporter.addError = lambda test, err: \
-                runDebug(test, err, "error", reporter, real_addError)
-            reporter.addFailure = lambda test, err: \
-                runDebug(test, err, "failure", reporter, real_addFailure)
-        reporter_proxy.add_observer(reporter)
+        result.add_observer(_apply_debug(reporter, runDebug))
+    return result
 
-    runner = runner_class()
-    runner.reporter = reporter_proxy
+def run_suites(suites, reporters, runner=None, runDebug=None, **kwargs):
+    "Run the test suites"
+    runner = runner or SimpleRunner()
+    runner.reporter = _create_reporter_proxy(reporters, runDebug)
+
     apply_runner(suites=suites,
                  runner=runner,
                  **kwargs)
