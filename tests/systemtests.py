@@ -5,12 +5,9 @@ import unittest, testoob
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
-def _python_executable():
-    import os
-    return os.environ.get("PYTHON", "python")
-
 def _create_args(testcase, options):
-    return [_python_executable(), helpers.executable_path(), _suite_file] + \
+    import sys
+    return [sys.executable, helpers.executable_path(), _suite_file] + \
            options + [testcase]
 
 class CommandLineTestCase(unittest.TestCase):
@@ -19,7 +16,7 @@ class CommandLineTestCase(unittest.TestCase):
         regex = r"""
 \.\.\.\.\.\.\.\.\.\.
 ----------------------------------------------------------------------
-Ran 10 tests in 0\.0\d+s
+Ran 10 tests in \d\.\d+s
 OK
 """.strip()
 
@@ -29,7 +26,7 @@ OK
         args = _create_args(options=["-q"], testcase="CaseDigits")
         regex = r"""
 ^----------------------------------------------------------------------
-Ran 10 tests in 0\.0\d+s
+Ran 10 tests in \d\.\d+s
 OK$
 """.strip()
 
@@ -50,7 +47,7 @@ test8 \(.*suites\.CaseDigits\.test8\) \.\.\. ok
 test9 \(.*suites\.CaseDigits\.test9\) \.\.\. ok
 
 ----------------------------------------------------------------------
-Ran 10 tests in 0\.0\d+s
+Ran 10 tests in \d\.\d+s
 OK
 """.strip()
 
@@ -65,7 +62,7 @@ FAIL: testFailure \(.*suites\.CaseFailure\.testFailure\)
 .*AssertionError
 
 ----------------------------------------------------------------------
-Ran 1 test in 0\.0\d+s
+Ran 1 test in \d\.\d+s
 FAILED \(failures=1\)$
 """.strip()
 
