@@ -23,16 +23,23 @@ def apply_runner(suites, runner, interval=None, test_extractor = _extract_fixtur
 # Runners
 ###############################################################################
 
-class SimpleRunner:
-    def __init__(self, reporter):
+class BaseRunner(object):
+    """default implementations of setting a reporter and done()"""
+    def _set_reporter(self, reporter):
         self._reporter = reporter
         self._reporter.start()
+    reporter = property(lambda self:self._reporter, _set_reporter)
 
     def run(self, fixture):
-        fixture(self._reporter)
+        # just to remind you :-)
+        raise NotImplementedError
 
     def done(self):
-        self._reporter.done()
+        self.reporter.done()
+
+class SimpleRunner(BaseRunner):
+    def run(self, fixture):
+        fixture(self._reporter)
 
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
@@ -61,8 +68,10 @@ def run_suites(suites, reporters, runner_class=SimpleRunner, runDebug=None, **kw
                 runDebug(test, err, "failure", reporter, real_addFailure)
         reporter_proxy.add_observer(reporter)
 
+    runner = runner_class()
+    runner.reporter = reporter_proxy
     apply_runner(suites=suites,
-                 runner=runner_class(reporter_proxy),
+                 runner=runner,
                  **kwargs)
 
 ###############################################################################
