@@ -35,6 +35,7 @@ examples:
         if missing_modules:
             p.error("option '%(option)s' requires missing modules "
                     "%(missing_modules)s" % vars())
+
     return p.parse_args() + (require_modules,)
 
 def _get_verbosity(options):
@@ -89,11 +90,10 @@ def main(suite=None, defaultTest=None):
     if options.debug is not None:
         import pdb
         def runDebug(test, err, flavour, reporter, real_add):
-            if flavour not in ["error", "failure"]:
-                raise NameError("No such flavour", flavour)
+            assert flavour in ["error", "failure"]
             real_add(test, err)
-            print
-            print "Debugging for", flavour, "in test:", reporter.getDescription(test)
+            print "\nDebugging for", flavour, "in test:", \
+                  reporter.getDescription(test)
             pdb.post_mortem(err[2])
         kwargs["runDebug"] = runDebug
 
