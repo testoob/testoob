@@ -446,21 +446,27 @@ class HTMLReporter(XMLReporter):
 ###############################################################################
 def ObserverProxy(method_names):
     """
-    Create an proxy that forwards methods to a group of observers.
+    Create a thread-safe proxy that forwards methods to a group of observers.
     See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/413701.
     """
     class Proxy:
         def __init__(self):
-            self._observers = []
+            self.observers = []
+            import threading
+            self.lock = threading.RLock()
         def add_observer(self, observer):
-            self._observers.append(observer)
+            self.observers.append(observer)
         def remove_observer(self, observer):
-            self._observers.remove(observer)
+            self.observers.remove(observer)
 
     def create_method_proxy(method_name):
         def method_proxy(self, *args, **kwargs):
-            for observer in self._observers:
-                getattr(observer, method_name)(*args, **kwargs)
+            self.lock.acquire()
+            try:
+                for observer in self.observers:
+                    getattr(observer, method_name)(*args, **kwargs)
+            finally:
+                self.lock.release()
         return method_proxy
             
     for method_name in method_names:

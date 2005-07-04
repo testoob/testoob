@@ -41,6 +41,25 @@ class SimpleRunner(BaseRunner):
     def run(self, fixture):
         fixture(self._reporter)
 
+class ThreadedRunner(BaseRunner):
+    """Run tests using a threadpool.
+    Uses TwistedPython's thread pool"""
+    def __init__(self, max_threads=None):
+        BaseRunner.__init__(self)
+
+        from twisted.python.threadpool import ThreadPool
+
+        min_threads = min(ThreadPool.min, max_threads)
+        self.pool = ThreadPool(minthreads = min_threads, maxthreads=max_threads)
+        self.pool.start()
+
+    def run(self, fixture):
+        self.pool.dispatch(None, fixture, self.reporter)
+
+    def done(self):
+        self.pool.stop()
+        BaseRunner.done(self)
+
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
     if suite is None and suites is None:

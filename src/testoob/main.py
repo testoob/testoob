@@ -24,6 +24,7 @@ examples:
     p.add_option("--color", action="store_true", help="Color output")
     p.add_option("--interval", type="float", default=0, help="Add interval between tests")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
+    p.add_option("--threads", type="int", help="Run in a threadpool")
 
     def require_modules(option, *modules):
         missing_modules = []
@@ -96,6 +97,11 @@ def main(suite=None, defaultTest=None):
                   reporter.getDescription(test)
             pdb.post_mortem(err[2])
         kwargs["runDebug"] = runDebug
+
+    if options.threads is not None:
+        require_modules("--threads", "twisted.python.threadpool")
+        from running import ThreadedRunner
+        kwargs["runner"] = ThreadedRunner(max_threads = options.threads)
 
     import running
     running.text_run(**kwargs)
