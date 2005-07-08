@@ -122,7 +122,7 @@ def _pop(d, key, default):
 def text_run(*args, **kwargs):
     """
     Run suites with a TextStreamReporter.
-    Accepts keyword 'verbosity' (0, 1, or 2, default is 1)
+    Accepts keyword 'verbosity' (0, 1, 2 or 3, default is 1)
     and 'immediate' (True or False)
     """
 
@@ -133,13 +133,21 @@ def text_run(*args, **kwargs):
 
     import sys, reporting
     reporter_class = _pop(kwargs, "reporter_class", reporting.TextStreamReporter)
-    kwargs["reporters"].append( reporter_class(
+
+    reporter_instance = reporter_class(
             verbosity=verbosity,
             immediate=immediate,
             descriptions=1,
-            stream=sys.stderr) )
+            stream=sys.stderr)
+
+    if verbosity == 3:
+        import verbalize
+        verbalize.make_methods_verbose("unittest",
+                                       "TestCase",
+                                       "(^assert)|(^fail[A-Z])|(^fail$)",
+                                       reporter_instance)
+
+    kwargs["reporters"].append(reporter_instance)
 
     run(*args, **kwargs)
-
-
 

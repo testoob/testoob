@@ -36,6 +36,10 @@ class IReporter:
         "Called when a test has completed successfully"
         pass
 
+    def addVassert(self, msg, state):
+        "Called when an assert was made"
+        pass
+
     ########################################
     # Additional reporter's methods.
     ########################################
@@ -78,6 +82,7 @@ class BaseReporter(IReporter):
         self.testsRun = 0
         self.failures = []
         self.errors = []
+        self.vasserts = []
 
     def start(self):
         self.start_time = _time.time()
@@ -101,6 +106,9 @@ class BaseReporter(IReporter):
     def addSuccess(self, test):
         pass
 
+    def addVassert(self, msg, state):
+        self.vasserts.append((msg, state))
+
     def _wasSuccessful(self):
         "Tells whether or not this result was a success"
         return len(self.failures) == len(self.errors) == 0
@@ -120,6 +128,7 @@ class TextStreamReporter(BaseReporter):
         self.stream = stream
         self.showAll = verbosity > 1
         self.dots = verbosity == 1
+        self.vassert = verbosity == 3
         self.immediate = immediate
         self.descriptions = descriptions
 
@@ -135,6 +144,9 @@ class TextStreamReporter(BaseReporter):
             self._writeln(self._decorateSuccess("ok"))
         elif self.dots:
             self._write(self._decorateSuccess('.'))
+        if self.vassert and not self.immediate:
+            self._printVasserts()
+        self.vasserts = []
 
     def addError(self, test, err):
         BaseReporter.addError(self, test, err)
@@ -144,16 +156,25 @@ class TextStreamReporter(BaseReporter):
             self._write(self._decorateFailure('E'))
         if self.immediate:
             self._immediatePrint(test, err, "ERROR")
-
+        elif self.vassert:
+            self._printVasserts()
+        self.vasserts = []
 
     def addFailure(self, test, err):
         BaseReporter.addFailure(self, test, err)
         if self.showAll:
-            self._writeln(self._decorateFailure("FAIL\n"))
+            self._writeln(self._decorateFailure("FAIL"))
         elif self.dots:
             self._write(self._decorateFailure('F'))
         if self.immediate:
             self._immediatePrint(test, err, "FAIL")
+        elif self.vassert:
+            self._printVasserts()
+        self.vasserts = []
+
+    def _printVasserts(self):
+        for msg, sign in self.vasserts:
+            self._writeln("  " + (msg % self._decorateSign(sign)))
 
     def _immediatePrint(self, test, error, flavour):
         if self.dots:
@@ -172,6 +193,12 @@ class TextStreamReporter(BaseReporter):
         self._writeln(self.separator2)
         self._printResults()
 
+    def addVassert(self, msg, sign):
+        BaseReporter.addVassert(self, msg, sign)
+        if self.immediate:
+            self._writeln("\n  " + (msg % self._decorateSign(sign)))
+
+
     def _printResults(self):
         testssuffix = self.testsRun > 1 and "s" or ""
         self._writeln("Ran %d test%s in %.3fs" %
@@ -188,6 +215,14 @@ class TextStreamReporter(BaseReporter):
 
             self._writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
     
+    def _decorateSign(self, sign):
+        if sign == '+':
+            return self._decorateSuccess("PASSED")
+        elif sign == '-':
+            return self._decorateFailure("FAILED")
+        else:
+            raise AttributeError("Invalid sign '" + sign + "'")
+
     def _decorateFailure(self, errString):
         return errString
     

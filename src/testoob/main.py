@@ -18,6 +18,7 @@ examples:
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
+    p.add_option("--vassert", action="store_true", help="Verbalize the assert calls")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
@@ -41,6 +42,7 @@ examples:
 
 def _get_verbosity(options):
     if options.quiet: return 0
+    if options.vassert: return 3
     if options.verbose: return 2
     return 1
 
