@@ -1,23 +1,28 @@
 #!/usr/bin/env python
-
 import sys
 
-def printUsage():
-    print "Usage"
-    print "====="
-    print "  %s TestFileName" % sys.argv[0]
-    print 
-    print "example:"
-    print "  %s my_test_file.py - Runs the tests from the given file." % sys.argv[0]
-    sys.exit()
+def parseArgs(printUsage=False):
+    usage="""%prog [options] [test_file] [test1 [test2 [...]]]
 
-def parseArgs():
-    try:
-        argument = sys.argv[1]
-        del sys.argv[1]
-        return argument
-    except IndexError, e:
-        printUsage()
+examples:
+  %prog myFile.py                          - run default set of tests
+  %prog myFile.py MyTestSuite              - run suite 'MyTestSuite'
+  %prog myFile.py MyTestCase.testSomething - run MyTestCase.testSomething
+  %prog myFile.py MyTestCase               - run all 'test*' test methods in MyTestCase"""
+
+    from testoob.main import _parse_args
+
+    if printUsage:
+        sys.argv.append("-h")
+
+    options, free_args, require_modules = _parse_args(usage)
+
+    if len(free_args) == 0:
+        parseArgs(printUsage=True)
+    file_name = free_args[0]
+    test_names = free_args[1:]
+
+    return options, file_name, test_names, require_modules
 
 def addPythonPath(path):
     from os.path import normpath
@@ -36,28 +41,26 @@ def fixIncludePath():
     module_path = join(dirname(currentFile()), "..")
     addPythonPath(module_path)
 
-argument = parseArgs()
-if (argument == "-h" or argument == "--help"):
-    printUsage()
+options, file_name, test_names, require_modules = parseArgs()
 
 try:
     # Add the path of the ran file to the python path, so that includes
     # from the same directory would work.
     from os.path import dirname
-    addPythonPath(dirname(argument))
+    addPythonPath(dirname(file_name))
 
     name = __name__
-    __name__ = "".join(argument.split("/")[-1].split(".")[0])
-    execfile(argument)
+    __name__ = "".join(file_name.split("/")[-1].split(".")[0])
+    execfile(file_name)
     __name__ = name
 
     try:
-        import testoob
+        from testoob.main import _main
     except ImportError:
         fixIncludePath()
-        import testoob
-    testoob.main()
-
+        from testoob.main import _main
+    _main(None, None, options, test_names, require_modules)
 except IOError, e:
     print e
-    sys.exit(1)
+    parseArgs(printUsage=True)
+

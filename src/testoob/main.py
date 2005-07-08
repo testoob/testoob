@@ -1,17 +1,10 @@
 "main() implementation"
 
-def _parse_args():
+def _parse_args(usage):
     try:
         import optparse
     except ImportError:
         from compatibility import optparse
-    usage="""%prog [options] [test1 [test2 [...]]]
-
-examples:
-  %prog                          - run default set of tests
-  %prog MyTestSuite              - run suite 'MyTestSuite'
-  %prog MyTestCase.testSomething - run MyTestCase.testSomething
-  %prog MyTestCase               - run all 'test*' test methods in MyTestCase"""
 
     formatter=optparse.TitledHelpFormatter(max_help_position=30)
     p = optparse.OptionParser(usage=usage, formatter=formatter)
@@ -61,9 +54,7 @@ def _get_suites(suite, defaultTest, test_names):
         test_names = [defaultTest]
     return TestLoader().loadTestsFromNames(test_names, __main__)
 
-def main(suite=None, defaultTest=None):
-    options, test_names, require_modules = _parse_args()
-
+def _main(suite, defaultTest, options, test_names, require_modules):
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
@@ -107,3 +98,16 @@ def main(suite=None, defaultTest=None):
 
     import running
     running.text_run(**kwargs)
+
+def main(suite=None, defaultTest=None):
+    usage="""%prog [options] [test1 [test2 [...]]]
+
+examples:
+  %prog                          - run default set of tests
+  %prog MyTestSuite              - run suite 'MyTestSuite'
+  %prog MyTestCase.testSomething - run MyTestCase.testSomething
+  %prog MyTestCase               - run all 'test*' test methods in MyTestCase"""
+    options, test_names, require_modules = _parse_args(usage)
+
+    _main(suite, defaultTest, options, test_names, require_modules)
+
