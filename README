@@ -7,8 +7,9 @@
 = Description:
 ===========================================================
 
-TestOOB is a bundle of extensions to Python's built-in unit
-testing framework (module unittest).
+TestOOB is an advanced Python unit testing framework that
+integrates effortlessly with Python's standard 'unittest'
+module.
 
 It's designed and built to be easy to use and extend.
 
@@ -24,13 +25,18 @@ See TestOOB's homepage:
 = Features:
 ===========================================================
 
-- Easy to use, simply replace unittest.main() with testoob.main()!
-- Extensible filtering (see testoob/extractors.py)
-- Advanced reporting   (see testoob/reporting.py)
-- Extra testing facilities
+Start using immediately with the 'testoob' executable, or
+replace unittest.main() with testoob.main()
 
-See the documentation for more details, and run your tests with '--help'.
-For the full nitty-gritty, see the sources.
+Some advanced options:
+- Filtering              (see testoob/extractors.py)
+- Reporting              (see testoob/reporting.py)
+- Testing facilities     (see testoob/testing.py)
+- Running (e.g. threads) (see testoob/running.py)
+- And more!
+
+See the full options by running 'testoob -h', and check the
+documentation.
 
 ===========================================================
 = Installation:
@@ -54,6 +60,7 @@ TestOOB has been created with the help of:
 
 - Ori Peleg (orispammerpel at users.sourceforge.net)
 - Barak Schiller (bspamalotschiller at gmail.com)
+- Misha Seltzer (mishadontspamme at seltzer dot com)
 
 To mail us, remove spam-related words from the user names.
 
