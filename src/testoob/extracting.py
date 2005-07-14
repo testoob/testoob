@@ -17,11 +17,11 @@ def _breadth_first(tree,children=iter):
     yield tree
     last = tree
     for node in _breadth_first(tree,children):
-	for child in children(node):
-	    yield child
-	    last = child
-	if last == node:
-	    return
+        for child in children(node):
+            yield child
+            last = child
+        if last == node:
+            return
 
 def suite_iter(suite):
     """suite_iter(suite) -> an iterator on its direct sub-suites.
