@@ -448,7 +448,8 @@ class XMLFileReporter(XMLReporter):
 
 
 class HTMLReporter(XMLReporter):
-    "This HTML reporter uses an XSL transformation scheme to convert an XML output to HTML"
+    """This HTML reporter uses an XSL transformation scheme to convert an XML
+    output to HTML"""
     import xslconverters
     def __init__(self, filename, converter=xslconverters.BASIC_CONVERTER):
         XMLReporter.__init__(self)
