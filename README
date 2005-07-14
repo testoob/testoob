@@ -35,8 +35,8 @@ Some advanced options:
 - Running (e.g. threads) (see testoob/running.py)
 - And more!
 
-See the full options by running 'testoob -h', and check the
-documentation.
+See the full running options by running 'testoob -h', and
+check the documentation.
 
 ===========================================================
 = Installation:
