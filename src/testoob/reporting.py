@@ -446,36 +446,30 @@ class XMLFileReporter(XMLReporter):
         try: f.write(self.get_xml())
         finally: f.close()
 
-
-class HTMLReporter(XMLReporter):
-    """This HTML reporter uses an XSL transformation scheme to convert an XML
-    output to HTML"""
-    import xslconverters
-    def __init__(self, filename, converter=xslconverters.BASIC_CONVERTER):
+class XSLTReporter(XMLReporter):
+    "This reporter uses an XSL transformation scheme to convert an XML output"
+    def __init__(self, filename, converter):
         XMLReporter.__init__(self)
         self.filename = filename
         self.converter = converter
     def done(self):
-        import time 
         XMLReporter.done(self)
 
-        #The processor class is the core of the XSLT API
-        try:
-            from Ft.Xml.Xslt import Processor
-            processor = Processor.Processor()
-            #4XSLT uses the InputSource architecture
-            from Ft.Xml import InputSource
-            #Prepare an InputSource for the transform
-            transform = InputSource.DefaultFactory.fromString(self.converter, "CONVERTER")
-            #Prepare an InputSource for the source document
-            source = InputSource.DefaultFactory.fromString(self.get_xml(), "XML")
-            processor.appendStylesheet(transform)
-            params = {u'date': unicode(time.asctime())}
-            result = processor.run(source,topLevelParams=params)
-            #result is a string with the serialized transform result
-            open(self.filename, "wt").write(result)
-        except ImportError:
-            raise Exception("Unable to import 4Suite XSLT engine, make sure 4suite is properly installed")
+        from Ft.Xml.Xslt import Processor
+        from Ft.Xml import InputSource
+        processor = Processor.Processor()
+        transform = InputSource.DefaultFactory.fromString(self.converter, "CONVERTER")
+        input_source = InputSource.DefaultFactory.fromString(self.get_xml(), "XML")
+        processor.appendStylesheet(transform)
+        params = {u'date': unicode(_time.asctime())}
+        result = processor.run(input_source, topLevelParams=params)
+
+        open(self.filename, "wt").write(result)
+
+class HTMLReporter(XSLTReporter):
+    def __init__(self, filename):
+        import xslconverters
+        XSLTReporter.__init__(self, filename, xslconverters.BASIC_CONVERTER)
         
 ###############################################################################
 # Reporter proxy
