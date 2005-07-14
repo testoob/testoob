@@ -10,12 +10,10 @@ examples:
   %prog myFile.py MyTestCase.testSomething - run MyTestCase.testSomething
   %prog myFile.py MyTestCase               - run all 'test*' test methods in MyTestCase"""
 
-    from testoob.main import _parse_args
-
     if printUsage:
         sys.argv.append("-h")
 
-    options, free_args, require_modules = _parse_args(usage)
+    options, free_args, require_modules = testoob_main("_parse_args")(usage)
 
     if len(free_args) == 0:
         parseArgs(printUsage=True)
@@ -41,6 +39,15 @@ def fixIncludePath():
     module_path = join(dirname(currentFile()), "..")
     addPythonPath(module_path)
 
+def testoob_main(attrname):
+    try:
+        exec "from testoob.main import %(attrname)s as result" % vars()
+    except ImportError:
+        fixIncludePath()
+        exec "from testoob.main import %(attrname)s as result" % vars()
+        
+    return result
+
 options, file_name, test_names, require_modules = parseArgs()
 
 try:
@@ -54,12 +61,7 @@ try:
     execfile(file_name)
     __name__ = name
 
-    try:
-        from testoob.main import _main
-    except ImportError:
-        fixIncludePath()
-        from testoob.main import _main
-    _main(None, None, options, test_names, require_modules)
+    testoob_main("_main")(None, None, options, test_names, require_modules)
 except IOError, e:
     print e
     parseArgs(printUsage=True)
