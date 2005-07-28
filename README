@@ -48,9 +48,9 @@ See docs/INSTALL
 = License:
 ===========================================================
 
-TestOOB is distributed under the terms of the GNU Lesser
-General Public License (LGPL). See docs/COPYING and
-docs/lgpl.txt for more information.
+TestOOB is distributed under the terms of the Apache
+License, Version 2.0.  See docs/COPYING for more
+information.
 
 ===========================================================
 = Credits:

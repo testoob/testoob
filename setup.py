@@ -10,7 +10,7 @@ kwargs = {
     'author_email'     : 'testoob@gmail.com',
     'url'              : 'http://testoob.sourceforge.net',
     'download_url'     : 'http://sourceforge.net/project/showfiles.php?group_id=138557',
-    'license'          : 'LGPL',
+    'license'          : 'Apache License, Version 2.0',
     'platforms'        : ['any'],
     'description'      : 'TestOOB - An advanced unit testing framework',
 }
@@ -27,7 +27,7 @@ kwargs['classifiers'] = """
 Development Status :: 5 - Production/Stable
 Environment :: Console
 Intended Audience :: Developers
-License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Operating System :: Microsoft :: Windows
 Operating System :: POSIX

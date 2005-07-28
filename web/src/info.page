@@ -15,10 +15,9 @@ line.
 
 h2. License
 
-TestOOB is released under the "GNU
-LGPL":http://www.fsf.org/licensing/licenses/lgpl.html. For full details, see
-the <code>COPYING</code> and <code>lgpl.txt</code> files that are included in
-the distribution.
+TestOOB is released under the "Apache License, Version
+2.0":http://www.apache.org/licenses/LICENSE-2.0. For full details, see the
+<code>COPYING</code> file included with the distribution.
 
 !http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://opensource.org/trademarks/open_source_button.png
 
