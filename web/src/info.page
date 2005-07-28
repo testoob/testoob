@@ -29,13 +29,6 @@ Feel free to:
 * "Report bugs":tickets.html
 * Fix an "active ticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/report/1
 
-h2. Credits
-
-(in chronological order)
-* Ori Peleg &lt;orispammerpel at users dot sourceforge dot net&gt;
-* Barak Schiller &lt;bspamalotschiller at gmail dot com&gt;
-* Misha Seltzer &lt;mishadontspamme at seltzer dot com&gt;
-
 h2. Compatibility
 
 TestOOB is tested with the following Python versions:
@@ -48,4 +41,23 @@ and on the following platforms:
 * Windows
 * FreeBSD
 * Cygwin
+
+h2. Credits
+
+We'd like to thank:
+* "Steve Purcell":http://www.pythonconsulting.com/, author of "PyUnit":http://pyunit.sourceforge.net, for email advice, and - of course - for PyUnit.
+* "The Pragmatic Bookshelf":http://www.pragmaticprogrammer.com/, for general insights on software construction.
+* The users of TestOOB, for making amazing suggestions.
+
+We'd like to credit the following sources for ideas:
+* "JFunc":http://jfunc.sourceforge.net, for verbose assertions.
+* "py.test":http://codespeak.net/py/current/doc/test.html, for having an external executable.
+* "Zope":http://www.zope.org 's "test.py":http://www.python.org/~jeremy/weblog/031014.html, for immediate feedback about failures.
+
+If you think we missed something, please tell us!
+
+And finally, the developers (in chronological order):
+* Ori Peleg &lt;orispammerpel at users dot sourceforge dot net&gt;
+* Barak Schiller &lt;bspamalotschiller at gmail dot com&gt;
+* Misha Seltzer &lt;mishadontspamme at seltzer dot com&gt;
 
