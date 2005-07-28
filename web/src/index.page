@@ -9,6 +9,8 @@ h2. About
 TestOOB is an advanced unit testing framework for Python. It integrates
 effortlessly with existing PyUnit (module 'unittest') test suites.
 
+!images/screenshot02.png(Screenshot)!
+
 h2. Requirements
 
 * Python 2.2 or higher
