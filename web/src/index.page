@@ -16,6 +16,7 @@ h2. Requirements
 * Python 2.2 or higher
 * "ElementTree":http://effbot.org/zone/element-index.htm for XML output.
 * "ElementTree":http://effbot.org/zone/element-index.htm and "4Suite":http://4suite.org for HTML output.
+* "Twisted":http://twistedmatrix.com/products/download for running in threads.
 
 h2. Where Can I Learn About Unit Testing?
 

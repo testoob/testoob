@@ -1,0 +1,130 @@
+---
+title: Features
+inMenu: true
+directoryName: TestOOB
+---
+
+h2. Color Console Output
+
+Enable color output on the console with the '--color' command-line option.
+
+"SCREENSHOT":images/screenshot01.png
+
+h2. Regular Expressions
+
+Choose which tests to run using "regular
+expressions":http://www.python.org/doc/current/lib/re-syntax.html with the
+'--color' command-line option.
+
+"SCREENSHOT":images/screenshot01.png
+
+h2. Immediate Reports
+
+Get immediate failure reports with the '--immediate' command-line option.
+
+<pre class="output">
+prompt> testoob tests/suites.py --regex='test[A-D]|CaseFailure|test[0-9]' --immediate
+..........F
+======================================================================
+FAIL: testFailure (suites.CaseFailure.testFailure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "tests/suites.py", line 53, in testFailure
+    def testFailure(self): self.fail()
+AssertionError
+======================================================================
+....
+----------------------------------------------------------------------
+Ran 15 tests in 0.018s
+FAILED (failures=1)
+prompt>
+</pre>
+
+h2. XML Output
+
+Output XML with the '--xml' command-line option, and pass them to an automated
+system.
+
+Requires the "ElementTree":http://effbot.org/zone/element-index.htm Python
+package.
+
+h2. HTML Output
+
+Output HTML for viewing test results in a web browser with the '--html' command-line option.
+
+Requires the "ElementTree":http://effbot.org/zone/element-index.htm and
+"4Suite":http://4suite.org/ Python packages.
+
+The HTML output is generated with XSLT from the XML output. It's possible to
+use an external XSLT processor, such as
+"xsltproc":http://xmlsoft.org/XSLT/xsltproc.html,
+"Xalan":http://xml.apache.org/, or "Saxon":http://saxon.sourceforge.net/.
+
+h2. Debug
+
+Run "pdb":http://www.python.org/doc/current/lib/debugger-commands.html on
+failing tests with the '--debug' command-line option.
+
+<pre class="output">
+prompt> testoob tests/suites.py -v --debug CaseMixed.testSuccess CaseMixed.testError
+testSuccess (suites.CaseMixed.testSuccess) ... ok
+testError (suites.CaseMixed.testError) ... ERROR
+
+Debugging for error in test: testError (suites.CaseMixed.testError)
+> /path/to/project/tests/suites.py(46)testError()
+-> def testError(self): raise RuntimeError
+(Pdb)
+</pre>
+
+h2. Verbose Asserts
+
+Get full information on your asserts with the '--vassert' command-line option.
+
+Useful to see that you're testing what you think you are.
+
+<pre class="output">
+prompt> testoob tests/suites.py --regex='test[0-1]' --vassert
+test0 (suites.CaseDigits.test0) ... ok
+  [ PASSED (assertEquals) first: "00" second: "00" ]
+test1 (suites.CaseDigits.test1) ... ok
+  [ PASSED (assertEquals) first: "11" second: "11" ]
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.008s
+OK
+prompt>
+</pre>
+
+h2. Multiple Threads
+
+Run tests in parallel with the '--threads' command-line option.
+
+Requires "Twisted":http://twistedmatrix.com/products/download.
+
+Without threads:
+<pre class="output">
+prompt> testoob tests/timed_suite.py
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 16.174s
+OK
+prompt>
+</pre>
+
+With threads:
+<pre class="output">
+prompt> testoob tests/timed_suite.py --threads=7
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 3.376s
+OK
+prompt>
+</pre>
+
+*NOTE*: Make sure your tests are thread safe! If they're not, don't expect this
+option to work. If you're using C extensions that aren't thread safe, the tests
+can crash quite messily.
+
+h2. Wait Between Tests
+
+Sleep between tests with the '--interval' command line option.
