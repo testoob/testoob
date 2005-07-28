@@ -14,7 +14,7 @@ h2. Regular Expressions
 
 Choose which tests to run using "regular
 expressions":http://www.python.org/doc/current/lib/re-syntax.html with the
-'--color' command-line option.
+'--regex' command-line option.
 
 "SCREENSHOT":images/screenshot01.png
 
