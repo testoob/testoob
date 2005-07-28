@@ -4,46 +4,30 @@ inMenu: true
 directoryName: TestOOB
 ---
 
-h2. Why are we doing this?
-
-The idea behind TestOOB is to provide simple interfaces to testing facilities
-that will make using and writing tests more enjoyable.
-
-We hope that one day TestOOB will be a base for cross-language testing ideas.
-If you want to port some TestOOB functionality to another language, drop us a
-line.
-
 h2. License
 
 TestOOB is released under the "Apache License, Version
-2.0":http://www.apache.org/licenses/LICENSE-2.0. For full details, see the
-<code>COPYING</code> file included with the distribution.
+2.0":http://www.apache.org/licenses/LICENSE-2.0.
 
-!http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://opensource.org/trademarks/open_source_button.png
+!http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://www.opensource.org/docs/definition.php
 
+h2. Why are we doing this?
+
+We want TestOOB to provide simple and powerful testing facilities. We want
+testing to be fun!
 
 h2. Repository URL
 
 Our "Subversion":http://subversion.tigris.org repository's URL is
 http://opensvn.csie.org/testoob/trunk.
 
-
 h2. Contributing
 
-h3. Request features and report bugs
+Feel free to:
 
-This is the most important thing! See "here":tickets.html.
-
-h3. Resolve a ticket
-
-# Pick an "active
-ticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/report/1.
-# Fix or resolve the ticket.
-# Attach the patch to the ticket.
-
-We <b>only</b> accept patches licensed under the "Apache License, Version
-2.0":http://opensource.org/licenses/apache2.0.php. To understand why, see
-http://www.python.org/psf/contrib.html.
+* "Request features":tickets.html
+* "Report bugs":tickets.html
+* Fix an "active ticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/report/1
 
 h2. Credits
 
