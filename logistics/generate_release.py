@@ -115,7 +115,7 @@ def replace_string(from_str, to_str, files):
         run_command("""sed -i "" 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
 
 def replace_version_string():
-    files = [norm_join(root_dir(), file) for file in ("setup.py", "src/testoob/__init__.py")]
+    files = [norm_join(root_dir(), file) for file in ("Makefile", "setup.py", "src/testoob/__init__.py")]
     replace_string("__TESTOOB_VERSION__", version(), files)
 
 def branch_release():

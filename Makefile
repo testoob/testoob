@@ -6,6 +6,8 @@ WEBSITEDIR = $(HOME)/public_html/testoob
 SUITEFILE = tests/alltests.py
 SOURCES = $(wildcard src/testoob/*.py)
 WEBSITE_SOURCES = web/src/*.page web/src/*.template web/src/*.info
+VERSION = __TESTOOB_VERSION__
+WEBDISTFILE = $(DISTDIR)/testoob_website-$(VERSION).tar.bz2
 
 .PHONY: all
 all:
@@ -40,7 +42,8 @@ web: $(WEBSITEDIR)
 
 DISTUTILS_CMD = $(PYTHON) ./setup.py -q sdist --dist-dir=$(DISTDIR)
 .PHONY: dist
-dist:
+dist: $(WEBSITEDIR)
 	$(RM) MANIFEST
 	$(DISTUTILS_CMD) --formats=bztar
 	$(DISTUTILS_CMD) --formats=gztar
+	cd $(WEBSITEDIR); tar jcf $(WEBDISTFILE) .
