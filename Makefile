@@ -25,7 +25,7 @@ testall:
 clean:
 	$(RM) `find . -name "*~"`
 	$(RM) `find . -name "*.pyc"`
-	$(RM) -r $(DISTDIR) $(BUILDDIR)
+	$(RM) -r $(DISTDIR) $(BUILDDIR) web/output
 	$(RM) MANIFEST
 
 $(APIDIR): $(SOURCES)
