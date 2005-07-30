@@ -1,8 +1,11 @@
 PYTHON ?= python
-DISTDIR = dist
-APIDIR = api
-WEBSITEDIR = $(DISTDIR)/website
+DISTDIR = $(CURDIR)/dist
+BUILDDIR = $(CURDIR)/build
+APIDIR = $(BUILDDIR)/api
+WEBSITEDIR = $(HOME)/public_html/testoob
 SUITEFILE = tests/alltests.py
+SOURCES = $(wildcard src/testoob/*.py)
+WEBSITE_SOURCES = web/src/*.page web/src/*.template web/src/*.info
 
 .PHONY: all
 all:
@@ -22,16 +25,18 @@ testall:
 clean:
 	$(RM) `find . -name "*~"`
 	$(RM) `find . -name "*.pyc"`
-	$(RM) -r $(DISTDIR) $(APIDIR)
+	$(RM) -r $(DISTDIR) $(BUILDDIR)
 	$(RM) MANIFEST
 
-.PHONY: api
-api:
-	cd src; epydoc -o ../$(APIDIR) testoob
+$(APIDIR): $(SOURCES)
+	mkdir -p $(APIDIR)
+	epydoc -o $(APIDIR) --url http://testoob.sourceforge.net -n TestOOB -q $(SOURCES)
 
-.phony: website
-website:
-	cd web; webgen; mv output ../$(WEBSITEDIR)
+$(WEBSITEDIR): $(APIDIR) $(WEBSITE_SOURCES)
+	cd web && webgen && rm -fr $(WEBSITEDIR) && cp -R output $(WEBSITEDIR) && cp -R $(APIDIR) $(WEBSITEDIR) && chmod -R og+rX $(WEBSITEDIR)
+
+.phony: web
+web: $(WEBSITEDIR)
 
 DISTUTILS_CMD = $(PYTHON) ./setup.py -q sdist --dist-dir=$(DISTDIR)
 .PHONY: dist

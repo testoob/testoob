@@ -16,6 +16,12 @@ info.page:
 links.page:
   orderInfo: 19
 
+api.html:
+ title: API
+ dest: api
+ inMenu: true
+ orderInfo: 19
+
 sourceforge.html:
  title: SF.net Project Page
  dest: http://www.sourceforge.net/projects/testoob

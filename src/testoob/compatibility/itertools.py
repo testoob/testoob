@@ -1,4 +1,8 @@
-"""Functional tools for creating and using iterators.
+"""
+This file is taken from the PyPy project, http://codespeak.net/pypy
+---
+
+Functional tools for creating and using iterators.
 
 Infinite iterators:
 count([n]) --> n, n+1, n+2, ...
