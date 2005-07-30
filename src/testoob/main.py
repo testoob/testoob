@@ -68,12 +68,11 @@ def _main(suite, defaultTest, options, test_names, require_modules):
         kwargs["test_extractor"]  = regex_extractor(options.regex)
 
     if options.xml is not None:
-        require_modules("--xml", "elementtree")
         from reporting import XMLFileReporter
         kwargs["reporters"].append( XMLFileReporter(filename=options.xml) )
     
     if options.html is not None:
-        require_modules("--html", "elementtree", "Ft.Xml")
+        require_modules("--html", "Ft.Xml")
         from reporting import HTMLReporter
         kwargs["reporters"].append( HTMLReporter(filename=options.html) )
     

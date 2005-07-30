@@ -383,7 +383,10 @@ class XMLReporter(BaseReporter):
 
         from cStringIO import StringIO
         self._sio = StringIO()
-        from elementtree.SimpleXMLWriter import XMLWriter
+        try:
+            from elementtree.SimpleXMLWriter import XMLWriter
+        except ImportError:
+            from compatibility.SimpleXMLWriter import XMLWriter
         self.writer = XMLWriter(self._sio, "utf-8")
 
         self.test_starts = {}
