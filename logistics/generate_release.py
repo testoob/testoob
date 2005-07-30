@@ -155,9 +155,17 @@ def create_release_branch():
     switch_to_trunk()
 
 def release_dir(): return "/tmp"
+
 def distfiles():
-    return [release_dir() + "/testoob-%s.tar.%s" % (version(), ext)
-            for ext in ("gz", "bz2")]
+    basenames = [
+        x % version() for x in (
+            "testoob-%s.tar.gz",
+            "testoob-%s.tar.bz2",
+        )
+    ]
+
+    from os.path import join
+    return [join(release_dir(), basename) for basename in basenames]
 
 def create_distribution():
     import tempfile
