@@ -1,8 +1,5 @@
-"""
-This file is taken from the PyPy project, http://codespeak.net/pypy
----
-
-optparse - a powerful, extensible, and easy-to-use option parser.
+# This file is taken from the PyPy project, http://codespeak.net/pypy
+"""optparse - a powerful, extensible, and easy-to-use option parser.
 
 By Greg Ward <gward@python.net>
 

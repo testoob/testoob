@@ -1,8 +1,5 @@
-"""
-This file is taken from the PyPy project, http://codespeak.net/pypy
----
-
-Text wrapping and filling.
+# This file is taken from the PyPy project, http://codespeak.net/pypy
+"""Text wrapping and filling.
 """
 
 # Copyright (C) 1999-2001 Gregory P. Ward.

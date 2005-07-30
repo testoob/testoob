@@ -1,3 +1,5 @@
+# This file is taken from the PyPy project, http://codespeak.net/pypy
+
 # subprocess - Subprocesses with accessible I/O streams
 #
 # For more information about this module, see PEP 324.
