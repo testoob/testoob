@@ -187,9 +187,13 @@ class TextStreamReporter(BaseReporter):
             self._printVasserts()
         self.vasserts = []
 
+    def _vassertMessage(self, msg, sign):
+        decoratedSign = self._decorateSign(sign)
+        return "[ %(decoratedSign)s %(msg)s ]" % vars()
+
     def _printVasserts(self):
         for msg, sign in self.vasserts:
-            self._writeln("  " + (msg % self._decorateSign(sign)))
+            self._writeln("  " + self._vassertMessage(msg, sign))
 
     def _immediatePrint(self, test, error, flavour):
         if self.dots:
@@ -211,8 +215,7 @@ class TextStreamReporter(BaseReporter):
     def addVassert(self, msg, sign):
         BaseReporter.addVassert(self, msg, sign)
         if self.immediate:
-            self._writeln("\n  " + (msg % self._decorateSign(sign)))
-
+            self._writeln("\n  " + self._vassertMessage(msg, sign))
 
     def _printResults(self):
         testssuffix = self.testsRun > 1 and "s" or ""

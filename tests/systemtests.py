@@ -81,7 +81,7 @@ testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. ok
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testVassertSimple(self):
-        args = _create_args(options=["--regex=test0", "--vassert"])
+        args = _create_args(options=["--regex=CaseDigits.test0", "--vassert"])
         regex = r"""
 test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
   \[ PASSED \(assertEquals\) first: "00" second: "00" \]
@@ -89,6 +89,18 @@ test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
 ----------------------------------------------------------------------
 """.strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
+
+    def testVassertFormatStrings(self):
+        args = _create_args(options=["--regex=MoreTests.test.*FormatString",
+                                     "--vassert"])
+        regex = r"""
+test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
+  \[ PASSED \(assertEquals\) first: "%s" second: "%s" \]
+
+----------------------------------------------------------------------
+""".strip()
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()

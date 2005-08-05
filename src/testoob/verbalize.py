@@ -17,10 +17,9 @@ def _import(package_name, class_name):
     return getattr(__import__(package_name), class_name)
 
 def _create_message(method_name, variables_names, variables_values):
-    msg = "[ %s (" + method_name + ") "
-    for i in xrange(len(variables_values)):
-        msg += variables_names[i] + ": \"" + str(variables_values[i]) + "\" "
-    return msg + "]"
+    msg = "(" + method_name + ") "
+    msg += " ".join([name + ": \"" + str(value) + "\"" for name, value in zip(variables_names, variables_values)])
+    return msg
 
 def _make_method_verbose(Class, method_name, reporter):
     variables = eval("Class.%s" % method_name).func_code.co_varnames

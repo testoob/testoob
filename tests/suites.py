@@ -66,6 +66,10 @@ class CaseEmpty(unittest.TestCase):
         return unittest.makeSuite(CaseEmpty)
     suite = staticmethod(suite)
 
+class MoreTests(unittest.TestCase):
+    def testAssertEqualWithFormatString(self):
+        self.assertEquals("%s", "%s")
+
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 
