@@ -5,10 +5,12 @@ import unittest, testoob
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
-def _create_args(testcase, options):
+def _create_args(testcase=None, options=None):
     import sys
-    return [sys.executable, helpers.executable_path(), _suite_file] + \
-           options + [testcase]
+    result = [sys.executable, helpers.executable_path(), _suite_file]
+    if options is not None: result += options
+    if testcase is not None: result.append(testcase)
+    return result
 
 class CommandLineTestCase(unittest.TestCase):
     def testSuccesfulRunNormal(self):
@@ -76,6 +78,16 @@ testD \(.*suites\.CaseLetters\.testD\) \.\.\. ok
 testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. ok
 """.strip()
 
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
+    def testVassertSimple(self):
+        args = _create_args(options=["--regex=test0", "--vassert"])
+        regex = r"""
+test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
+  \[ PASSED \(assertEquals\) first: "00" second: "00" \]
+
+----------------------------------------------------------------------
+""".strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
