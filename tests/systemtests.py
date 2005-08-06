@@ -108,6 +108,14 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
         regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*ok"
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testLaunchingPdb(self):
+        args = _create_args(tests=["CaseMixed.testFailure"], options=["--debug"])
+        output_regex="Debugging for failure in test: testFailure \(suites\.CaseMixed\.testFailure\).*raise self\.failureException, msg.*\(Pdb\)"
+        error_regex="" # accept anything on the standard error
+        testoob.testing.command_line(args=args,
+                                     expected_output_regex=output_regex,
+                                     expected_error_regex=error_regex)
+
     def testXMLReporting(self):
         import tempfile
         xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
