@@ -128,3 +128,25 @@ can crash quite messily.
 h2. Wait Between Tests
 
 Sleep between tests with the '--interval' command line option.
+
+h2. Test Command-Line Utilities
+
+Use "<code>testoob.testing.command_line</code>":api/public/testoob.testing-module.html to test command-line utilities. You can check an application's standard output, standard error, and return code.
+
+h3. Examples:
+
+Checking that <code>nmap</code> detects a local HTTP server:
+<pre class="python">
+<code>  def testNmapLocalHTTPServer(self):
+    testoob.testing.command_line(["nmap", "localhost"],
+                                 expected_output_regex="80/tcp   open  http")</code>
+</pre>
+
+Testing <code>md5sum</code>:
+<pre class="python">
+<code>  def testBla(self):
+    testoob.testing.command_line(
+      ["md5sum"],
+      input="abc\n",
+      expected_output="0bee89b07a248e27c83fc3d5951213c1 *-\n")</code>
+</pre>
