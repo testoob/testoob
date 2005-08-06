@@ -101,6 +101,53 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
 """.strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testXMLReporting(self):
+        import tempfile
+        xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
+        args = _create_args(options=["--xml=" + xmlfile], testcase="CaseMixed")
+
+        try:
+            testoob.testing._run_command(args)
+            from elementtree.ElementTree import parse
+            root = parse(xmlfile).getroot()
+
+            # testsuites tag
+            self.assertEqual("testsuites", root.tag)
+
+            def extract_info(testcase):
+                class Struct: pass
+                result = Struct()
+                result.tag = testcase.tag
+                result.name = testcase.attrib["name"]
+                result.result = testcase.find("result").text
+                failure = testcase.find("failure")
+                result.failure = failure is not None and failure.attrib["type"] or None
+                error = testcase.find("error")
+                result.error = error is not None and error.attrib["type"] or None
+                return result
+
+            testcase_reports = [extract_info(testcase) for testcase in root.findall("testcase")]
+
+            # ensure one testcase of each type
+            [success] = [x for x in testcase_reports if x.result == "success"]
+            [failure] = [x for x in testcase_reports if x.result == "failure"]
+            [error]   = [x for x in testcase_reports if x.result == "error"]
+
+            def check_result(testcase, name=None, failure=None, error=None):
+                self.assertEqual("testcase", testcase.tag)
+                self.assertEqual(name, testcase.name)
+                self.assertEqual(failure, testcase.failure)
+                self.assertEqual(error, testcase.error)
+
+            check_result(success, name="testSuccess (suites.CaseMixed)")
+            check_result(failure, name="testFailure (suites.CaseMixed)",
+                                  failure="exceptions.AssertionError")
+            check_result(error,   name="testError (suites.CaseMixed)",
+                                  error="exceptions.RuntimeError")
+
+        finally:
+            import os
+            os.unlink(xmlfile)
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
