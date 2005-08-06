@@ -101,6 +101,13 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
 """.strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testImmediateReporting(self):
+        args = _create_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
+                            options=["-v", "--immediate"])
+        # Check that the fail message appears before testSuccess is run
+        regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*ok"
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
     def testXMLReporting(self):
         import tempfile
         xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
