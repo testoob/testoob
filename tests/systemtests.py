@@ -5,16 +5,16 @@ import unittest, testoob
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
-def _create_args(testcase=None, options=None):
+def _create_args(tests=None, options=None):
     import sys
     result = [sys.executable, helpers.executable_path(), _suite_file]
     if options is not None: result += options
-    if testcase is not None: result.append(testcase)
+    if tests is not None: result += tests
     return result
 
 class CommandLineTestCase(unittest.TestCase):
     def testSuccesfulRunNormal(self):
-        args = _create_args(options=[], testcase="CaseDigits")
+        args = _create_args(options=[], tests=["CaseDigits"])
         regex = r"""
 \.\.\.\.\.\.\.\.\.\.
 ----------------------------------------------------------------------
@@ -25,7 +25,7 @@ OK
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testSuccesfulRunQuiet(self):
-        args = _create_args(options=["-q"], testcase="CaseDigits")
+        args = _create_args(options=["-q"], tests=["CaseDigits"])
         regex = r"""
 ^----------------------------------------------------------------------
 Ran 10 tests in \d\.\d+s
@@ -35,7 +35,7 @@ OK$
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testSuccesfulRunVerbose(self):
-        args = _create_args(options=["-v"], testcase="CaseDigits")
+        args = _create_args(options=["-v"], tests=["CaseDigits"])
         regex = r"""
 test0 \(.*suites\.CaseDigits\.test0\) \.\.\. ok
 test1 \(.*suites\.CaseDigits\.test1\) \.\.\. ok
@@ -56,7 +56,7 @@ OK
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testFailureRunQuiet(self):
-        args = _create_args(options=["-q"], testcase="CaseFailure")
+        args = _create_args(options=["-q"], tests=["CaseFailure"])
         regex = r"""
 ^======================================================================
 FAIL: testFailure \(.*suites\.CaseFailure\.testFailure\)
@@ -71,7 +71,7 @@ FAILED \(failures=1\)$
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testRegex(self):
-        args = _create_args(options=["-v", "--regex=A|D|J"], testcase="CaseLetters")
+        args = _create_args(options=["-v", "--regex=A|D|J"], tests=["CaseLetters"])
         regex=r"""
 testA \(.*suites\.CaseLetters\.testA\) \.\.\. ok
 testD \(.*suites\.CaseLetters\.testD\) \.\.\. ok
@@ -104,7 +104,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
     def testXMLReporting(self):
         import tempfile
         xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
-        args = _create_args(options=["--xml=" + xmlfile], testcase="CaseMixed")
+        args = _create_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
 
         try:
             testoob.testing._run_command(args)
