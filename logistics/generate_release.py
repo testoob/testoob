@@ -185,8 +185,7 @@ def run_tests():
     pass # TODO
 
 def upload_to_sourceforge():
-    print "You should run:"
-    print "ncftpput upload.sourceforge.net incoming %s" % " ".join(distfiles())
+    run_command("ncftpput upload.sourceforge.net incoming " + " ".join(distfiles()))
 
 def perform_release():
     create_release_branch()
