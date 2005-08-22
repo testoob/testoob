@@ -8,7 +8,7 @@ h2. Color Console Output
 
 Enable color output on the console with the '--color' command-line option.
 
-"SCREENSHOT":images/screenshot01.png
+!images/screenshot01.png(Screenshot)!
 
 h2. Regular Expressions
 
@@ -16,7 +16,7 @@ Choose which tests to run using "regular
 expressions":http://www.python.org/doc/current/lib/re-syntax.html with the
 '--regex' command-line option.
 
-"SCREENSHOT":images/screenshot01.png
+See screenshot above.
 
 h2. Immediate Reports
 
@@ -45,15 +45,11 @@ h2. XML Output
 Output XML with the '--xml' command-line option, and pass them to an automated
 system.
 
-Requires the "ElementTree":http://effbot.org/zone/element-index.htm Python
-package.
-
 h2. HTML Output
 
 Output HTML for viewing test results in a web browser with the '--html' command-line option.
 
-Requires the "ElementTree":http://effbot.org/zone/element-index.htm and
-"4Suite":http://4suite.org/ Python packages.
+Requires the "4Suite":http://4suite.org/ Python package.
 
 The HTML output is generated with XSLT from the XML output. It's possible to
 use an external XSLT processor, such as
