@@ -164,5 +164,24 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
             import os
             os.unlink(xmlfile)
 
+    def testHTMLReporting(self):
+        import tempfile
+        htmlfile = tempfile.mktemp(".testoob-testHTMLReporting")
+        args = _create_args(options=["--html=" + htmlfile], tests=["CaseMixed"])
+
+        try:
+            testoob.testing._run_command(args)
+            htmlcontents = open(htmlfile).read()
+
+            from testoob.testing import assert_matches
+            assert htmlcontents.find("<title>TestOOB report</title>") >= 0
+            assert htmlcontents.find("def testError(self): raise RuntimeError") >= 0
+            assert htmlcontents.find("def testFailure(self): self.fail()") >= 0
+
+            assert_matches(r"testSuccess.*>Success<", htmlcontents)
+        finally:
+            import os
+            os.unlink(htmlfile)
+
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
