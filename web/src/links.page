@@ -13,4 +13,5 @@ h2. Unit Testing Tutorials
 h2. Relevant Links
 
 * "PyUnit":http://pyunit.sourceforge.net, the standard Python unit testing framework which TestOOB works with
+* "doctest":http://docs.python.org/lib/module-doctest.html, the standard Python module for literate testing
 * "py.test":http://codespeak.net/py/current/doc/test.html, an alternative testing framework
