@@ -9,6 +9,10 @@ pre {
     border: thin solid black;
 }
 
+pre.clear {
+    border: none;
+    padding: 0px;
+}
 pre.python {
     background-color: #FFEFD5; /* PapayaWhip */
 }

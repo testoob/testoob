@@ -72,6 +72,32 @@ use an external XSLT processor, such as
 "xsltproc":http://xmlsoft.org/XSLT/xsltproc.html,
 "Xalan":http://xml.apache.org/, or "Saxon":http://saxon.sourceforge.net/.
 
+<table border="1">
+  <tr>
+    <td>Name</td>
+    <td>Time</td>
+    <td>Result</td>
+    <td>Info</td>
+  </tr>
+  <tr>
+    <td>test7 (suites.CaseDigits)</td>
+    <td>0.0002</td>
+    <td><font color="green">Success</font></td>
+  </tr>
+  <tr>
+    <td>testError (suites.CaseError)</td>
+    <td>0.0016</td>
+    <td><font color="red">error</font></td>
+    <td>
+      <pre class="clear">Traceback (most recent call last):
+File "../../tests/suites.py", line 59, in testError
+def testError(self): raise RuntimeError
+RuntimeError
+</pre>
+    </td>
+  </tr>
+</table>
+
 h2. Debug
 
 Run "pdb":http://www.python.org/doc/current/lib/debugger-commands.html on
