@@ -4,6 +4,23 @@ TestOOB is an advanced testing framework for Python. It is
 designed to integrate effortlessly with existing PyUnit
 (standard module 'unittest') test suites.
 
+== TestOOB 0.6, 23 August, 2005
+
+Release Focus: License Change, Bugfixes
+
+News:
+ * TestOOB is now licensed under the Apache License version 2.0
+ * ElementTree is no longer necessary for generating XML and HTML, the
+   necessary ElementTree sources have been included in the distribution
+
+Bugfixes:
+ * vassert failures with '%', ticket #117
+ * html_report.xsl missing from the distribution, ticket #123
+
+Internal:
+ * Better system tests, tickets #113, #114, #120, #121
+ * Documentation updates, tickets #18, #19, #102, #107, #109, #119, #122
+
 == TestOOB 0.5, 25 July, 2005
 
 Release Focus: threads, verbose asserts, and stability fixes
