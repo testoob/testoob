@@ -1,22 +1,22 @@
 ---
-title: TestOOB - Python Testing Out Of (The) Box
-inMenu: false
+title: Home
+inMenu: true
 directoryName: TestOOB
 ---
 
-h2. About
-
-TestOOB is an advanced unit testing framework for Python. It integrates
-effortlessly with existing PyUnit (module 'unittest') test suites.
+h1. TestOOB: Advanced Testing in Python
 
 !images/screenshot02.png(Screenshot)!
 
-h2. Requirements
+h2. News
 
-* Python 2.2 or higher
-* "4Suite":http://4suite.org for HTML output.
-* "Twisted":http://twistedmatrix.com/products/download for running in threads.
+h3. 8 August, 2005: TestOOB 0.6 released
 
-h2. Where Can I Learn About Unit Testing?
+Changes:
 
-See the "links":links.html.
+h3. 25 July, 2005: TestOOB 0.5 released
+
+* Verbose asserts
+* Run tests in threads
+* Stability fixes
+* "Changelog":http://sourceforge.net/project/shownotes.php?release_id=344729

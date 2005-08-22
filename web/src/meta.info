@@ -1,14 +1,17 @@
 index.page:
   orderInfo: -20
 
+about.page:
+  orderInfo: -17
+
 download.html:
   title: Download
   dest: http://sourceforge.net/project/showfiles.php?group_id=138557
   inMenu: true
-  orderInfo: -19
+  orderInfo: -15
 
 examples.page:
-  orderInfo: -18
+  orderInfo: -10
 
 info.page:
   orderInfo: 18

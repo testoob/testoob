@@ -1,0 +1,20 @@
+---
+title: About
+inMenu: true
+directoryName: TestOOB
+---
+
+h2. About
+
+TestOOB is an advanced unit testing framework for Python. It integrates
+effortlessly with existing PyUnit (module 'unittest') test suites.
+
+h2. Requirements
+
+* Python 2.2 or higher
+* "4Suite":http://4suite.org for HTML output.
+* "Twisted":http://twistedmatrix.com/products/download for running in threads.
+
+h2. Where Can I Learn About Unit Testing?
+
+See the "links":links.html.
