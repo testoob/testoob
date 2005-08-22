@@ -8,7 +8,7 @@ Lets assume we're releasing version 6.2
 
 * Generate the release (branches, creates distfile, uploads to sourceforge)
 
-    ./logistics/generate_release --for-keeps --release=6.2 --root-dir=.
+    ./logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.
 
 * Create a news announcement from the most recent changelog entry.
 
