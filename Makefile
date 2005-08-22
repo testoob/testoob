@@ -40,10 +40,13 @@ $(WEBSITEDIR): $(APIDIR) $(WEBSITE_SOURCES)
 .phony: web
 web: $(WEBSITEDIR)
 
-DISTUTILS_CMD = $(PYTHON) ./setup.py -q sdist --dist-dir=$(DISTDIR)
+distutils = $(PYTHON) ./setup.py -q $(1) --dist-dir=$(DISTDIR) $(2)
+distutils_sdist = $(call distutils,sdist,--format=$(strip $(1)))
+distutils_wininst = $(call distutils,bdist_wininst)
 .PHONY: dist
 dist: $(WEBSITEDIR)
 	$(RM) MANIFEST
-	$(DISTUTILS_CMD) --formats=bztar
-	$(DISTUTILS_CMD) --formats=gztar
+	$(call distutils_sdist, gztar)
+	$(call distutils_sdist, bztar)
+	$(call distutils_wininst)
 	cd $(WEBSITEDIR); tar jcf $(WEBDISTFILE) .
