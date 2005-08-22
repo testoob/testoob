@@ -161,6 +161,7 @@ def distfiles():
         x % version() for x in (
             "testoob-%s.tar.gz",
             "testoob-%s.tar.bz2",
+            "testoob-%s.win32.exe",
         )
     ]
 
