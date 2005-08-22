@@ -3,7 +3,6 @@ Python Syntax Highlighting:
   - http://fauskes.net/nb/syntaxhighlighting/
 
 Other:
-- http://www.sagehill.net/docbookxsl
 - http://diveintoaccesibility.org
 
 Python API documentation:
