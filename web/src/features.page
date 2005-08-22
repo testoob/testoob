@@ -45,6 +45,22 @@ h2. XML Output
 Output XML with the '--xml' command-line option, and pass them to an automated
 system.
 
+<pre class="xml">
+<testsuites>
+  <testcase name="testSuccess (suites.CaseMixed)" time="0.0002">
+    <result>success</result>
+  </testcase>
+  <testcase name="testError (suites.CaseMixed)" time="0.0014">
+    <result>error</result>
+    <error message="" type="exceptions.RuntimeError">
+Traceback (most recent call last):
+  ...
+    </error>
+  </testcase>
+  <total_time value="0.0099"/>
+</testsuites>
+</pre>
+
 h2. HTML Output
 
 Output HTML for viewing test results in a web browser with the '--html' command-line option.
