@@ -1,12 +1,11 @@
 import helpers
 helpers.fix_include_path()
 
-import unittest, testoob
+import unittest, testoob, os, sys
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
 def _create_args(tests=None, options=None):
-    import sys
     result = [sys.executable, helpers.executable_path(), _suite_file]
     if options is not None: result += options
     if tests is not None: result += tests
@@ -161,8 +160,8 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
                                   error="exceptions.RuntimeError")
 
         finally:
-            import os
-            os.unlink(xmlfile)
+            if os.path.exists(htmlfile):
+                os.unlink(xmlfile)
 
     def testHTMLReporting(self):
         import tempfile
@@ -180,8 +179,8 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
 
             assert_matches(r"testSuccess.*>Success<", htmlcontents)
         finally:
-            import os
-            os.unlink(htmlfile)
+            if os.path.exists(htmlfile):
+                os.unlink(htmlfile)
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
