@@ -5,7 +5,7 @@ import unittest, testoob, os, sys
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
-def _create_args(tests=None, options=None):
+def _testoob_args(tests=None, options=None):
     result = [sys.executable, helpers.executable_path(), _suite_file]
     if options is not None: result += options
     if tests is not None: result += tests
@@ -13,7 +13,7 @@ def _create_args(tests=None, options=None):
 
 class CommandLineTestCase(unittest.TestCase):
     def testSuccesfulRunNormal(self):
-        args = _create_args(options=[], tests=["CaseDigits"])
+        args = _testoob_args(options=[], tests=["CaseDigits"])
         regex = r"""
 \.\.\.\.\.\.\.\.\.\.
 ----------------------------------------------------------------------
@@ -24,7 +24,7 @@ OK
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testSuccesfulRunQuiet(self):
-        args = _create_args(options=["-q"], tests=["CaseDigits"])
+        args = _testoob_args(options=["-q"], tests=["CaseDigits"])
         regex = r"""
 ^----------------------------------------------------------------------
 Ran 10 tests in \d\.\d+s
@@ -34,7 +34,7 @@ OK$
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testSuccesfulRunVerbose(self):
-        args = _create_args(options=["-v"], tests=["CaseDigits"])
+        args = _testoob_args(options=["-v"], tests=["CaseDigits"])
         regex = r"""
 test0 \(.*suites\.CaseDigits\.test0\) \.\.\. ok
 test1 \(.*suites\.CaseDigits\.test1\) \.\.\. ok
@@ -55,7 +55,7 @@ OK
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testFailureRunQuiet(self):
-        args = _create_args(options=["-q"], tests=["CaseFailure"])
+        args = _testoob_args(options=["-q"], tests=["CaseFailure"])
         regex = r"""
 ^======================================================================
 FAIL: testFailure \(.*suites\.CaseFailure\.testFailure\)
@@ -70,7 +70,7 @@ FAILED \(failures=1\)$
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testRegex(self):
-        args = _create_args(options=["-v", "--regex=A|D|J"], tests=["CaseLetters"])
+        args = _testoob_args(options=["-v", "--regex=A|D|J"], tests=["CaseLetters"])
         regex=r"""
 testA \(.*suites\.CaseLetters\.testA\) \.\.\. ok
 testD \(.*suites\.CaseLetters\.testD\) \.\.\. ok
@@ -80,7 +80,7 @@ testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. ok
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testVassertSimple(self):
-        args = _create_args(options=["--regex=CaseDigits.test0", "--vassert"])
+        args = _testoob_args(options=["--regex=CaseDigits.test0", "--vassert"])
         regex = r"""
 test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
   \[ PASSED \(assertEquals\) first: "00" second: "00" \]
@@ -90,7 +90,7 @@ test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testVassertFormatStrings(self):
-        args = _create_args(options=["--regex=MoreTests.test.*FormatString",
+        args = _testoob_args(options=["--regex=MoreTests.test.*FormatString",
                                      "--vassert"])
         regex = r"""
 test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
@@ -101,14 +101,14 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testImmediateReporting(self):
-        args = _create_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
+        args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
                             options=["-v", "--immediate"])
         # Check that the fail message appears before testSuccess is run
         regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*ok"
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testLaunchingPdb(self):
-        args = _create_args(tests=["CaseMixed.testFailure"], options=["--debug"])
+        args = _testoob_args(tests=["CaseMixed.testFailure"], options=["--debug"])
         output_regex="Debugging for failure in test: testFailure \(suites\.CaseMixed\.testFailure\).*raise self\.failureException, msg.*\(Pdb\)"
         error_regex="" # accept anything on the standard error
         testoob.testing.command_line(args=args,
@@ -118,10 +118,10 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
     def testXMLReporting(self):
         import tempfile
         xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
-        args = _create_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
+        args = _testoob_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
 
         try:
-            testoob.testing._run_command(args)
+            testoob.testing.command_line(args=args, expected_error_regex="FAILED")
             from elementtree.ElementTree import parse
             root = parse(xmlfile).getroot()
 
@@ -160,16 +160,20 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
                                   error="exceptions.RuntimeError")
 
         finally:
-            if os.path.exists(htmlfile):
+            if os.path.exists(xmlfile):
                 os.unlink(xmlfile)
 
     def testHTMLReporting(self):
-        import tempfile
-        htmlfile = tempfile.mktemp(".testoob-testHTMLReporting")
-        args = _create_args(options=["--html=" + htmlfile], tests=["CaseMixed"])
-
         try:
-            testoob.testing._run_command(args)
+            import tempfile
+            htmlfile = tempfile.mktemp(".testoob-testHTMLReporting")
+            args = _testoob_args(options=["--html=" + htmlfile], tests=["CaseMixed"])
+
+            stdout, stderr, rc = testoob.testing._run_command(args)
+            if stderr.find("option '--html' requires missing modules") >= 0:
+                # HTML reporting isn't expected to work
+                return
+
             htmlcontents = open(htmlfile).read()
 
             from testoob.testing import assert_matches
