@@ -75,6 +75,20 @@ class ThreadedRunner(BaseRunner):
         self.pool.stop()
         BaseRunner.done(self)
 
+class ProcessedRunner(BaseRunner):
+    "Run tests using fork in different processes."
+    def __init__(self, max_processes=1):
+        from processed_helper import ProcessedRunnerHelper
+        BaseRunner.__init__(self)
+        self._helper = ProcessedRunnerHelper(max_processes)
+    
+    def run(self, fixture):
+        self._helper.register_fixture(fixture)
+
+    def done(self):
+        self._helper.start(self.reporter)
+        BaseRunner.done(self)
+
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
     if suite is None and suites is None:
