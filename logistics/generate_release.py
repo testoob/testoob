@@ -54,7 +54,7 @@ def options():
 
 def dry_run():
     return not options().for_keeps
-    
+
 def norm_join(*args):
     "os.join, then os.normpath"
     from os.path import normpath, join

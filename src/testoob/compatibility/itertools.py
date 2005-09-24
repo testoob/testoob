@@ -7,7 +7,7 @@ cycle(p) --> p0, p1, ... plast, p0, p1, ...
 repeat(elem [,n]) --> elem, elem, elem, ... endlessly or up to n times
 
 Iterators terminating on the shortest input sequence:
-izip(p, q, ...) --> (p[0], q[0]), (p[1], q[1]), ... 
+izip(p, q, ...) --> (p[0], q[0]), (p[1], q[1]), ...
 ifilter(pred, seq) --> elements of seq where pred(elem) is True
 ifilterfalse(pred, seq) --> elements of seq where pred(elem) is False
 islice(seq, [start,] stop [, step]) --> elements from
@@ -15,7 +15,7 @@ islice(seq, [start,] stop [, step]) --> elements from
 imap(fun, p, q, ...) --> fun(p0, q0), fun(p1, q1), ...
 starmap(fun, seq) --> fun(*seq[0]), fun(*seq[1]), ...
 tee(it, n=2) --> (it1, it2 , ... itn) splits one iterator into n
-chain(p, q, ...) --> p0, p1, ... plast, q0, q1, ... 
+chain(p, q, ...) --> p0, p1, ... plast, q0, q1, ...
 takewhile(pred, seq) --> seq[0], seq[1], until pred fails
 dropwhile(pred, seq) --> seq[n], seq[n+1], starting when pred fails
 groupby(iterable[, keyfunc]) --> sub-iterators grouped by value of keyfunc(v)
@@ -47,7 +47,7 @@ class chain:
 
     def __iter__(self):
         return self
-    
+
     def next(self):
         try:
             next_elt = self._cur_iterable_iter.next()
@@ -64,9 +64,9 @@ class chain:
             # CPython raises a TypeError when next() is not defined
             raise TypeError('%s has no next() method' % \
                             (self._cur_iterable_iter))
-            
+
         return next_elt
-            
+
 
 class count:
     """Make an iterator that returns consecutive integers starting
@@ -100,7 +100,7 @@ class count:
         return 'count(%d)' % (self.times + 1)
 
 
-            
+
 class cycle:
     """Make an iterator returning elements from the iterable and
     saving a copy of each. When the iterable is exhausted, return
@@ -115,13 +115,13 @@ class cycle:
             saved.append(element)
         while saved:
             for element in saved:
-                yield element    
+                yield element
     """
     def __init__(self, iterable):
         self._cur_iter = iter(iterable)
         self._saved = []
         self._must_save = True
-        
+
     def __iter__(self):
         return self
 
@@ -140,8 +140,8 @@ class cycle:
             raise TypeError('%s has no next() method' % \
                             (self._cur_iter))
         return next_elt
-            
-        
+
+
 class dropwhile:
     """Make an iterator that drops elements from the iterable as long
     as the predicate is true; afterwards, returns every
@@ -199,7 +199,7 @@ class groupby:
        for k, g in groupby(data, keyfunc):
            groups.append(list(g))      # Store group iterator as a list
            uniquekeys.append(k)
-    """    
+    """
     def __init__(self, iterable, key=None):
         if key is None:
             key = lambda x: x
@@ -217,7 +217,7 @@ class groupby:
             except AttributeError:
                 # CPython raises a TypeError when next() is not defined
                 raise TypeError('%s has no next() method' % \
-                                (self.it))            
+                                (self.it))
             self.currkey = self.keyfunc(self.currvalue)
         self.tgtkey = self.currkey
         return (self.currkey, self._grouper(self.tgtkey))
@@ -242,7 +242,7 @@ class _ifilter_base:
 
     def __iter__(self):
         return self
-    
+
 class ifilter(_ifilter_base):
     """Make an iterator that filters elements from iterable returning
     only those for which the predicate is True.  If predicate is
@@ -275,7 +275,7 @@ class ifilterfalse(_ifilter_base):
     None, return the items that are false.
 
     Equivalent to :
-    
+
     def ifilterfalse(predicate, iterable):
         if predicate is None:
             predicate = bool
@@ -294,7 +294,7 @@ class ifilterfalse(_ifilter_base):
             if not self._predicate(next_elt):
                 return next_elt
             next_elt = self._iter.next()
-             
+
 
 
 
@@ -318,7 +318,7 @@ class imap:
                 yield tuple(args)
             else:
                 yield function(*args)
-    
+
     """
     def __init__(self, function, iterable, *other_iterables):
         self._func = function
@@ -353,7 +353,7 @@ class islice:
     step. Can be used to extract related fields from data where the
     internal structure has been flattened (for example, a multi-line
     report may list a name field on every third line).
-    """ 
+    """
     def __init__(self, iterable, *args):
         s = slice(*args)
         self.start, self.stop, self.step = s.start or 0, s.stop, s.step
@@ -373,7 +373,7 @@ class islice:
     def __iter__(self):
         return self
 
-    def next(self): 
+    def next(self):
         if self.donext is None:
             try:
                 self.donext = self.it.next
@@ -383,10 +383,10 @@ class islice:
             self.donext()
             self.cnt += 1
         if self.stop is None or self.cnt < self.stop:
-            self.start += self.step 
+            self.start += self.step
             self.cnt += 1
             return self.donext()
-        raise StopIteration 
+        raise StopIteration
 
 class izip:
     """Make an iterator that aggregates elements from each of the
@@ -417,7 +417,7 @@ class izip:
         except AttributeError:
             # CPython raises a TypeError when next() is not defined
             raise TypeError('%s has no next() method' % (i))
-    
+
 
 class repeat:
     """Make an iterator that returns object over and over again.
@@ -443,14 +443,14 @@ class repeat:
             if times < 0:
                 times = 0
         self._times = times
-        
+
     def __iter__(self):
         return self
 
     def next(self):
         # next() *need* to decrement self._times when consumed
         if self._times is not None:
-            if self._times <= 0: 
+            if self._times <= 0:
                 raise StopIteration()
             self._times -= 1
         return self._obj
@@ -465,7 +465,7 @@ class repeat:
         if self._times == -1 or self._times is None:
             raise TypeError("len() of uniszed object")
         return self._times
-    
+
 
 class starmap:
     """Make an iterator that computes the function using arguments
@@ -480,7 +480,7 @@ class starmap:
     def starmap(function, iterable):
         iterable = iter(iterable)
         while True:
-            yield function(*iterable.next())    
+            yield function(*iterable.next())
     """
     def __init__(self, function, iterable):
         self._func = function
@@ -507,7 +507,7 @@ class takewhile:
     long as the predicate is true.
 
     Equivalent to :
-    
+
     def takewhile(predicate, iterable):
         for x in iterable:
             if predicate(x):
@@ -533,7 +533,7 @@ class takewhile:
             raise StopIteration()
         return value
 
-    
+
 class TeeData(object):
     """Holds cached values for TeeObjects"""
     def __init__(self, iterator):
@@ -564,30 +564,30 @@ class TeeObject(object):
         else:
             self.tee_data = TeeData(iter(iterable))
             self.pos = 0
-            
+
     def next(self):
         data = self.tee_data[self.pos]
         self.pos += 1
         return data
-    
+
     def __iter__(self):
         return self
 
-    
+
 def tee(iterable, n=2):
     """Return n independent iterators from a single iterable.
     Note : once tee() has made a split, the original iterable
     should not be used anywhere else; otherwise, the iterable could get
     advanced without the tee objects being informed.
-    
+
     Note : this member of the toolkit may require significant auxiliary
     storage (depending on how much temporary data needs to be stored).
     In general, if one iterator is going to use most or all of the
     data before the other iterator, it is faster to use list() instead
     of tee()
-    
+
     Equivalent to :
-    
+
     def tee(iterable, n=2):
         def gen(next, data={}, cnt=[0]):
             for i in count():

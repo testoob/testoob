@@ -2099,7 +2099,7 @@ class ImageControl(SubmitControl):
         value = self._value
         if value:
             pairs.append((name, value))
-        return pairs      
+        return pairs
 
 # aliases, just to make str(control) and str(form) clearer
 class PasswordControl(TextControl): pass

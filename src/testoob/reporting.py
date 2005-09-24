@@ -1,17 +1,17 @@
 # TestOOB, Python Testing Out Of (The) Box
 # Copyright (C) 2005 Ori Peleg, Barak Schiller, and Misha Seltzer
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
-# limitations under the License. 
+# limitations under the License.
 
 "Reporting facilities"
 
@@ -92,7 +92,7 @@ class BaseReporter(IReporter):
     """Base class for most reporters, with a sensible default implementation
     for most of the reporter methods"""
     # borrows a lot of code from unittest.TestResult
-    
+
     def __init__(self):
         self.testsRun = 0
         self.failures = []
@@ -135,7 +135,7 @@ class TextStreamReporter(BaseReporter):
 
     separator1 = '=' * 70
     separator2 = '-' * 70
-    
+
     def __init__(self, stream, descriptions, verbosity, immediate = False):
         import re
         self.re = re
@@ -232,7 +232,7 @@ class TextStreamReporter(BaseReporter):
                 strings.append("errors=%d" % len(self.errors))
 
             self._writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
-    
+
     def _decorateSign(self, sign):
         if sign == '+':
             return self._decorateSuccess("PASSED")
@@ -243,7 +243,7 @@ class TextStreamReporter(BaseReporter):
 
     def _decorateFailure(self, errString):
         return errString
-    
+
     def _decorateSuccess(self, sccString):
         return sccString
 
@@ -297,18 +297,18 @@ class ColoredTextReporter(TextStreamReporter):
 
     def __init__(self, stream, descriptions, verbosity, immediate):
         TextStreamReporter.__init__(self, stream, descriptions, verbosity, immediate)
-    
+
     def _red(self, str):
         "Make it red!"
         return ColoredTextReporter.codes['red'] + str + ColoredTextReporter.codes['reset']
-    
+
     def _green(self, str):
         "make it green!"
         return ColoredTextReporter.codes['green'] + str + ColoredTextReporter.codes['reset']
-    
+
     def _decorateFailure(self, errString):
         return self._red(errString)
-    
+
     def _decorateSuccess(self, sccString):
         return self._green(sccString)
 
@@ -322,7 +322,7 @@ class OldHTMLReporter(BaseReporter):
         from elementtree.SimpleXMLWriter import XMLWriter
         self.writer = XMLWriter(self._sio, "utf-8")
         self.filename = filename
-        
+
         self.test_starts = {}
 
     def start(self):
@@ -342,14 +342,14 @@ class OldHTMLReporter(BaseReporter):
         self.writer.element("td", "Result")
         self.writer.element("td", "More info")
         self.writer.end("tr")
-        
+
     def done(self):
         BaseReporter.done(self)
         self.writer.end("table")
         self.writer.element("p", "Total time: %.4f"%self.total_time)
         self.writer.end("body")
         self.writer.end("html")
-        
+
         #assert len(self.test_starts) == 0
         f = file(self.filename, "w")
         try: f.write(self._getHtml())
@@ -357,12 +357,12 @@ class OldHTMLReporter(BaseReporter):
 
     def _getHtml(self):
         return self._sio.getvalue()
-    
+
     def _encodeException(self, str):
         import re
         str = re.sub(r'File "(.+)",', r'<a href="file:///\1"> File "\1",</a>', str)
         return str.replace("\n","<br>")
-    
+
     def startTest(self, test):
         BaseReporter.startTest(self, test)
         self.test_starts[test] = _time.time()
@@ -392,7 +392,7 @@ class OldHTMLReporter(BaseReporter):
         del self.test_starts[test]
         return "%.4f" % result
 
-    
+
 class XMLReporter(BaseReporter):
     """Reports test results in XML, in a format resembling Ant's JUnit xml
     formatting output."""
@@ -417,7 +417,7 @@ class XMLReporter(BaseReporter):
         BaseReporter.done(self)
         self.writer.element("total_time", value="%.4f"%self.total_time)
         self.writer.end("testsuites")
-        
+
         assert len(self.test_starts) == 0
 
     def get_xml(self):
@@ -491,7 +491,7 @@ class HTMLReporter(XSLTReporter):
     def __init__(self, filename):
         import xslconverters
         XSLTReporter.__init__(self, filename, xslconverters.BASIC_CONVERTER)
-        
+
 ###############################################################################
 # Reporter proxy
 ###############################################################################
@@ -519,7 +519,7 @@ def ObserverProxy(method_names):
             finally:
                 self.lock.release()
         return method_proxy
-            
+
     for method_name in method_names:
         setattr(Proxy, method_name, create_method_proxy(method_name))
 

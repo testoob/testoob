@@ -19,7 +19,7 @@ def child(to_parent, from_parent):
             "n": n,
             "double" : n*2,
         }
-        
+
         os.write(to_parent, pickle.dumps(d))
 
     print "[%d] done" % os.getpid()
@@ -69,7 +69,7 @@ def send_input(children_to_fds):
 
 def poll_output(children_from_fds):
     fds_left = children_from_fds[:]
-    
+
     poll = select.poll()
     for fd in fds_left: poll.register(fd)
 
