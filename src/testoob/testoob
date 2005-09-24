@@ -13,14 +13,15 @@ examples:
     if printUsage:
         sys.argv.append("-h")
 
-    options, free_args, require_modules = testoob_main("_parse_args")(usage)
+    parser = testoob_main("_arg_parser")(usage)
+    options, free_args = parser.parse_args()
 
     if len(free_args) == 0:
         parseArgs(printUsage=True)
     file_name = free_args[0]
     test_names = free_args[1:]
 
-    return options, file_name, test_names, require_modules
+    return options, file_name, test_names, parser
 
 def addPythonPath(path):
     from os.path import normpath
@@ -48,7 +49,7 @@ def testoob_main(attrname):
         
     return result
 
-options, file_name, test_names, require_modules = parseArgs()
+options, file_name, test_names, parser = parseArgs()
 
 try:
     # Add the path of the ran file to the python path, so that includes
@@ -61,7 +62,7 @@ try:
     execfile(file_name)
     __name__ = name
 
-    testoob_main("_main")(None, None, options, test_names, require_modules)
+    testoob_main("_main")(None, None, options, test_names, parser)
 except IOError, e:
     print e
     parseArgs(printUsage=True)

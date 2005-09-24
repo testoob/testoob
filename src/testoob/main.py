@@ -15,7 +15,7 @@
 
 "main() implementation"
 
-def _parse_args(usage):
+def _arg_parser(usage):
     try:
         import optparse
     except ImportError:
@@ -36,18 +36,7 @@ def _parse_args(usage):
     p.add_option("--threads", type="int", help="Run in a threadpool")
     p.add_option("--processes", type="int", help="Run in multiple processes")
 
-    def require_modules(option, *modules):
-        missing_modules = []
-        for modulename in modules:
-            try:
-                __import__(modulename)
-            except ImportError:
-                missing_modules.append(modulename)
-        if missing_modules:
-            p.error("option '%(option)s' requires missing modules "
-                    "%(missing_modules)s" % vars())
-
-    return p.parse_args() + (require_modules,)
+    return p
 
 def _get_verbosity(options):
     if options.quiet: return 0
@@ -70,7 +59,19 @@ def _get_suites(suite, defaultTest, test_names):
         test_names = [defaultTest]
     return TestLoader().loadTestsFromNames(test_names, __main__)
 
-def _main(suite, defaultTest, options, test_names, require_modules):
+def _main(suite, defaultTest, options, test_names, parser):
+
+    def require_modules(option, *modules):
+        missing_modules = []
+        for modulename in modules:
+            try:
+                __import__(modulename)
+            except ImportError:
+                missing_modules.append(modulename)
+        if missing_modules:
+            parser.error("option '%(option)s' requires missing modules "
+                         "%(missing_modules)s" % vars())
+
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
@@ -133,7 +134,9 @@ examples:
   %prog MyTestSuite              - run suite 'MyTestSuite'
   %prog MyTestCase.testSomething - run MyTestCase.testSomething
   %prog MyTestCase               - run all 'test*' test methods in MyTestCase"""
-    options, test_names, require_modules = _parse_args(usage)
 
-    _main(suite, defaultTest, options, test_names, require_modules)
+    parser = _arg_parser(usage)
+    options, test_names = parser.parse_args()
+
+    _main(suite, defaultTest, options, test_names, parser)
 
