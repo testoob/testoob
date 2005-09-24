@@ -57,13 +57,20 @@ def extract_fixtures(suite, recursive_iterator=_breadth_first):
     return _ifilter(lambda test: isinstance(test, unittest.TestCase),
                     recursive_iterator(suite, children=test_children))
 
+def predicate_extractor(pred):
+    return lambda suite: _ifilter(pred, extract_fixtures(suite))
+
 def regex_extractor(regex):
     """Filter tests based on matching a regex to their id.
     Matching is performed with re.search"""
     import re
     compiled = re.compile(regex)
-    def pred(test): return compiled.search(test.id())
-    def wrapper(suite):
-        return _ifilter(pred, extract_fixtures(suite))
-    return wrapper
+    def pred(test):return compiled.search(test.id())
+    return predicate_extractor(pred)
 
+def glob_extractor(pattern):
+    """Filter tests based on a matching glob pattern to their id.
+    Matching is performed with fnmatch.fnmatchcase"""
+    import fnmatch
+    def pred(test): return fnmatch.fnmatchcase(test.id(), pattern)
+    return predicate_extractor(pred)

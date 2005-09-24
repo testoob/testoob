@@ -186,5 +186,20 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
             if os.path.exists(htmlfile):
                 os.unlink(htmlfile)
 
+    def testConflictingRegexGlob(self):
+        args = _testoob_args(options=["--regex=abc", "--glob=abc"], tests=["CaseLetters"])
+        regex=r"The following options can't be specified together: glob, regex"
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=None)
+
+    def testGlob(self):
+        args = _testoob_args(options=["-v", "--glob=*Database*"], tests=["CaseNames"])
+        regex=r"""
+testDatabaseConnections \(.*suites\.CaseNames\.testDatabaseConnections\) \.\.\. ok
+testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. ok
+.*Ran 2 tests
+""".strip()
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
+
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()

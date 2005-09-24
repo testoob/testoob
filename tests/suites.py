@@ -40,6 +40,13 @@ class CaseDigits(unittest.TestCase):
     def test8(self): self.assertEquals("8" + "8", "88")
     def test9(self): self.assertEquals("9" + "9", "99")
 
+class CaseNames(unittest.TestCase):
+    def testDatabaseError(self): pass
+    def testDatabaseConnections(self): pass
+    def testFilesystemLocal(self): pass
+    def testFilesystemRemote(self): pass
+    def testFilesystemError(self): pass
+
 class CaseMixed(unittest.TestCase):
     def testSuccess(self): pass
     def testFailure(self): self.fail()

@@ -28,6 +28,7 @@ def _arg_parser(usage):
     p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
     p.add_option("--vassert", action="store_true", help="Verbalize the assert calls")
     p.add_option("--regex", help="Filtering regular expression")
+    p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
     p.add_option("--color", action="store_true", help="Color output")
@@ -72,6 +73,19 @@ def _main(suite, defaultTest, options, test_names, parser):
             parser.error("option '%(option)s' requires missing modules "
                          "%(missing_modules)s" % vars())
 
+    def conflicting_options(*option_names):
+        given_options = [
+            name
+            for name in option_names
+            if getattr(options, name) is not None
+        ]
+        given_options.sort()
+
+        if len(given_options) > 1:
+            parser.error("The following options can't be specified together: %s" % ", ".join(given_options))
+
+    conflicting_options("regex", "glob")
+
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
@@ -82,7 +96,11 @@ def _main(suite, defaultTest, options, test_names, parser):
 
     if options.regex is not None:
         from extracting import regex_extractor
-        kwargs["test_extractor"]  = regex_extractor(options.regex)
+        kwargs["test_extractor"] = regex_extractor(options.regex)
+
+    if options.glob is not None:
+        from extracting import glob_extractor
+        kwargs["test_extractor"] = glob_extractor(options.glob)
 
     if options.xml is not None:
         from reporting import XMLFileReporter
