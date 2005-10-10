@@ -142,7 +142,7 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["runner"] = ProcessedRunner(max_processes = options.processes)
 
     import running
-    running.text_run(**kwargs)
+    return running.text_run(**kwargs)
 
 def main(suite=None, defaultTest=None):
     usage="""%prog [options] [test1 [test2 [...]]]
@@ -156,5 +156,5 @@ examples:
     parser = _arg_parser(usage)
     options, test_names = parser.parse_args()
 
-    _main(suite, defaultTest, options, test_names, parser)
+    return _main(suite, defaultTest, options, test_names, parser)
 

@@ -179,4 +179,5 @@ def text_run(*args, **kwargs):
     kwargs["reporters"].append(reporter_instance)
 
     run(*args, **kwargs)
+    return reporter_instance.getDoneStatus()
 

@@ -62,6 +62,10 @@ class IReporter:
         "Get a nice printable description of the test"
         pass
 
+    def getDoneStatus(self):
+        "Return a map of testsSuccess, testsFailed and testsErrored"
+        pass
+
 # Constructing meaningful report strings from exception info
 
 def _exc_info_to_string(err, test):
@@ -127,7 +131,12 @@ class BaseReporter(IReporter):
     def _wasSuccessful(self):
         "Tells whether or not this result was a success"
         return len(self.failures) == len(self.errors) == 0
-
+    
+    def getDoneStatus(self):
+        return {'testsFailed' : len(self.failures),
+                'testsErrored': len(self.errors),
+                'testsSuccess': self.testsRun - (len(self.failures) + len(self.errors)),
+               }
 
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
