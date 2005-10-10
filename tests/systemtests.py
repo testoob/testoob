@@ -67,7 +67,7 @@ Ran 1 test in \d\.\d+s
 FAILED \(failures=1\)$
 """.strip()
 
-        testoob.testing.command_line(args=args, expected_error_regex=regex)
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testRegex(self):
         args = _testoob_args(options=["-v", "--regex=A|D|J"], tests=["CaseLetters"])
@@ -105,7 +105,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
                             options=["-v", "--immediate"])
         # Check that the fail message appears before testSuccess is run
         regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*ok"
-        testoob.testing.command_line(args=args, expected_error_regex=regex)
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testLaunchingPdb(self):
         args = _testoob_args(tests=["CaseMixed.testFailure"], options=["--debug"])
@@ -113,7 +113,8 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
         error_regex="" # accept anything on the standard error
         testoob.testing.command_line(args=args,
                                      expected_output_regex=output_regex,
-                                     expected_error_regex=error_regex)
+                                     expected_error_regex=error_regex,
+                                     expected_rc=1)
 
     def testXMLReporting(self):
         import tempfile

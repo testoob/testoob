@@ -62,7 +62,9 @@ try:
     execfile(file_name)
     __name__ = name
 
-    testoob_main("_main")(None, None, options, test_names, parser)
+    result = testoob_main("_main")(None, None, options, test_names, parser)
+    if (result["testsFailed"] + result["testsErrored"]) > 0:
+        sys.exit(1)
 except IOError, e:
     print e
     parseArgs(printUsage=True)
