@@ -201,6 +201,10 @@ testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. ok
 """.strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testRepeat(self):
+        args = _testoob_args(options=["--repeat=7"], tests=["CaseDigits"])
+        regex=r"Ran 70 tests"
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()

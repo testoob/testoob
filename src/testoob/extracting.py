@@ -81,3 +81,12 @@ def glob(pattern):
     import fnmatch
     def pred(test): return fnmatch.fnmatchcase(test.id(), pattern)
     return predicate(pred)
+
+def _irepeat_items(num_times, iterable):
+    for x in iterable:
+        for i in xrange(num_times):
+            yield x
+
+def repeat(num_times):
+    "Repeat each test a number of times"
+    return _iterable_decorator(lambda iterable: _irepeat_items(num_times, iterable))

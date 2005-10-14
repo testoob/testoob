@@ -36,6 +36,7 @@ def _arg_parser(usage):
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
     p.add_option("--threads", type="int", help="Run in a threadpool")
     p.add_option("--processes", type="int", help="Run in multiple processes")
+    p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
 
     return p
 
@@ -102,6 +103,10 @@ def _main(suite, defaultTest, options, test_names, parser):
     if options.glob is not None:
         import extracting
         kwargs["extraction_decorators"].append(extracting.glob(options.glob))
+
+    if options.repeat is not None:
+        import extracting
+        kwargs["extraction_decorators"].append(extracting.repeat(options.repeat))
 
     if options.xml is not None:
         from reporting import XMLFileReporter
