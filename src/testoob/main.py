@@ -96,12 +96,12 @@ def _main(suite, defaultTest, options, test_names, parser):
     }
 
     if options.regex is not None:
-        from extracting import regex_extractor
-        kwargs["extraction_decorators"].append(regex_extractor(options.regex))
+        import extracting
+        kwargs["extraction_decorators"].append(extracting.regex(options.regex))
 
     if options.glob is not None:
-        from extracting import glob_extractor
-        kwargs["extraction_decorators"].append(glob_extractor(options.glob))
+        import extracting
+        kwargs["extraction_decorators"].append(extracting.glob(options.glob))
 
     if options.xml is not None:
         from reporting import XMLFileReporter

@@ -57,24 +57,24 @@ def full_extractor(suite, recursive_iterator=_breadth_first):
     return _ifilter(lambda test: isinstance(test, unittest.TestCase),
                     recursive_iterator(suite, children=test_children))
 
-def predicate_extractor(pred):
+def predicate(pred):
     def decorator(extractor):
         def wrapper(*args, **kwargs):
             return _ifilter(pred, extractor(*args, **kwargs))
         return wrapper
     return decorator
 
-def regex_extractor(regex):
+def regex(regex):
     """Filter tests based on matching a regex to their id.
     Matching is performed with re.search"""
     import re
     compiled = re.compile(regex)
     def pred(test):return compiled.search(test.id())
-    return predicate_extractor(pred)
+    return predicate(pred)
 
-def glob_extractor(pattern):
+def glob(pattern):
     """Filter tests based on a matching glob pattern to their id.
     Matching is performed with fnmatch.fnmatchcase"""
     import fnmatch
     def pred(test): return fnmatch.fnmatchcase(test.id(), pattern)
-    return predicate_extractor(pred)
+    return predicate(pred)

@@ -8,7 +8,7 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
         self._run(suite=suites.suite(), extraction_decorators=[decorator])
 
     def testRegexExtractorMatchEverything(self):
-        self._runWithDecorator(testoob.extracting.regex_extractor(".*"))
+        self._runWithDecorator(testoob.extracting.regex(".*"))
         self._check_reporter(
                 started   = suites.all_test_names,
                 finished  = suites.all_test_names,
@@ -20,7 +20,7 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
             )
 
     def testRegexExtractorMatchSome(self):
-        self._runWithDecorator(testoob.extracting.regex_extractor("(B|C|6)$"))
+        self._runWithDecorator(testoob.extracting.regex("(B|C|6)$"))
         self._check_reporter(
                 started   = ["testB", "testC", "test6"],
                 finished  = ["testB", "testC", "test6"],
@@ -32,7 +32,7 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
             )
 
     def testRegexExtractorMatchNone(self):
-        self._runWithDecorator(testoob.extracting.regex_extractor("xanadu"))
+        self._runWithDecorator(testoob.extracting.regex("xanadu"))
         self._check_reporter(
                 started   = [],
                 finished  = [],
