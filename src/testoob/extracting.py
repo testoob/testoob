@@ -57,12 +57,15 @@ def full_extractor(suite, recursive_iterator=_breadth_first):
     return _ifilter(lambda test: isinstance(test, unittest.TestCase),
                     recursive_iterator(suite, children=test_children))
 
-def predicate(pred):
+def _iterable_decorator(func):
     def decorator(extractor):
         def wrapper(*args, **kwargs):
-            return _ifilter(pred, extractor(*args, **kwargs))
+            return func(extractor(*args, **kwargs))
         return wrapper
     return decorator
+
+def predicate(pred):
+    return _iterable_decorator(lambda iterable: _ifilter(pred, iterable))
 
 def regex(regex):
     """Filter tests based on matching a regex to their id.
