@@ -122,7 +122,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
         args = _testoob_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
 
         try:
-            testoob.testing.command_line(args=args, expected_error_regex="FAILED")
+            testoob.testing.command_line(args=args, expected_error_regex="FAILED", expected_rc=None)
             from elementtree.ElementTree import parse
             root = parse(xmlfile).getroot()
 
