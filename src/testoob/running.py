@@ -21,9 +21,9 @@ from extracting import suite_iter as _suite_iter
 ###############################################################################
 # apply_runner
 ###############################################################################
-from extracting import extract_fixtures as _extract_fixtures
+from extracting import full_extractor as _full_extractor
 import time
-def apply_runner(suites, runner, interval=None, test_extractor = _extract_fixtures):
+def apply_runner(suites, runner, interval=None, test_extractor = _full_extractor):
     """Runs the suite."""
     first = True
     for suite in _suite_iter(suites):

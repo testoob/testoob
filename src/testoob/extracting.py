@@ -46,7 +46,7 @@ def suite_iter(suite):
     except TypeError:
         return iter(suite._tests) # Before 2.4, test suites weren't iterable
 
-def extract_fixtures(suite, recursive_iterator=_breadth_first):
+def full_extractor(suite, recursive_iterator=_breadth_first):
     """Extract the text fixtures from a suite.
     Descends recursively into sub-suites."""
     import unittest
@@ -58,7 +58,7 @@ def extract_fixtures(suite, recursive_iterator=_breadth_first):
                     recursive_iterator(suite, children=test_children))
 
 def predicate_extractor(pred):
-    return lambda suite: _ifilter(pred, extract_fixtures(suite))
+    return lambda suite: _ifilter(pred, full_extractor(suite))
 
 def regex_extractor(regex):
     """Filter tests based on matching a regex to their id.
