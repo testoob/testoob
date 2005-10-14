@@ -58,7 +58,11 @@ def full_extractor(suite, recursive_iterator=_breadth_first):
                     recursive_iterator(suite, children=test_children))
 
 def predicate_extractor(pred):
-    return lambda suite: _ifilter(pred, full_extractor(suite))
+    def decorator(extractor):
+        def wrapper(*args, **kwargs):
+            return _ifilter(pred, extractor(*args, **kwargs))
+        return wrapper
+    return decorator
 
 def regex_extractor(regex):
     """Filter tests based on matching a regex to their id.

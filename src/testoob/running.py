@@ -23,8 +23,20 @@ from extracting import suite_iter as _suite_iter
 ###############################################################################
 from extracting import full_extractor as _full_extractor
 import time
-def apply_runner(suites, runner, interval=None, test_extractor = _full_extractor):
+
+def apply_decorators(callable, decorators):
+    "Wrap the callable in all the decorators"
+    result = callable
+    for decorator in decorators:
+        result = decorator(result)
+    return result
+
+def apply_runner(suites, runner, interval=None, extraction_decorators = None):
     """Runs the suite."""
+
+    if extraction_decorators is None: extraction_decorators = []
+    test_extractor = apply_decorators(_full_extractor, extraction_decorators)
+
     first = True
     for suite in _suite_iter(suites):
         for fixture in test_extractor(suite):

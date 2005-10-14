@@ -91,16 +91,17 @@ def _main(suite, defaultTest, options, test_names, parser):
         "verbosity" : _get_verbosity(options),
         "immediate" : options.immediate,
         "reporters" : [],
+        "extraction_decorators" : [],
         "interval" : options.interval
     }
 
     if options.regex is not None:
         from extracting import regex_extractor
-        kwargs["test_extractor"] = regex_extractor(options.regex)
+        kwargs["extraction_decorators"].append(regex_extractor(options.regex))
 
     if options.glob is not None:
         from extracting import glob_extractor
-        kwargs["test_extractor"] = glob_extractor(options.glob)
+        kwargs["extraction_decorators"].append(glob_extractor(options.glob))
 
     if options.xml is not None:
         from reporting import XMLFileReporter
