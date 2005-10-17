@@ -18,6 +18,11 @@ expressions":http://www.python.org/doc/current/lib/re-syntax.html with the
 
 See screenshot above.
 
+h2. Glob Patterns
+
+Choose which tests to run with Unix-style "glob
+patterns":http://www.python.org/doc/current/lib/module-fnmatch.html with the '--glob' command-line option.
+
 h2. Immediate Reports
 
 Get immediate failure reports with the '--immediate' command-line option.
@@ -133,6 +138,13 @@ OK
 prompt>
 </pre>
 
+h2. Multiple Processes
+
+Run tests in parallel in different processes with the '--processes'
+command-line option.
+
+This should work in most cases, even when the code isn't thread-safe.
+
 h2. Multiple Threads
 
 Run tests in parallel with the '--threads' command-line option.
@@ -162,6 +174,14 @@ prompt>
 *NOTE*: Make sure your tests are thread safe! If they're not, don't expect this
 option to work. If you're using C extensions that aren't thread safe, the tests
 can crash quite messily.
+
+h2. Repeat tests
+
+Repeat each test a number of times with the '--repeat' command-line option.
+
+Some uses for this:
+* For non-deterministic tests (pass with probability)
+* For stress-testing, possibly combined with '<code>--threads</code>' or '<code>--processes</code>'. 
 
 h2. Wait Between Tests
 
