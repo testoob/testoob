@@ -10,16 +10,10 @@ h1. TestOOB: Advanced Testing in Python
 
 h2. News
 
-h3. 23 August, 2005: TestOOB 0.6 released
+h3. 17 October, 2005: TestOOB 0.7 released
+* run tests in multiple processes!
+* repeat tests
+* filter tests with glob patterns
+* non-zero exit code on test failures
+* "Changelog":http://sourceforge.net/project/shownotes.php?release_id=364123
 
-* License changed to the "Apache License, Version 2.0":http://www.apache.org/licenses/LICENSE-2.0
-* "ElementTree":http://effbot.org/zone/element-index.htm is no longer necessary for XML/HTML reporting
-* Bug fixes
-* "Changelog":http://sourceforge.net/project/shownotes.php?release_id=351021
-
-h3. 25 July, 2005: TestOOB 0.5 released
-
-* Verbose asserts
-* Run tests in threads
-* Stability fixes
-* "Changelog":http://sourceforge.net/project/shownotes.php?release_id=344729
