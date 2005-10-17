@@ -54,9 +54,10 @@ We'd like to thank:
 * The users of TestOOB, for making amazing suggestions.
 
 We'd like to credit the following sources for ideas:
-* "JFunc":http://jfunc.sourceforge.net, for verbose assertions.
+* "JFunc":http://jfunc.sourceforge.net, for verbose assertions and repeating tests
 * "py.test":http://codespeak.net/py/current/doc/test.html, for having an external executable.
 * "Zope":http://www.zope.org 's "test.py":http://www.python.org/~jeremy/weblog/031014.html, for immediate feedback about failures.
+* "JUnitScenario":http://junitscenario.sourceforge.net, for repeating tests
 
 If you think we missed something, please tell us!
 
