@@ -4,6 +4,24 @@ TestOOB is an advanced testing framework for Python. It is
 designed to integrate effortlessly with existing PyUnit
 (standard module 'unittest') test suites.
 
+== TestOOB 0.7, 17 October, 2005
+
+Release Focus: Multi-process test running
+
+New Features:
+ * Run tests in multiple processes (--processes)
+ * Repeat tests (--repeat)
+ * Filter tests with glob patterns (--glob)
+
+Bugfixes:
+ * 'testoob' executable should exit with non-zero code on failure, ticket #149
+
+Internal:
+ * API for receiving the results of the test run, ticket #150
+ * Former test extractors are now decorators on an extractor
+ * Fixed some system tests
+ * Cleaned up docstrings
+
 == TestOOB 0.6, 23 August, 2005
 
 Release Focus: License Change, Bugfixes
