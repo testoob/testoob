@@ -11,6 +11,7 @@ h1. TestOOB: Advanced Testing in Python
 h2. News
 
 h3. 17 October, 2005: TestOOB 0.7 released
+
 * run tests in multiple processes!
 * repeat tests
 * filter tests with glob patterns
