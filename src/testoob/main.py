@@ -26,7 +26,7 @@ def _arg_parser(usage):
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
-    p.add_option("--vassert", action="store_true", help="Verbalize the assert calls")
+    p.add_option("--vassert", action="store_true", help="Make asserts verbose")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
