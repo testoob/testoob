@@ -36,16 +36,16 @@ OK$
     def testSuccesfulRunVerbose(self):
         args = _testoob_args(options=["-v"], tests=["CaseDigits"])
         regex = r"""
-test0 \(.*suites\.CaseDigits\.test0\) \.\.\. ok
-test1 \(.*suites\.CaseDigits\.test1\) \.\.\. ok
-test2 \(.*suites\.CaseDigits\.test2\) \.\.\. ok
-test3 \(.*suites\.CaseDigits\.test3\) \.\.\. ok
-test4 \(.*suites\.CaseDigits\.test4\) \.\.\. ok
-test5 \(.*suites\.CaseDigits\.test5\) \.\.\. ok
-test6 \(.*suites\.CaseDigits\.test6\) \.\.\. ok
-test7 \(.*suites\.CaseDigits\.test7\) \.\.\. ok
-test8 \(.*suites\.CaseDigits\.test8\) \.\.\. ok
-test9 \(.*suites\.CaseDigits\.test9\) \.\.\. ok
+test0 \(.*suites\.CaseDigits\.test0\) \.\.\. OK
+test1 \(.*suites\.CaseDigits\.test1\) \.\.\. OK
+test2 \(.*suites\.CaseDigits\.test2\) \.\.\. OK
+test3 \(.*suites\.CaseDigits\.test3\) \.\.\. OK
+test4 \(.*suites\.CaseDigits\.test4\) \.\.\. OK
+test5 \(.*suites\.CaseDigits\.test5\) \.\.\. OK
+test6 \(.*suites\.CaseDigits\.test6\) \.\.\. OK
+test7 \(.*suites\.CaseDigits\.test7\) \.\.\. OK
+test8 \(.*suites\.CaseDigits\.test8\) \.\.\. OK
+test9 \(.*suites\.CaseDigits\.test9\) \.\.\. OK
 
 ----------------------------------------------------------------------
 Ran 10 tests in \d\.\d+s
@@ -72,9 +72,9 @@ FAILED \(failures=1\)$
     def testRegex(self):
         args = _testoob_args(options=["-v", "--regex=A|D|J"], tests=["CaseLetters"])
         regex=r"""
-testA \(.*suites\.CaseLetters\.testA\) \.\.\. ok
-testD \(.*suites\.CaseLetters\.testD\) \.\.\. ok
-testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. ok
+testA \(.*suites\.CaseLetters\.testA\) \.\.\. OK
+testD \(.*suites\.CaseLetters\.testD\) \.\.\. OK
+testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. OK
 """.strip()
 
         testoob.testing.command_line(args=args, expected_error_regex=regex)
@@ -82,7 +82,7 @@ testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. ok
     def testVassertSimple(self):
         args = _testoob_args(options=["--regex=CaseDigits.test0", "--vassert"])
         regex = r"""
-test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
+test0 \(suites\.CaseDigits\.test0\) \.\.\. OK
   \[ PASSED \(assertEquals\) first: "00" second: "00" \]
 
 ----------------------------------------------------------------------
@@ -93,7 +93,7 @@ test0 \(suites\.CaseDigits\.test0\) \.\.\. ok
         args = _testoob_args(options=["--regex=MoreTests.test.*FormatString",
                                      "--vassert"])
         regex = r"""
-test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
+test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
   \[ PASSED \(assertEquals\) first: "%s" second: "%s" \]
 
 ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
         args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
                             options=["-v", "--immediate"])
         # Check that the fail message appears before testSuccess is run
-        regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*ok"
+        regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*OK"
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testLaunchingPdb(self):
@@ -195,8 +195,8 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. ok
     def testGlob(self):
         args = _testoob_args(options=["-v", "--glob=*Database*"], tests=["CaseNames"])
         regex=r"""
-testDatabaseConnections \(.*suites\.CaseNames\.testDatabaseConnections\) \.\.\. ok
-testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. ok
+testDatabaseConnections \(.*suites\.CaseNames\.testDatabaseConnections\) \.\.\. OK
+testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. OK
 .*Ran 2 tests
 """.strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
