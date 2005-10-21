@@ -155,6 +155,7 @@ class TextStreamReporter(BaseReporter):
         self.vassert = verbosity == 3
         self.immediate = immediate
         self.descriptions = descriptions
+        self.multiLineOutput = False
 
     def startTest(self, test):
         BaseReporter.startTest(self, test)
@@ -165,34 +166,34 @@ class TextStreamReporter(BaseReporter):
     def addSuccess(self, test):
         BaseReporter.addSuccess(self, test)
         if self.showAll:
-            self._writeln(self._decorateSuccess("ok"))
+            self._write("\n" * self.multiLineOutput)
+            self._writeln(self._decorateSuccess("OK"))
         elif self.dots:
             self._write(self._decorateSuccess('.'))
-        if self.vassert and not self.immediate:
-            self._printVasserts()
-        self.vasserts = []
 
     def addError(self, test, err):
         BaseReporter.addError(self, test, err)
         if self.showAll:
+            self._write("\n" * self.multiLineOutput)
             self._writeln(self._decorateFailure("ERROR"))
         elif self.dots:
             self._write(self._decorateFailure('E'))
         if self.immediate:
             self._immediatePrint(test, err, "ERROR")
-        elif self.vassert:
-            self._printVasserts()
-        self.vasserts = []
 
     def addFailure(self, test, err):
         BaseReporter.addFailure(self, test, err)
         if self.showAll:
+            self._write("\n" * self.multiLineOutput)
             self._writeln(self._decorateFailure("FAIL"))
         elif self.dots:
             self._write(self._decorateFailure('F'))
         if self.immediate:
             self._immediatePrint(test, err, "FAIL")
-        elif self.vassert:
+
+    def stopTest(self, test):
+        BaseReporter.stopTest(self, test)
+        if self.vassert and not self.immediate:
             self._printVasserts()
         self.vasserts = []
 
@@ -224,7 +225,8 @@ class TextStreamReporter(BaseReporter):
     def addVassert(self, msg, sign):
         BaseReporter.addVassert(self, msg, sign)
         if self.immediate:
-            self._writeln("\n  " + self._vassertMessage(msg, sign))
+            self._write("\n  " + self._vassertMessage(msg, sign))
+            self.multiLineOutput = True
 
     def _printResults(self):
         testssuffix = self.testsRun > 1 and "s" or ""
