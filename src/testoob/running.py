@@ -120,8 +120,12 @@ class ListingRunner(BaseRunner):
         """Store the info about each fixture, to show them later.
         """
         import sys
+        if sys.modules.has_key(fixture.__module__):
+            module_filename = sys.modules[fixture.__module__].__file__
+        else:
+            module_filename = "unknown file"
         self.fixture_infos.setdefault(fixture.__module__, {
-                "filename": sys.modules[fixture.__module__].__file__,
+                "filename": module_filename,
                 "classes": {}
                 })
         mod = self.fixture_infos[fixture.__module__]
