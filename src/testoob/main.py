@@ -23,6 +23,7 @@ def _arg_parser(usage):
 
     formatter=optparse.TitledHelpFormatter(max_help_position=30)
     p = optparse.OptionParser(usage=usage, formatter=formatter)
+    p.add_option("--version", action="store_true", help="Print the version of testoob")
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
@@ -63,6 +64,12 @@ def _get_suites(suite, defaultTest, test_names):
 
 def _main(suite, defaultTest, options, test_names, parser):
 
+    if options.version:
+        from __init__ import __version__
+        print __version__
+        from sys import exit
+        exit(0)
+    
     def require_modules(option, *modules):
         missing_modules = []
         for modulename in modules:
