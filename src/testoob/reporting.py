@@ -155,10 +155,10 @@ class TextStreamReporter(BaseReporter):
         self.vassert = verbosity == 3
         self.immediate = immediate
         self.descriptions = descriptions
-        self.multiLineOutput = False
 
     def startTest(self, test):
         BaseReporter.startTest(self, test)
+        self.multiLineOutput = False
         if self.showAll:
             self._write(self.getDescription(test))
             self._write(" ... ")
