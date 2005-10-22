@@ -51,7 +51,7 @@ class IReporter:
         "Called when a test has completed successfully"
         pass
 
-    def addVassert(self, msg, state):
+    def addAssert(self, test, assertName, varList, isPassed):
         "Called when an assert was made"
         pass
 
@@ -101,7 +101,7 @@ class BaseReporter(IReporter):
         self.testsRun = 0
         self.failures = []
         self.errors = []
-        self.vasserts = []
+        self.asserts = {}
 
     def start(self):
         self.start_time = _time.time()
@@ -112,6 +112,7 @@ class BaseReporter(IReporter):
 
     def startTest(self, test):
         self.testsRun += 1
+        self.asserts[test] = []
 
     def stopTest(self, test):
         pass
@@ -125,8 +126,8 @@ class BaseReporter(IReporter):
     def addSuccess(self, test):
         pass
 
-    def addVassert(self, msg, state):
-        self.vasserts.append((msg, state))
+    def addAssert(self, test, assertName, varList, state):
+        self.asserts[test] += [(assertName, varList, state)]
 
     def _wasSuccessful(self):
         "Tells whether or not this result was a success"
@@ -194,16 +195,17 @@ class TextStreamReporter(BaseReporter):
     def stopTest(self, test):
         BaseReporter.stopTest(self, test)
         if self.vassert and not self.immediate:
-            self._printVasserts()
-        self.vasserts = []
+            self._printVasserts(test)
 
-    def _vassertMessage(self, msg, sign):
-        decoratedSign = self._decorateSign(sign)
+    def _vassertMessage(self, assertName, varList, isPassed):
+        msg = "(" + assertName + ") "
+        msg += " ".join([name + ": \"" + str(value) + "\"" for name, value in varList])
+        decoratedSign = self._decorateSign(isPassed)
         return "[ %(decoratedSign)s %(msg)s ]" % vars()
 
-    def _printVasserts(self):
-        for msg, sign in self.vasserts:
-            self._writeln("  " + self._vassertMessage(msg, sign))
+    def _printVasserts(self, test):
+        for assertName, varList, isPassed in self.asserts[test]:
+            self._writeln("  " + self._vassertMessage(assertName, varList, isPassed))
 
     def _immediatePrint(self, test, error, flavour):
         if self.dots:
@@ -222,10 +224,10 @@ class TextStreamReporter(BaseReporter):
         self._writeln(self.separator2)
         self._printResults()
 
-    def addVassert(self, msg, sign):
-        BaseReporter.addVassert(self, msg, sign)
-        if self.immediate:
-            self._write("\n  " + self._vassertMessage(msg, sign))
+    def addAssert(self, test, assertName, varList, isPassed):
+        BaseReporter.addAssert(self, test, assertName, varList, isPassed)
+        if self.immediate and self.vassert:
+            self._write("\n  " + self._vassertMessage(assertName, varList, isPassed))
             self.multiLineOutput = True
 
     def _printResults(self):
@@ -244,13 +246,11 @@ class TextStreamReporter(BaseReporter):
 
             self._writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
 
-    def _decorateSign(self, sign):
-        if sign == '+':
+    def _decorateSign(self, isPassed):
+        if isPassed:
             return self._decorateSuccess("PASSED")
-        elif sign == '-':
-            return self._decorateFailure("FAILED")
         else:
-            raise AttributeError("Invalid sign '" + sign + "'")
+            return self._decorateFailure("FAILED")
 
     def _decorateFailure(self, errString):
         return errString
@@ -589,6 +589,7 @@ ReporterProxy = ObserverProxy([
     "addError",
     "addFailure",
     "addSuccess",
+    "addAssert",
 ])
 
 

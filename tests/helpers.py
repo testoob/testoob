@@ -46,6 +46,8 @@ class ReporterWithMemory:
         self._append_test(self.failures, test)
     def addSuccess(self, test):
         self._append_test(self.successes, test)
+    def addAssert(self, test, assertName, varList, isPassed):
+        pass
 
     def __str__(self):
         attrs = ("started","successes","errors","failures","finished","stdout","stderr")

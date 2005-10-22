@@ -52,20 +52,25 @@ def apply_runner(suites, runner, interval=None, extraction_decorators = None):
 
 class BaseRunner(object):
     """default implementations of setting a reporter and done()"""
+    def __init__(self):
+        from asserter import Asserter
+        self._Asserter = Asserter
+
     def _set_reporter(self, reporter):
         self._reporter = reporter
         self._reporter.start()
     reporter = property(lambda self:self._reporter, _set_reporter)
 
     def run(self, fixture):
-        # just to remind you :-)
-        raise NotImplementedError
+        # Let the assert functions know it's reporter.
+        self._Asserter().set_reporter(fixture, self._reporter)
 
     def done(self):
         self.reporter.done()
 
 class SimpleRunner(BaseRunner):
     def run(self, fixture):
+        BaseRunner.run(self, fixture)
         fixture(self._reporter)
 
 class ThreadedRunner(BaseRunner):
@@ -81,6 +86,7 @@ class ThreadedRunner(BaseRunner):
         self.pool.start()
 
     def run(self, fixture):
+        BaseRunner.run(self, fixture)
         self.pool.dispatch(None, fixture, self.reporter)
 
     def done(self):
@@ -95,6 +101,7 @@ class ProcessedRunner(BaseRunner):
         self._helper = ProcessedRunnerHelper(max_processes)
 
     def run(self, fixture):
+        BaseRunner.run(self, fixture)
         self._helper.register_fixture(fixture)
 
     def done(self):
@@ -110,6 +117,10 @@ def run(suite=None, suites=None, **kwargs):
 
     if suites is None:
         suites = [suite]
+
+    # Make every assert call the "addAssert" method of a reporter.
+    from asserter import Asserter
+    Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")
 
     run_suites(suites, **kwargs)
 
@@ -139,7 +150,7 @@ def run_suites(suites, reporters, runner=None, runDebug=None, **kwargs):
     "Run the test suites"
     runner = runner or SimpleRunner()
     runner.reporter = _create_reporter_proxy(reporters, runDebug)
-
+    
     apply_runner(suites=suites,
                  runner=runner,
                  **kwargs)
@@ -180,13 +191,6 @@ def text_run(*args, **kwargs):
             immediate=immediate,
             descriptions=1,
             stream=sys.stderr)
-
-    if verbosity == 3:
-        import verbalize
-        verbalize.make_methods_verbose("unittest",
-                                       "TestCase",
-                                       "(^assert)|(^fail[A-Z])|(^fail$)",
-                                       reporter_instance)
 
     kwargs["reporters"].append(reporter_instance)
 
