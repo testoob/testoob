@@ -39,6 +39,13 @@ def _arg_parser(usage):
     p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
 
+    options, parameters = p.parse_args()
+    if options.version:
+        from __init__ import __version__
+        print __version__
+        from sys import exit
+        exit(0)
+    
     return p
 
 def _get_verbosity(options):
@@ -64,12 +71,6 @@ def _get_suites(suite, defaultTest, test_names):
 
 def _main(suite, defaultTest, options, test_names, parser):
 
-    if options.version:
-        from __init__ import __version__
-        print __version__
-        from sys import exit
-        exit(0)
-    
     def require_modules(option, *modules):
         missing_modules = []
         for modulename in modules:
