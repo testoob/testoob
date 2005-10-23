@@ -15,6 +15,7 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
                 successes = suites.all_test_names,
                 failures  = [],
                 errors    = [],
+                asserts   = suites.all_asserts,
                 stdout    = "",
                 stderr    = "",
             )
@@ -27,6 +28,11 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
                 successes = ["testB", "testC", "test6"],
                 failures  = [],
                 errors    = [],
+                asserts   = {
+                                "testB": ("assertEquals", True),
+                                "testC": ("assertEquals", True),
+                                "test6": ("assertEquals", True),
+                            },
                 stdout    = "",
                 stderr    = "",
             )
@@ -39,6 +45,7 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = [],
                 errors    = [],
+                asserts   = {},
                 stdout    = "",
                 stderr    = "",
             )

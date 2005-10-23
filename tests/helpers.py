@@ -23,6 +23,7 @@ class ReporterWithMemory:
         self.errors = []
         self.failures = []
         self.finished = []
+        self.asserts = {}
         self.stdout = ""
         self.stderr = ""
 
@@ -47,7 +48,7 @@ class ReporterWithMemory:
     def addSuccess(self, test):
         self._append_test(self.successes, test)
     def addAssert(self, test, assertName, varList, isPassed):
-        pass
+        self.asserts[str(test).split()[0]] = (assertName, isPassed)
 
     def __str__(self):
         attrs = ("started","successes","errors","failures","finished","stdout","stderr")

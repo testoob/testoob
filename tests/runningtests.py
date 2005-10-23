@@ -10,6 +10,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = suites.all_test_names,
                 failures  = [],
                 errors    = [],
+                asserts   = suites.all_asserts,
                 stdout    = "",
                 stderr    = "",
             )
@@ -22,6 +23,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = ["testFailure"],
                 errors    = [],
+                asserts   = {"testFailure": ("fail", False)},
                 stdout    = "",
                 stderr    = "",
             )
@@ -34,6 +36,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = [],
                 errors    = ["testError"],
+                asserts   = {},
                 stdout    = "",
                 stderr    = "",
             )
@@ -46,6 +49,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = ["testSuccess"],
                 failures  = ["testFailure"],
                 errors    = ["testError"],
+                asserts   = {"testFailure": ("fail", False)},
                 stdout    = "",
                 stderr    = "",
             )
@@ -58,6 +62,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = [],
                 errors    = [],
+                asserts   = {},
                 stdout    = "",
                 stderr    = "",
             )
