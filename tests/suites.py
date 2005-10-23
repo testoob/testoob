@@ -77,6 +77,11 @@ class MoreTests(unittest.TestCase):
     def testAssertEqualWithFormatString(self):
         self.assertEquals("%s", "%s")
 
+class CaseDocstring(unittest.TestCase):
+    def testPass(self):
+        "this test always passes"
+        pass
+
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 

@@ -206,5 +206,30 @@ testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. OK
         regex=r"Ran 70 tests"
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testList(self):
+        args = _testoob_args(options=["--list"], tests=["CaseDigits"])
+        expected="""Module: suites (unknown file)
+\tClass: CaseDigits (10 test functions)
+\t\ttest0()
+\t\ttest1()
+\t\ttest2()
+\t\ttest3()
+\t\ttest4()
+\t\ttest5()
+\t\ttest6()
+\t\ttest7()
+\t\ttest8()
+\t\ttest9()
+"""
+        testoob.testing.command_line(args=args, expected_output=expected)
+
+    def testListDocstrings(self):
+        args = _testoob_args(options=["--list"], tests=["CaseDocstring"])
+        expected="""Module: suites (unknown file)
+\tClass: CaseDocstring (1 test functions)
+\t\ttestPass() - this test always passes
+"""
+        testoob.testing.command_line(args=args, expected_output=expected)
+
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()

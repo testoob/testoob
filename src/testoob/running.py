@@ -152,7 +152,7 @@ class ListingRunner(BaseRunner):
                       (class_name, len(functions))
                 if self.num_functions < 50:
                     for func in functions:
-                        print "\t\t%s() %s" % (func[0], func[1] and "- "+func[1] or "")
+                        print "\t\t%s()%s" % (func[0], func[1] and " - "+func[1] or "")
 
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
