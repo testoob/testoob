@@ -108,51 +108,94 @@ class ProcessedRunner(BaseRunner):
         self._helper.start(self.reporter)
         BaseRunner.done(self)
 
+class _FixtureInfo:
+    def __init__(self, fixture):
+        self.fixture = fixture
+    
+    def module(self):
+        return self.fixture.__module__
+
+    def filename(self):
+        import sys
+        try:
+            return sys.modules[self.module()].__file__
+        except KeyError:
+            return "unknown file"
+
+    def classname(self):
+        return self.fixture.__class__.__name__
+
+    def funcname(self):
+        # parsing id() because the function name is a private fixture field
+        return self.fixture.id().split(".")[-1]
+
+    def docstring(self):
+        if getattr(self.fixture, self.funcname()).__doc__:
+            return getattr(self.fixture, self.funcname()).__doc__.splitlines()[0]
+        return ""
+
+    def funcinfo(self):
+        return (self.funcname(), self.docstring())
+
+class _TestHistory:
+    def __init__(self):
+        self.modules = {}
+
+    def record_fixture(self, fixture):
+        """Store the info about each fixture, to show them later.
+        """
+        fixture_info = _FixtureInfo(fixture)
+        self._class_function_list(fixture_info).append(fixture_info.funcinfo())
+
+    def get_string(self, max_functions_to_show):
+        """Show the test methods, if there are too many list the classes only.
+        """
+        result = []
+        for (module_name, module_info) in self.modules.items():
+            result.append("Module: %s (%s)" % \
+                    (module_name, module_info["filename"]))
+            for (class_name, functions) in module_info["classes"].items():
+                result.append("\tClass: %s (%d test functions)" %\
+                      (class_name, len(functions)))
+                if self._num_functions() <= max_functions_to_show:
+                    for func in functions:
+                        result.append("\t\t%s()%s" % \
+                                (func[0], func[1] and " - "+func[1] or ""))
+        return "\n".join(result)
+
+    def _module(self, fixture_info):
+        self.modules.setdefault(
+                fixture_info.module(),
+                {
+                    "filename": fixture_info.filename(),
+                    "classes": {}
+                })
+        return self.modules[fixture_info.module()]
+
+    def _class_function_list(self, fixture_info):
+        classes_dict = self._module(fixture_info)["classes"]
+        classes_dict.setdefault(fixture_info.classname(), [])
+        return classes_dict[fixture_info.classname()]
+
+    def _num_functions(self):
+        result = 0
+        for mod_info in self.modules.values():
+            for functions in mod_info["classes"].values():
+                result += len(functions)
+        return result
+
 class ListingRunner(BaseRunner):
     """Just list the test names, don't run them.
     """
     
     def __init__(self):
-        self.fixture_infos = {}
-        self.num_functions = 0
+        self.history = _TestHistory()
 
     def run(self, fixture):
-        """Store the info about each fixture, to show them later.
-        """
-        import sys
-        if sys.modules.has_key(fixture.__module__):
-            module_filename = sys.modules[fixture.__module__].__file__
-        else:
-            module_filename = "unknown file"
-        self.fixture_infos.setdefault(fixture.__module__, {
-                "filename": module_filename,
-                "classes": {}
-                })
-        mod = self.fixture_infos[fixture.__module__]
-        class_name = fixture.__class__.__name__
-        mod["classes"].setdefault(class_name, [])
-        # Getting the function name is the only thing that is not so easy, 
-        # unittest does not provide a "legal" way. So we use this hacky way
-        # reading the id() attribute.
-        func_name = fixture.id().split(".")[-1]
-        if getattr(fixture, func_name).__doc__:
-            doc = getattr(fixture, func_name).__doc__.split("\n")[0]
-        else:
-            doc = ""
-        mod["classes"][class_name].append([func_name, doc])
-        self.num_functions += 1
+        self.history.record_fixture(fixture)
 
     def done(self):
-        """Print the test methods, if there are too many list the classes only.
-        """
-        for (module_name, mod_info) in self.fixture_infos.items():
-            print "Module: %s (%s)" % (module_name, mod_info["filename"])
-            for (class_name, functions) in mod_info["classes"].items():
-                print "\tClass: %s (%d test functions)" %\
-                      (class_name, len(functions))
-                if self.num_functions < 50:
-                    for func in functions:
-                        print "\t\t%s()%s" % (func[0], func[1] and " - "+func[1] or "")
+        print self.history.get_string(max_functions_to_show=50)
 
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
