@@ -29,9 +29,9 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
                 failures  = [],
                 errors    = [],
                 asserts   = {
-                                "testB": ("assertEquals", True),
-                                "testC": ("assertEquals", True),
-                                "test6": ("assertEquals", True),
+                                "testB": ("assertEquals", None.__class__),
+                                "testC": ("assertEquals", None.__class__),
+                                "test6": ("assertEquals", None.__class__),
                             },
                 stdout    = "",
                 stderr    = "",

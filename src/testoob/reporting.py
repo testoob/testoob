@@ -51,8 +51,8 @@ class IReporter:
         "Called when a test has completed successfully"
         pass
 
-    def addAssert(self, test, assertName, varList, isPassed):
-        "Called when an assert was made"
+    def addAssert(self, test, assertName, varList, err):
+        "Called when an assert was made (if err is None, the assert passed)"
         pass
 
     ########################################
@@ -126,8 +126,8 @@ class BaseReporter(IReporter):
     def addSuccess(self, test):
         pass
 
-    def addAssert(self, test, assertName, varList, state):
-        self.asserts[test] += [(assertName, varList, state)]
+    def addAssert(self, test, assertName, varList, err):
+        self.asserts[test] += [(assertName, varList, err)]
 
     def _wasSuccessful(self):
         "Tells whether or not this result was a success"
@@ -204,8 +204,8 @@ class TextStreamReporter(BaseReporter):
         return "[ %(decoratedSign)s %(msg)s ]" % vars()
 
     def _printVasserts(self, test):
-        for assertName, varList, isPassed in self.asserts[test]:
-            self._writeln("  " + self._vassertMessage(assertName, varList, isPassed))
+        for assertName, varList, err in self.asserts[test]:
+            self._writeln("  " + self._vassertMessage(assertName, varList, (err == None)))
 
     def _immediatePrint(self, test, error, flavour):
         if self.dots:
@@ -224,10 +224,10 @@ class TextStreamReporter(BaseReporter):
         self._writeln(self.separator2)
         self._printResults()
 
-    def addAssert(self, test, assertName, varList, isPassed):
-        BaseReporter.addAssert(self, test, assertName, varList, isPassed)
+    def addAssert(self, test, assertName, varList, err):
+        BaseReporter.addAssert(self, test, assertName, varList, err)
         if self.immediate and self.vassert:
-            self._write("\n  " + self._vassertMessage(assertName, varList, isPassed))
+            self._write("\n  " + self._vassertMessage(assertName, varList, (err == None)))
             self.multiLineOutput = True
 
     def _printResults(self):

@@ -42,10 +42,13 @@ class Asserter:
                 return method(*args)
             try:
                 method(*args)
-            except:
-                self._reporters[test].addAssert(test, method_name, varList, False)
+            except Exception, e:
+                self._reporters[test].addAssert(test, method_name, varList, e)
                 raise
-            self._reporters[test].addAssert(test, method_name, varList, True)
+            # Just in case of AssertionFail is not derived from Exception.
+            except:
+                raise
+            self._reporters[test].addAssert(test, method_name, varList, None)
 
         setattr(Class, method_name, _assert_reporting_func)
 

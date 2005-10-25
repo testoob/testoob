@@ -23,7 +23,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = ["testFailure"],
                 errors    = [],
-                asserts   = {"testFailure": ("fail", False)},
+                asserts   = {"testFailure": ("fail", AssertionError)},
                 stdout    = "",
                 stderr    = "",
             )
@@ -49,7 +49,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = ["testSuccess"],
                 failures  = ["testFailure"],
                 errors    = ["testError"],
-                asserts   = {"testFailure": ("fail", False)},
+                asserts   = {"testFailure": ("fail", AssertionError)},
                 stdout    = "",
                 stderr    = "",
             )

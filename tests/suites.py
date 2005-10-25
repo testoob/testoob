@@ -86,7 +86,7 @@ import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 all_asserts = {}
 for test_name in all_test_names:
-    all_asserts[test_name] = ("assertEquals", True)
+    all_asserts[test_name] = ("assertEquals", None.__class__)
 
 def suite():
     result = unittest.TestSuite()
