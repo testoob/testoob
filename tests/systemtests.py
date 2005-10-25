@@ -231,5 +231,14 @@ testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. OK
 """
         testoob.testing.command_line(args=args, expected_output=expected)
 
+    def testStopOnFail(self):
+        args = _testoob_args(options=["--stop-on-fail"], tests=["CaseMixed"])
+        regex=r"""E
+======================================================================
+ERROR: testError \(suites\.CaseMixed\.testError\)
+----------------------------------------------------------------------
+"""
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()

@@ -65,6 +65,10 @@ class IReporter:
     def getDoneStatus(self):
         "Return a map of testsSuccess, testsFailed and testsErrored"
         pass
+    
+    def isSuccessful(self):
+        "Tells whether or not this result was a success"
+        pass
 
 # Constructing meaningful report strings from exception info
 
@@ -129,7 +133,7 @@ class BaseReporter(IReporter):
     def addAssert(self, test, assertName, varList, err):
         self.asserts[test] += [(assertName, varList, err)]
 
-    def _wasSuccessful(self):
+    def isSuccessful(self):
         "Tells whether or not this result was a success"
         return len(self.failures) == len(self.errors) == 0
     
@@ -235,7 +239,7 @@ class TextStreamReporter(BaseReporter):
         self._writeln("Ran %d test%s in %.3fs" %
                 (self.testsRun, testssuffix, self.total_time))
 
-        if self._wasSuccessful():
+        if self.isSuccessful():
             self._writeln(self._decorateSuccess("OK"))
         else:
             strings = []
@@ -593,6 +597,7 @@ ReporterProxy = ObserverProxy([
     "addFailure",
     "addSuccess",
     "addAssert",
+    "isSuccessful",
 ])
 
 

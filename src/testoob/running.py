@@ -22,7 +22,6 @@ from extracting import suite_iter as _suite_iter
 # apply_runner
 ###############################################################################
 from extracting import full_extractor as _full_extractor
-import time
 
 def apply_decorators(callable, decorators):
     "Wrap the callable in all the decorators"
@@ -31,19 +30,24 @@ def apply_decorators(callable, decorators):
         result = decorator(result)
     return result
 
-def apply_runner(suites, runner, interval=None, extraction_decorators = None):
+def apply_runner(suites, runner, interval=None, stop_on_fail=False, extraction_decorators = None):
     """Runs the suite."""
 
     if extraction_decorators is None: extraction_decorators = []
     test_extractor = apply_decorators(_full_extractor, extraction_decorators)
 
-    first = True
-    for suite in _suite_iter(suites):
-        for fixture in test_extractor(suite):
-            if not first and interval is not None:
-                time.sleep(interval)
-            first = False
-            runner.run(fixture)
+    def running_loop():
+        import time
+        first = True
+        for suite in _suite_iter(suites):
+            for fixture in test_extractor(suite):
+                if not first and interval is not None:
+                    time.sleep(interval)
+                first = False
+                if not runner.run(fixture) and stop_on_fail:
+                    return
+
+    running_loop()
     runner.done()
 
 ###############################################################################
@@ -72,6 +76,7 @@ class SimpleRunner(BaseRunner):
     def run(self, fixture):
         BaseRunner.run(self, fixture)
         fixture(self._reporter)
+        return self._reporter.isSuccessful()
 
 class ThreadedRunner(BaseRunner):
     """Run tests using a threadpool.

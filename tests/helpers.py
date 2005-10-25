@@ -49,6 +49,8 @@ class ReporterWithMemory:
         self._append_test(self.successes, test)
     def addAssert(self, test, assertName, varList, err):
         self.asserts[str(test).split()[0]] = (assertName, err.__class__)
+    def isSuccessful(self):
+        pass
 
     def __str__(self):
         attrs = ("started","successes","errors","failures","finished","stdout","stderr")
