@@ -207,10 +207,6 @@ def run(suite=None, suites=None, **kwargs):
     if suites is None:
         suites = [suite]
 
-    # Make every assert call the "addAssert" method of a reporter.
-    from asserter import Asserter
-    Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")
-
     run_suites(suites, **kwargs)
 
 def _apply_debug(reporter, runDebug):
