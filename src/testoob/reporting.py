@@ -554,6 +554,7 @@ class HTMLReporter(XSLTReporter):
 def ObserverProxy(method_names):
     """
     Create a thread-safe proxy that forwards methods to a group of observers.
+    Each method can return a boolean value, the proxy will return the '&' between them.
     See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/413701.
     """
     class Proxy:
@@ -569,11 +570,13 @@ def ObserverProxy(method_names):
     def create_method_proxy(method_name):
         def method_proxy(self, *args, **kwargs):
             self.lock.acquire()
+            retVal = True
             try:
                 for observer in self.observers:
-                    getattr(observer, method_name)(*args, **kwargs)
+                    retVal &= bool(getattr(observer, method_name)(*args, **kwargs))
             finally:
                 self.lock.release()
+            return retVal
         return method_proxy
 
     for method_name in method_names:
