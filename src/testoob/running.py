@@ -49,6 +49,7 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False, extraction_d
 
     running_loop()
     runner.done()
+    return runner.isSuccessful()
 
 ###############################################################################
 # Runners
@@ -71,6 +72,9 @@ class BaseRunner(object):
 
     def done(self):
         self.reporter.done()
+
+    def isSuccessful(self):
+        return self.reporter.isSuccessful()
 
 class SimpleRunner(BaseRunner):
     def run(self, fixture):
@@ -212,7 +216,7 @@ def run(suite=None, suites=None, **kwargs):
     if suites is None:
         suites = [suite]
 
-    run_suites(suites, **kwargs)
+    return run_suites(suites, **kwargs)
 
 def _apply_debug(reporter, runDebug):
     if runDebug is None:
@@ -241,9 +245,9 @@ def run_suites(suites, reporters, runner=None, runDebug=None, **kwargs):
     runner = runner or SimpleRunner()
     runner.reporter = _create_reporter_proxy(reporters, runDebug)
     
-    apply_runner(suites=suites,
-                 runner=runner,
-                 **kwargs)
+    return apply_runner(suites=suites,
+                        runner=runner,
+                        **kwargs)
 
 ###############################################################################
 # text_run
@@ -284,6 +288,5 @@ def text_run(*args, **kwargs):
 
     kwargs["reporters"].append(reporter_instance)
 
-    run(*args, **kwargs)
-    return reporter_instance.getDoneStatus()
+    return run(*args, **kwargs)
 
