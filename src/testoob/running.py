@@ -30,12 +30,26 @@ def apply_decorators(callable, decorators):
         result = decorator(result)
     return result
 
-def apply_runner(suites, runner, interval=None, stop_on_fail=False, extraction_decorators = None):
+def apply_runner(suites, runner, interval=None, stop_on_fail=False,
+                 extraction_decorators = None, timeout=0):
     """Runs the suite."""
-
     if extraction_decorators is None: extraction_decorators = []
     test_extractor = apply_decorators(_full_extractor, extraction_decorators)
 
+    class Alarmed_fixture:
+        def __init__(self, fixture):
+            from signal import alarm
+            self.alarm = alarm
+            self.fixture = fixture
+        
+        def __call__(self, *args):
+            self.alarm(timeout) # Set timeout for a fixture.
+            self.fixture(*args)
+            self.alarm(0) # Release the alarm that was set.
+
+        def get_fixture(self):
+            return self.fixture
+    
     def running_loop():
         import time
         first = True
@@ -44,7 +58,7 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False, extraction_d
                 if not first and interval is not None:
                     time.sleep(interval)
                 first = False
-                if not runner.run(fixture) and stop_on_fail:
+                if not runner.run(Alarmed_fixture(fixture)) and stop_on_fail:
                     return
 
     running_loop()
@@ -68,7 +82,7 @@ class BaseRunner(object):
 
     def run(self, fixture):
         # Let the assert functions know it's reporter.
-        self._Asserter().set_reporter(fixture, self._reporter)
+        self._Asserter().set_reporter(fixture.get_fixture(), self._reporter)
 
     def done(self):
         self.reporter.done()
@@ -201,7 +215,7 @@ class ListingRunner(BaseRunner):
         self.history = _TestHistory()
 
     def run(self, fixture):
-        self.history.record_fixture(fixture)
+        self.history.record_fixture(fixture.get_fixture())
 
     def done(self):
         print self.history.get_string(max_functions_to_show=50)

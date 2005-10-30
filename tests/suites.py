@@ -40,6 +40,18 @@ class CaseDigits(unittest.TestCase):
     def test8(self): self.assertEquals("8" + "8", "88")
     def test9(self): self.assertEquals("9" + "9", "99")
 
+class CaseSlow(unittest.TestCase):
+    def testSleep(self):
+        import time
+        time.sleep(2)
+        self.assert_(True)
+    def testBuisy(self):
+        import time
+        start = time.time()
+        while time.time() - start < 2:
+            time.sleep(1)
+        self.assert_(True)
+
 class CaseNames(unittest.TestCase):
     def testDatabaseError(self): pass
     def testDatabaseConnections(self): pass

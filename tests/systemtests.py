@@ -240,5 +240,25 @@ ERROR: testError \(suites\.CaseMixed\.testError\)
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
+    def testTimeOut(self):
+        args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
+        regex=r"""FF
+======================================================================
+FAIL: testBuisy \(suites\.CaseSlow\.testBuisy\)
+----------------------------------------------------------------------
+.*
+AssertionError: Timeout
+
+======================================================================
+FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
+----------------------------------------------------------------------
+.*
+AssertionError: Timeout
+
+----------------------------------------------------------------------
+Ran 2 tests in 2\.\d+s
+"""
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
