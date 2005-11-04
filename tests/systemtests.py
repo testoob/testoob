@@ -117,13 +117,16 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
                                      expected_rc=1)
 
     def testXMLReporting(self):
+        try:
+            from elementtree.ElementTree import parse
+        except ImportError:
+            return # TODO: raise Skip
         import tempfile
         xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
         args = _testoob_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
 
         try:
             testoob.testing.command_line(args=args, expected_error_regex="FAILED", expected_rc=None)
-            from elementtree.ElementTree import parse
             root = parse(xmlfile).getroot()
 
             # testsuites tag
