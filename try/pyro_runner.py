@@ -60,7 +60,13 @@ class PyroRunner(running.BaseRunner):
 	def done(self):
 		self.queue.put(NoMoreTests())
 
-		create_pyro_server(self.queue)
+		import os
+		if os.fork() == 0:
+			# child
+			client_code()
+		else:
+			# parent
+			create_pyro_server(self.queue)
 
 		print "All done :-)" # XXX
 		running.BaseRunner.done(self)
@@ -96,12 +102,12 @@ def client_code():
 		if isinstance(id, NoMoreTests):
 			break
 		print "client: id=%s" % id
-		#fixture = fixture_ids[id]
-		#fixture(reporter)
+		fixture = fixture_ids[id]
+		fixture(reporter)
 	
 	print "client: done"
 
-def server_code():
+def main():
 	print "server started" # XXX
 	import suite, sys
 	from testoob import reporting
@@ -112,9 +118,4 @@ def server_code():
 	running.run_suites(suites=[suite], reporters=[reporter], runner=PyroRunner())
 
 if __name__ == "__main__":
-	import os
-	if os.fork() == 0:
-		# child
-		client_code()
-	else:
-		server_code()
+	main()
