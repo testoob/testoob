@@ -7,33 +7,42 @@ class NoMoreTests: pass # mark the end of the queue
 
 fixture_ids = {}
 
+def create_pyro_server(queue):
+	Pyro.core.initServer()
+
+	# TODO: create our own nameserver in another process, see pyro-ns's
+	#       code
+	#    -OR-
+	#       don't use a nameserver, publish the server on a specific port
+	#       and have the clients connect to it
+	locator = Pyro.naming.NameServerLocator()
+	ns = locator.getNS()
+
+	daemon = Pyro.core.Daemon()
+	daemon.useNameServer(ns)
+
+	pyro_queue = Pyro.core.ObjBase()
+	pyro_queue.delegateTo(queue)
+
+	daemon.connect(pyro_queue, ":testoob:test_queue")
+
+	print "Server ready" # XXX
+
+	# == running
+	print "Waiting for client" # XXX
+	daemon.requestLoop(condition=lambda:not queue.empty())
+
+	# == cleanup
+
+	print "Cleaning up" # XXX
+	daemon.shutdown() # TODO
+
 from testoob import running
 class PyroRunner(running.BaseRunner):
 	def __init__(self):
 		running.BaseRunner.__init__(self)
-
-		Pyro.core.initServer()
-
-		# TODO: create our own nameserver in another process, see pyro-ns's
-		#       code
-		#    -OR-
-		#       don't use a nameserver, publish the server on a specific port
-		#       and have the clients connect to it
-		locator = Pyro.naming.NameServerLocator()
-		ns = locator.getNS()
-
-		self.daemon = Pyro.core.Daemon()
-		self.daemon.useNameServer(ns)
-
 		from Queue import Queue
 		self.queue = Queue()
-
-		self.pyro_queue = Pyro.core.ObjBase()
-		self.pyro_queue.delegateTo(self.queue)
-
-		self.daemon.connect(self.pyro_queue, ":testoob:test_queue")
-
-		print "Server ready" # XXX
 
 	def _get_id(self):
 		try:
@@ -50,15 +59,8 @@ class PyroRunner(running.BaseRunner):
 
 	def done(self):
 		self.queue.put(NoMoreTests())
-		# == running
-		# TODO: run in run()? This way tests can run during the setup
-		print "Waiting for client" # XXX
-		self.daemon.requestLoop(condition=lambda:not self.queue.empty())
 
-		# == cleanup
-
-		print "Cleaning up" # XXX
-		self.daemon.shutdown() # TODO ???
+		create_pyro_server(self.queue)
 
 		print "All done :-)" # XXX
 		running.BaseRunner.done(self)
@@ -69,7 +71,6 @@ def client_code():
 	time.sleep(3)
 	import Pyro.errors
 	Pyro.core.initClient()
-
 
 	locator = Pyro.naming.NameServerLocator()
 	ns = locator.getNS()
@@ -87,14 +88,16 @@ def client_code():
 
 	queue = uri.getProxy()
 
-	#from testoob import reporting
-	#reporter = reporting.TextStreamReporter(sys.stdout)
+	from testoob import reporting
+	reporter = reporting.TextStreamReporter(sys.stdout, 0, 1)
 
 	while True:
-		item = queue.get()
-		if isinstance(item, NoMoreTests):
-			return
-		print "client:", item
+		id = queue.get()
+		if isinstance(id, NoMoreTests):
+			break
+		print "client: id=%s" % id
+		#fixture = fixture_ids[id]
+		#fixture(reporter)
 	
 	print "client: done"
 
