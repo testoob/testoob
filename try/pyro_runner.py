@@ -3,21 +3,9 @@ import Pyro
 import Pyro.core
 import Pyro.naming
 
+class NoMoreTests: pass # mark the end of the queue
 
-fixture_dict = {}
-
-class StrQueue:
-	def __init__(self):
-		self._queue = []
-		self._ready = False
-		self._done = False
-	def push(self, obj): self._queue.append(obj)
-	def pop(self):return str(self._queue.pop())
-	def empty(self): return len(self._queue) == 0
-	def ready(self): return self._ready
-	def mark_ready(self): self._ready = True
-	def done(self): return self._done
-	def mark_done(self): self._done = True
+fixture_ids = {}
 
 from testoob import running
 class PyroRunner(running.BaseRunner):
@@ -37,24 +25,31 @@ class PyroRunner(running.BaseRunner):
 		self.daemon = Pyro.core.Daemon()
 		self.daemon.useNameServer(ns)
 
-		self.queue = StrQueue()
+		from Queue import Queue
+		self.queue = Queue()
 
-		self.pyro_queue = Pyro.core.SynchronizedObjBase()
+		self.pyro_queue = Pyro.core.ObjBase()
 		self.pyro_queue.delegateTo(self.queue)
 
 		self.daemon.connect(self.pyro_queue, ":testoob:test_queue")
 
 		print "Server ready" # XXX
 
+	def _get_id(self):
+		try:
+			self.current_id += 1
+		except AttributeError:
+			self.current_id = 0
+		return self.current_id
 
 	def run(self, fixture):
-		print "Registering %r" % fixture # XXX
-		self.queue.push(fixture) # register fixture
-		self.queue.mark_ready()
+		id = self._get_id()
+		print "Registering id %02d ==> %r" % (id, fixture) # XXX
+		fixture_ids[id] = fixture
+		self.queue.put(id) # register fixture id
 
 	def done(self):
-		self.queue.mark_done()
-
+		self.queue.put(NoMoreTests())
 		# == running
 		# TODO: run in run()? This way tests can run during the setup
 		print "Waiting for client" # XXX
@@ -95,15 +90,13 @@ def client_code():
 	#from testoob import reporting
 	#reporter = reporting.TextStreamReporter(sys.stdout)
 
-	def wait_for_queue():
-		print "client: waiting for queue readiness"
-		while not queue.ready():
-			time.sleep(0.1)
-		print "client: queue is ready"
-	wait_for_queue()
-
-	while not queue.empty() and queue.done():
-		print "client:", queue.pop()
+	while True:
+		item = queue.get()
+		if isinstance(item, NoMoreTests):
+			return
+		print "client:", item
+	
+	print "client: done"
 
 def server_code():
 	print "server started" # XXX
