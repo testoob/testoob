@@ -1,4 +1,4 @@
-import sys; sys.insert(0, "../src") # for testoob
+import sys; sys.path.insert(0, "../src") # for testoob
 import time
 import Pyro
 import Pyro.core

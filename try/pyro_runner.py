@@ -1,4 +1,4 @@
-import sys; sys.insert(0, "../src") # for testoob
+import sys; sys.path.insert(0, "../src") # for testoob
 import Pyro
 import Pyro.core
 import Pyro.naming
@@ -9,7 +9,7 @@ class StrQueue:
 		self._ready = False
 		self._done = False
 	def push(self, obj): self._queue.append(obj)
-	def pop(self):return str(self._queue.pop())
+	def pop(self):return self._queue.pop()
 	def empty(self): return len(self._queue) == 0
 	def ready(self): return self._ready
 	def mark_ready(self): self._ready = True
