@@ -1,7 +1,9 @@
+# vim:et:sw=4 ts=4
 def trace():
-    import sys, os
+    import sys, os, time
     calling_function_name = sys._getframe(1).f_code.co_name
     print "pid=%s, %r" % (os.getpid(), calling_function_name)
+    time.sleep(0.7)
     
 import unittest
 class BlaTest(unittest.TestCase):
@@ -24,7 +26,7 @@ class BlaTest(unittest.TestCase):
     def testQ(self): trace()
 
 def suite():
-	return unittest.makeSuite(BlaTest)
+    return unittest.makeSuite(BlaTest)
     
 if __name__ == "__main__":
     unittest.main()
