@@ -2,19 +2,32 @@ import sys; sys.path.insert(0, "../src") # for testoob
 import Pyro
 import Pyro.core
 import Pyro.naming
+import os
 
 class NoMoreTests: pass # mark the end of the queue
 
 fixture_ids = {}
 
+class NameServerManager:
+	"Manage a Pyro NameServer (create/destroy)"
+	def __init__(self):
+		pid = os.fork()
+		if pid == 0:
+			self.create_server()
+		else:
+			self.pid = pid
+	def create_server(self):
+		import Pyro.naming
+		Pyro.naming.main([])
+	def destroy(self):
+		from signal import SIGTERM
+		os.kill(self.pid, SIGTERM)
+
+name_server_manager = NameServerManager()
+
 def create_pyro_server(queue):
 	Pyro.core.initServer()
 
-	# TODO: create our own nameserver in another process, see pyro-ns's
-	#       code
-	#    -OR-
-	#       don't use a nameserver, publish the server on a specific port
-	#       and have the clients connect to it
 	locator = Pyro.naming.NameServerLocator()
 	ns = locator.getNS()
 
@@ -36,6 +49,8 @@ def create_pyro_server(queue):
 
 	print "Cleaning up" # XXX
 	daemon.shutdown() # TODO
+	
+	name_server_manager.destroy()
 
 from testoob import running
 class PyroRunner(running.BaseRunner):
@@ -60,7 +75,6 @@ class PyroRunner(running.BaseRunner):
 	def done(self):
 		self.queue.put(NoMoreTests())
 
-		import os
 		if os.fork() == 0:
 			# child
 			client_code()
