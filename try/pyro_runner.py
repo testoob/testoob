@@ -8,27 +8,6 @@ class NoMoreTests: pass # mark the end of the queue
 
 fixture_ids = {}
 
-def create_pyro_server(queue):
-    Pyro.core.initServer()
-
-    daemon = Pyro.core.Daemon()
-
-    pyro_queue = Pyro.core.ObjBase()
-    pyro_queue.delegateTo(queue)
-
-    daemon.connect(pyro_queue, ":testoob:test_queue")
-
-    print "Server ready" # XXX
-
-    # == running
-    print "Waiting for client" # XXX
-    daemon.requestLoop(condition=lambda:not queue.empty())
-
-    # == cleanup
-
-    print "Cleaning up" # XXX
-    daemon.shutdown() # TODO
-
 from testoob import running
 class PyroRunner(running.BaseRunner):
     def __init__(self):
@@ -52,34 +31,44 @@ class PyroRunner(running.BaseRunner):
     def done(self):
         self.queue.put(NoMoreTests())
 
-        if os.fork() == 0:
-            # child
+        if os.fork() == 0: # child
             client_code()
-        else:
-            # parent
-            create_pyro_server(self.queue)
+            return
+        else: # parent
+            server_code(self.queue)
 
-        print "All done :-)" # XXX
+        print "PyroRunner: done" # XXX
         running.BaseRunner.done(self)
 
+def server_code(queue):
+    print "server: started" # XXX
+    Pyro.core.initServer()
+
+    daemon = Pyro.core.Daemon()
+
+    pyro_queue = Pyro.core.ObjBase()
+    pyro_queue.delegateTo(queue)
+
+    daemon.connect(pyro_queue, ":testoob:test_queue")
+
+    print "server: ready" # XXX
+
+    # == running
+    daemon.requestLoop(condition=lambda:not queue.empty())
+
+    # == cleanup
+
+    print "server: cleaning up" # XXX
+    daemon.shutdown() # TODO
+
 def client_code():
-    print "client started" # XXX
+    print "client: started" # XXX
     import time
     time.sleep(3)
     import Pyro.errors
     Pyro.core.initClient()
 
-    def get_uri():
-        while True:
-            try:
-                return Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:test_queue')
-            except Pyro.errors.NamingError:
-                time.sleep(0.2)
-
-    print "client: waiting for queue registration"
-    uri = get_uri()
-    print "client: queue has been registered"
-
+    uri = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:test_queue')
     queue = uri.getProxy()
 
     from testoob import reporting
@@ -96,7 +85,6 @@ def client_code():
     print "client: done"
 
 def main():
-    print "server started" # XXX
     import suite, sys
     from testoob import reporting
 
