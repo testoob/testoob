@@ -13,8 +13,6 @@ def pyro_name(basename):
 
 class NoMoreTests: pass # mark the end of the queue
 
-fixture_ids = {}
-
 from testoob import running
 class PyroRunner(running.BaseRunner):
     def __init__(self, num_processes):
@@ -22,24 +20,28 @@ class PyroRunner(running.BaseRunner):
         from Queue import Queue
         self.queue = Queue()
         self.num_processes = num_processes
+        self.fixture_ids = {}
 
     def _get_id(self):
         try:
             self.current_id += 1
         except AttributeError:
             self.current_id = 0
-        return self.current_id
+        return "%s.%s" % (parent_pid, self.current_id)
 
     def run(self, fixture):
-        id = self._get_id()
-        fixture_ids[id] = fixture
-        self.queue.put(id) # register fixture id
+        self._register_fixture(fixture, self._get_id())
+
+    def _register_fixture(self, fixture, id):
+        assert id not in self.fixture_ids
+        self.fixture_ids[id] = fixture
+        self.queue.put(id)
 
     def _spawn_processes(self):
         for i in xrange(self.num_processes):
             if os.fork() == 0:
                 # child
-                client_code()
+                self._client_code()
                 sys.exit(0)
 
     def done(self):
@@ -48,56 +50,56 @@ class PyroRunner(running.BaseRunner):
 
         self._spawn_processes()
 
-        server_code(self.queue, self.reporter)
+        self._server_code()
 
         running.BaseRunner.done(self)
 
-def server_code(queue, reporter):
-    Pyro.core.initServer()
+    def _server_code(self):
+        Pyro.core.initServer()
 
-    daemon = Pyro.core.Daemon()
+        daemon = Pyro.core.Daemon()
 
-    pyro_queue = Pyro.core.ObjBase()
-    pyro_queue.delegateTo(queue)
+        pyro_queue = Pyro.core.ObjBase()
+        pyro_queue.delegateTo(self.queue)
 
-    pyro_reporter = Pyro.core.SynchronizedObjBase()
-    pyro_reporter.delegateTo(reporter)
+        pyro_reporter = Pyro.core.SynchronizedObjBase()
+        pyro_reporter.delegateTo(self.reporter)
 
-    daemon.connect(pyro_queue, ":testoob:queue")
-    daemon.connect(pyro_reporter, ":testoob:reporter")
+        daemon.connect(pyro_queue, ":testoob:queue")
+        daemon.connect(pyro_reporter, ":testoob:reporter")
 
-    # == running
-    daemon.requestLoop(condition=lambda:not queue.empty())
+        # == running
+        daemon.requestLoop(condition=lambda:not self.queue.empty())
 
-    # == cleanup
-    daemon.shutdown()
+        # == cleanup
+        daemon.shutdown()
 
-def client_code():
-    def safe_get_proxy(uri, timeout=40):
-        starttime = time.time()
-        while time.time() - starttime <= timeout:
-            try:
-                return Pyro.core.getProxyForURI(uri).getProxy()
-            except Pyro.errors.ProtocolError:
-                time.sleep(SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
-        raise RuntimeError("safe_get_proxy has timed out")
+    def _client_code(self):
+        def safe_get_proxy(uri, timeout=40):
+            starttime = time.time()
+            while time.time() - starttime <= timeout:
+                try:
+                    return Pyro.core.getProxyForURI(uri).getProxy()
+                except Pyro.errors.ProtocolError:
+                    time.sleep(SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
+            raise RuntimeError("safe_get_proxy has timed out")
 
-    import Pyro.errors
-    Pyro.core.initClient()
+        import Pyro.errors
+        Pyro.core.initClient()
 
-    queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
-    reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
+        queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
+        reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
 
-    try:
-        while True:
-            id = queue.get()
-            if isinstance(id, NoMoreTests):
-                break
-            fixture = fixture_ids[id]
-            fixture(reporter)
-    except Pyro.errors.ConnectionClosedError:
-        print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
-        sys.exit(1)
+        try:
+            while True:
+                id = queue.get()
+                if isinstance(id, NoMoreTests):
+                    break
+                fixture = self.fixture_ids[id]
+                fixture(reporter)
+        except Pyro.errors.ConnectionClosedError:
+            print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
+            sys.exit(1)
 
 def main(num_processes=1):
     print "num_processes=%s" % num_processes
