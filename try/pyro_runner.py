@@ -35,12 +35,12 @@ class PyroRunner(running.BaseRunner):
             client_code()
             return
         else: # parent
-            server_code(self.queue)
+            server_code(self.queue, self.reporter)
 
         print "PyroRunner: done" # XXX
         running.BaseRunner.done(self)
 
-def server_code(queue):
+def server_code(queue, reporter):
     print "server: started" # XXX
     Pyro.core.initServer()
 
@@ -49,7 +49,11 @@ def server_code(queue):
     pyro_queue = Pyro.core.ObjBase()
     pyro_queue.delegateTo(queue)
 
-    daemon.connect(pyro_queue, ":testoob:test_queue")
+    pyro_reporter = Pyro.core.SynchronizedObjBase()
+    pyro_reporter.delegateTo(reporter)
+
+    daemon.connect(pyro_queue, ":testoob:queue")
+    daemon.connect(pyro_reporter, ":testoob:reporter")
 
     print "server: ready" # XXX
 
@@ -68,11 +72,8 @@ def client_code():
     import Pyro.errors
     Pyro.core.initClient()
 
-    uri = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:test_queue')
-    queue = uri.getProxy()
-
-    from testoob import reporting
-    reporter = reporting.TextStreamReporter(sys.stdout, 0, 1)
+    queue = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:queue').getProxy()
+    reporter = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:reporter').getProxy()
 
     while True:
         id = queue.get()
