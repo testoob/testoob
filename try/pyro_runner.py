@@ -16,6 +16,17 @@ class NameServerManager:
 			self.create_server()
 		else:
 			self.pid = pid
+			self.wait_for_server()
+	def wait_for_server(self):
+		"block until a name server is successfully found"
+		locator = Pyro.naming.NameServerLocator()
+		while True:
+			try:
+				locator.getNS(host='localhost')
+				return
+			except Pyro.errors.ProtocolError:
+				import time
+				time.sleep(0.1)
 	def create_server(self):
 		import Pyro.naming
 		Pyro.naming.main([])
@@ -29,7 +40,7 @@ def create_pyro_server(queue):
 	Pyro.core.initServer()
 
 	locator = Pyro.naming.NameServerLocator()
-	ns = locator.getNS()
+	ns = locator.getNS(host='localhost')
 
 	daemon = Pyro.core.Daemon()
 	daemon.useNameServer(ns)
@@ -93,14 +104,14 @@ def client_code():
 	Pyro.core.initClient()
 
 	locator = Pyro.naming.NameServerLocator()
-	ns = locator.getNS()
+	ns = locator.getNS(host='localhost')
 
 	def get_uri():
 		while True:
 			try:
 				return ns.resolve(":testoob:test_queue")
 			except Pyro.errors.NamingError:
-				time.sleep(1)
+				time.sleep(0.2)
 
 	print "client: waiting for queue registration"
 	uri = get_uri()
