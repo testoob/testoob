@@ -38,11 +38,16 @@ class PyroRunner(running.BaseRunner):
         self.queue.put(id)
 
     def _spawn_processes(self):
-        for i in xrange(self.num_processes):
-            if os.fork() == 0:
-                # child
+        # fork first child
+        if os.fork() != 0: return # parent
+
+        # fork the rest
+        for i in xrange(1, self.num_processes):
+            if os.fork() == 0: # child
                 self._client_code()
-                sys.exit(0)
+
+        # run the client code on the first child too
+        self._client_code()
 
     def done(self):
         for i in xrange(self.num_processes):
@@ -95,11 +100,15 @@ class PyroRunner(running.BaseRunner):
                 id = queue.get()
                 if isinstance(id, NoMoreTests):
                     break
+                print "client:", id # XXX
                 fixture = self.fixture_ids[id]
                 fixture(reporter)
         except Pyro.errors.ConnectionClosedError:
+            # report the error gracefully
             print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
             sys.exit(1)
+
+        sys.exit(0) # everything was successful
 
 def main(num_processes=1):
     print "num_processes=%s" % num_processes
