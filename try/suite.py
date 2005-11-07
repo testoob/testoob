@@ -3,7 +3,7 @@ def trace():
     import sys, os, time
     calling_function_name = sys._getframe(1).f_code.co_name
     print "pid=%s, %r" % (os.getpid(), calling_function_name)
-    time.sleep(0.7)
+    time.sleep(5)
     
 import unittest
 class BlaTest(unittest.TestCase):

@@ -25,14 +25,11 @@ class PyroRunner(running.BaseRunner):
 
     def run(self, fixture):
         id = self._get_id()
-        print "Registering id %02d ==> %r" % (id, fixture) # XXX
         fixture_ids[id] = fixture
         self.queue.put(id) # register fixture id
 
     def _spawn_processes(self):
-        print "spawning %d processes:" % self.num_processes, # XXX
         for i in xrange(self.num_processes):
-            print i,; sys.stdout.flush() # XXX
             if os.fork() == 0:
                 # child
                 client_code()
@@ -46,11 +43,9 @@ class PyroRunner(running.BaseRunner):
 
         server_code(self.queue, self.reporter)
 
-        print "PyroRunner: done" # XXX
         running.BaseRunner.done(self)
 
 def server_code(queue, reporter):
-    print "server: started" # XXX
     Pyro.core.initServer()
 
     daemon = Pyro.core.Daemon()
@@ -64,18 +59,13 @@ def server_code(queue, reporter):
     daemon.connect(pyro_queue, ":testoob:queue")
     daemon.connect(pyro_reporter, ":testoob:reporter")
 
-    print "server: ready" # XXX
-
     # == running
     daemon.requestLoop(condition=lambda:not queue.empty())
 
     # == cleanup
-
-    print "server: cleaning up" # XXX
-    daemon.shutdown() # TODO
+    daemon.shutdown()
 
 def client_code():
-    print "client: started" # XXX
     import time
     time.sleep(3)
     import Pyro.errors
@@ -88,20 +78,22 @@ def client_code():
         id = queue.get()
         if isinstance(id, NoMoreTests):
             break
-        print "client: id=%s" % id
         fixture = fixture_ids[id]
         fixture(reporter)
 
-    print "client: done"
-
-def main():
+def main(num_processes=1):
+    print "num_processes=%s" % num_processes
     import suite, sys
     from testoob import reporting
 
     suite = suite.suite()
     reporter = reporting.TextStreamReporter(sys.stdout, 0, 0)
+    runner = PyroRunner(num_processes)
 
-    running.run_suites(suites=[suite], reporters=[reporter], runner=PyroRunner(4))
+    running.run_suites(suites=[suite], reporters=[reporter], runner=runner)
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2:
+        main(int(sys.argv[1]))
+    else:
+        main()
