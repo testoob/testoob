@@ -1,49 +1,17 @@
+# vim:et:sw=4 ts=4
 import sys; sys.path.insert(0, "../src") # for testoob
 import Pyro
 import Pyro.core
-import Pyro.naming
 import os
 
 class NoMoreTests: pass # mark the end of the queue
 
 fixture_ids = {}
 
-class NameServerManager:
-	"Manage a Pyro NameServer (create/destroy)"
-	def __init__(self):
-		pid = os.fork()
-		if pid == 0:
-			self.create_server()
-		else:
-			self.pid = pid
-			self.wait_for_server()
-	def wait_for_server(self):
-		"block until a name server is successfully found"
-		locator = Pyro.naming.NameServerLocator()
-		while True:
-			try:
-				locator.getNS(host='localhost')
-				return
-			except Pyro.errors.ProtocolError:
-				import time
-				time.sleep(0.1)
-	def create_server(self):
-		import Pyro.naming
-		Pyro.naming.main([])
-	def destroy(self):
-		from signal import SIGTERM
-		os.kill(self.pid, SIGTERM)
-
-name_server_manager = NameServerManager()
-
 def create_pyro_server(queue):
 	Pyro.core.initServer()
 
-	locator = Pyro.naming.NameServerLocator()
-	ns = locator.getNS(host='localhost')
-
 	daemon = Pyro.core.Daemon()
-	daemon.useNameServer(ns)
 
 	pyro_queue = Pyro.core.ObjBase()
 	pyro_queue.delegateTo(queue)
@@ -61,8 +29,6 @@ def create_pyro_server(queue):
 	print "Cleaning up" # XXX
 	daemon.shutdown() # TODO
 	
-	name_server_manager.destroy()
-
 from testoob import running
 class PyroRunner(running.BaseRunner):
 	def __init__(self):
@@ -103,13 +69,10 @@ def client_code():
 	import Pyro.errors
 	Pyro.core.initClient()
 
-	locator = Pyro.naming.NameServerLocator()
-	ns = locator.getNS(host='localhost')
-
 	def get_uri():
 		while True:
 			try:
-				return ns.resolve(":testoob:test_queue")
+				return Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:test_queue')
 			except Pyro.errors.NamingError:
 				time.sleep(0.2)
 
