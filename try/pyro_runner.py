@@ -74,12 +74,16 @@ def client_code():
     queue = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:queue').getProxy()
     reporter = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:reporter').getProxy()
 
-    while True:
-        id = queue.get()
-        if isinstance(id, NoMoreTests):
-            break
-        fixture = fixture_ids[id]
-        fixture(reporter)
+    try:
+        while True:
+            id = queue.get()
+            if isinstance(id, NoMoreTests):
+                break
+            fixture = fixture_ids[id]
+            fixture(reporter)
+    except Pyro.errors.ConnectionClosedError:
+        print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
+        sys.exit(1)
 
 def main(num_processes=1):
     print "num_processes=%s" % num_processes
