@@ -105,7 +105,7 @@ def main(num_processes=1):
     from testoob import reporting
 
     suite = suite.suite()
-    reporter = reporting.TextStreamReporter(sys.stdout, 0, 0)
+    reporter = reporting.TextStreamReporter(sys.stderr, 0, 0)
     runner = PyroRunner(num_processes)
 
     running.run_suites(suites=[suite], reporters=[reporter], runner=runner)

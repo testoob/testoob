@@ -1,9 +1,9 @@
 # vim:et:sw=4 ts=4
 def trace():
     import sys, os, time
-    calling_function_name = sys._getframe(1).f_code.co_name
-    print "pid=%s, %r" % (os.getpid(), calling_function_name)
-    time.sleep(5)
+    #calling_function_name = sys._getframe(1).f_code.co_name
+    #print "pid=%s, %r" % (os.getpid(), calling_function_name)
+    time.sleep(1)
     
 import unittest
 class BlaTest(unittest.TestCase):
