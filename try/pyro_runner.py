@@ -3,6 +3,13 @@ import sys; sys.path.insert(0, "../src") # for testoob
 import Pyro
 import Pyro.core
 import os
+import time
+
+parent_pid = os.getpid()
+SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
+
+def pyro_name(basename):
+    return ":testoob:%s:%s" % (basename, parent_pid)
 
 class NoMoreTests: pass # mark the end of the queue
 
@@ -66,13 +73,20 @@ def server_code(queue, reporter):
     daemon.shutdown()
 
 def client_code():
-    import time
-    time.sleep(3)
+    def safe_get_proxy(uri, timeout=40):
+        starttime = time.time()
+        while time.time() - starttime <= timeout:
+            try:
+                return Pyro.core.getProxyForURI(uri).getProxy()
+            except Pyro.errors.ProtocolError:
+                time.sleep(SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
+        raise RuntimeError("safe_get_proxy has timed out")
+
     import Pyro.errors
     Pyro.core.initClient()
 
-    queue = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:queue').getProxy()
-    reporter = Pyro.core.getProxyForURI('PYROLOC://localhost/:testoob:reporter').getProxy()
+    queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
+    reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
 
     try:
         while True:
