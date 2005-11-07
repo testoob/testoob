@@ -10,10 +10,11 @@ fixture_ids = {}
 
 from testoob import running
 class PyroRunner(running.BaseRunner):
-    def __init__(self):
+    def __init__(self, num_processes):
         running.BaseRunner.__init__(self)
         from Queue import Queue
         self.queue = Queue()
+        self.num_processes = num_processes
 
     def _get_id(self):
         try:
@@ -28,14 +29,22 @@ class PyroRunner(running.BaseRunner):
         fixture_ids[id] = fixture
         self.queue.put(id) # register fixture id
 
-    def done(self):
-        self.queue.put(NoMoreTests())
+    def _spawn_processes(self):
+        print "spawning %d processes:" % self.num_processes, # XXX
+        for i in xrange(self.num_processes):
+            print i,; sys.stdout.flush() # XXX
+            if os.fork() == 0:
+                # child
+                client_code()
+                sys.exit(0)
 
-        if os.fork() == 0: # child
-            client_code()
-            return
-        else: # parent
-            server_code(self.queue, self.reporter)
+    def done(self):
+        for i in xrange(self.num_processes):
+            self.queue.put(NoMoreTests())
+
+        self._spawn_processes()
+
+        server_code(self.queue, self.reporter)
 
         print "PyroRunner: done" # XXX
         running.BaseRunner.done(self)
@@ -92,7 +101,7 @@ def main():
     suite = suite.suite()
     reporter = reporting.TextStreamReporter(sys.stdout, 0, 0)
 
-    running.run_suites(suites=[suite], reporters=[reporter], runner=PyroRunner())
+    running.run_suites(suites=[suite], reporters=[reporter], runner=PyroRunner(4))
 
 if __name__ == "__main__":
     main()
