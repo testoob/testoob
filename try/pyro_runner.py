@@ -1,9 +1,12 @@
 # vim:et:sw=4 ts=4
-import sys; sys.path.insert(0, "../src") # for testoob
+def fix_include_path():
+    from sys import path
+    from os.path import join, dirname
+    path.insert(0, join(dirname(__file__), "..", "src"))
+fix_include_path()
 import Pyro
 import Pyro.core
-import os
-import time
+import time, os, sys
 
 parent_pid = os.getpid()
 SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
@@ -93,7 +96,17 @@ class PyroRunner(running.BaseRunner):
         Pyro.core.initClient()
 
         queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
-        reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
+        remote_reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
+
+        class PickleFriendlyReporterProxy:
+            def __init__(self, reporter):
+                self.reporter = reporter
+            def addSuccess(self, test):
+                self.reporter.addSuccess(str(test)) # converting test to string
+            def addError(self, test, err):
+                self.reporter.addError(str(test), str(err))
+            def addFailure(self, test, err):
+                self.reporter.addFailure(str(test), str(err))
 
         try:
             while True:
@@ -102,7 +115,7 @@ class PyroRunner(running.BaseRunner):
                     break
                 print "client:", id # XXX
                 fixture = self.fixture_ids[id]
-                fixture(reporter)
+                fixture(remote_reporter)
         except Pyro.errors.ConnectionClosedError:
             # report the error gracefully
             print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
