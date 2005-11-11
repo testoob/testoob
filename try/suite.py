@@ -16,7 +16,7 @@ class BlaTest(unittest.TestCase):
     def testG(self): trace()
     def testH(self): trace()
     def testI(self): trace()
-    def testJ(self): self.fail("bla")
+    def testWillFail(self): self.fail("bla")
     def testK(self): trace()
     def testL(self): trace()
     def testM(self): trace()
