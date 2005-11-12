@@ -4,31 +4,69 @@ def fix_include_path():
     from os.path import join, dirname
     path.insert(0, join(dirname(__file__), "..", "src"))
 fix_include_path()
-import time, os, sys
+import os, sys
 
-parent_pid = os.getpid()
-SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
+class PickleFriendlyReporterProxy:
+    def __init__(self, reporter):
+        self.reporter = reporter
 
-def pyro_name(basename):
-    return ":testoob:%s:%s" % (basename, parent_pid)
+    # direct proxies
+    def addSuccess(self, test):
+        self.reporter.addSuccess(test)
+    def startTest(self, test):
+        self.reporter.startTest(test)
+    def stopTest(self, test):
+        self.reporter.stopTest(test)
+
+    # making tracebacks safe for pickling
+    def addError(self, test, err):
+        from testoob import reporting
+        self.reporter.addError(test, reporting._exc_info_to_string(err, test))
+    def addFailure(self, test, err):
+        from testoob import reporting
+        self.reporter.addFailure(test, reporting._exc_info_to_string(err, test))
+
+    def addAssert(self, test, assertName, varList, err):
+        raise NotImplementedError # TODO: check when we need this
 
 class NoMoreTests: pass # mark the end of the queue
-
 from testoob import running
 class PyroRunner(running.BaseRunner):
+    SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
     def __init__(self, num_processes):
         running.BaseRunner.__init__(self)
         from Queue import Queue
         self.queue = Queue()
         self.num_processes = num_processes
         self.fixture_ids = {}
+        self._parent_pid = os.getpid()
+
+    def _pyro_name(self, basename):
+        "Return the name mangled for use in TestOOB's RPC"
+        return ":testoob:%s:%s" % (basename, self._parent_pid)
+    def _pyroloc_uri(self, basename):
+        "Return the PYROLOC URI for the object, with proper mangling"
+        return 'PYROLOC://localhost/%s' % self._pyro_name(basename)
+
+    def _get_pyro_proxy(self, basename, timeout=40):
+        "Safely try to get a proxy to the object, looping until timing out"
+        import time, Pyro.core, Pyro.errors
+        uri = self._pyroloc_uri(basename)
+        starttime = time.time()
+        while time.time() - starttime <= timeout:
+            try:
+                return Pyro.core.getProxyForURI(uri).getProxy()
+            except Pyro.errors.ProtocolError:
+                # object at the URI is unavailable, sleep a little
+                time.sleep(PyroRunner.SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
+        raise RuntimeError("getting the proxy has timed out")
 
     def _get_id(self):
         try:
             self.current_id += 1
         except AttributeError:
             self.current_id = 0
-        return "%s.%s" % (parent_pid, self.current_id)
+        return "%s.%s" % (self._parent_pid, self.current_id)
 
     def run(self, fixture):
         self._register_fixture(fixture, self._get_id())
@@ -60,20 +98,30 @@ class PyroRunner(running.BaseRunner):
 
         running.BaseRunner.done(self)
 
+    def _pyro_queue(self):
+        import Pyro.core
+        result = Pyro.core.ObjBase()
+        result.delegateTo(self.queue)
+        return result
+
+    def _pyro_reporter(self):
+        import Pyro.core
+        result = Pyro.core.SynchronizedObjBase()
+        result.delegateTo(self.reporter)
+        return result
+
+    def _init_server(self):
+        import Pyro.core
+        Pyro.core.initServer(banner=False)
+
     def _server_code(self):
         import Pyro.core
-        Pyro.core.initServer(banner=0)
+        Pyro.core.initServer(banner=False)
 
         daemon = Pyro.core.Daemon()
-
-        pyro_queue = Pyro.core.ObjBase()
-        pyro_queue.delegateTo(self.queue)
-
-        pyro_reporter = Pyro.core.SynchronizedObjBase()
-        pyro_reporter.delegateTo(self.reporter)
-
-        daemon.connect(pyro_queue, ":testoob:queue")
-        daemon.connect(pyro_reporter, ":testoob:reporter")
+        
+        daemon.connect(self._pyro_queue(), self._pyro_name("queue"))
+        daemon.connect(self._pyro_reporter(), self._pyro_name("reporter"))
 
         # == running
         daemon.requestLoop(condition=lambda:not self.queue.empty())
@@ -83,46 +131,14 @@ class PyroRunner(running.BaseRunner):
 
     def _client_code(self):
         import Pyro.errors, Pyro.core
-        def safe_get_proxy(uri, timeout=40):
-            starttime = time.time()
-            while time.time() - starttime <= timeout:
-                try:
-                    return Pyro.core.getProxyForURI(uri).getProxy()
-                except Pyro.errors.ProtocolError:
-                    time.sleep(SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
-            raise RuntimeError("safe_get_proxy has timed out")
 
-        Pyro.core.initClient(banner=0)
+        Pyro.core.initClient(banner=False)
 
-        queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
-        remote_reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
-
-        class PickleFriendlyReporterProxy:
-            def __init__(self, reporter):
-                self.reporter = reporter
-
-            # direct proxies
-            def addSuccess(self, test):
-                self.reporter.addSuccess(test)
-            def startTest(self, test):
-                self.reporter.startTest(test)
-            def stopTest(self, test):
-                self.reporter.stopTest(test)
-
-            # making tracebacks safe for pickling
-            def addError(self, test, err):
-                from testoob import reporting
-                self.reporter.addError(test, reporting._exc_info_to_string(err, test))
-            def addFailure(self, test, err):
-                from testoob import reporting
-                self.reporter.addFailure(test, reporting._exc_info_to_string(err, test))
-
-            #def addAssert(self, test, assertName, varList, err):
-            #    "Called when an assert was made (if err is None, the assert passed)"
-            #    pass
-
+        queue = self._get_pyro_proxy("queue")
+        remote_reporter = self._get_pyro_proxy("reporter")
         local_reporter = PickleFriendlyReporterProxy(remote_reporter)
 
+        import sys
         try:
             while True:
                 id = queue.get()
