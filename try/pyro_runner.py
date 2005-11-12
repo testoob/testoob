@@ -101,12 +101,28 @@ class PyroRunner(running.BaseRunner):
         class PickleFriendlyReporterProxy:
             def __init__(self, reporter):
                 self.reporter = reporter
+
+            # direct proxies
             def addSuccess(self, test):
-                self.reporter.addSuccess(str(test)) # converting test to string
+                self.reporter.addSuccess(test)
+            def startTest(self, test):
+                self.reporter.startTest(test)
+            def stopTest(self, test):
+                self.reporter.stopTest(test)
+
+            # making tracebacks safe for pickling
             def addError(self, test, err):
-                self.reporter.addError(str(test), str(err))
+                from testoob import reporting
+                self.reporter.addError(test, reporting._exc_info_to_string(err, test))
             def addFailure(self, test, err):
-                self.reporter.addFailure(str(test), str(err))
+                from testoob import reporting
+                self.reporter.addFailure(test, reporting._exc_info_to_string(err, test))
+
+            #def addAssert(self, test, assertName, varList, err):
+            #    "Called when an assert was made (if err is None, the assert passed)"
+            #    pass
+
+        local_reporter = PickleFriendlyReporterProxy(remote_reporter)
 
         try:
             while True:
@@ -115,7 +131,7 @@ class PyroRunner(running.BaseRunner):
                     break
                 print "client:", id # XXX
                 fixture = self.fixture_ids[id]
-                fixture(remote_reporter)
+                fixture(local_reporter)
         except Pyro.errors.ConnectionClosedError:
             # report the error gracefully
             print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
