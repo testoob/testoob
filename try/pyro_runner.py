@@ -4,8 +4,6 @@ def fix_include_path():
     from os.path import join, dirname
     path.insert(0, join(dirname(__file__), "..", "src"))
 fix_include_path()
-import Pyro
-import Pyro.core
 import time, os, sys
 
 parent_pid = os.getpid()
@@ -63,6 +61,7 @@ class PyroRunner(running.BaseRunner):
         running.BaseRunner.done(self)
 
     def _server_code(self):
+        import Pyro.core
         Pyro.core.initServer()
 
         daemon = Pyro.core.Daemon()
@@ -83,6 +82,7 @@ class PyroRunner(running.BaseRunner):
         daemon.shutdown()
 
     def _client_code(self):
+        import Pyro.errors, Pyro.core
         def safe_get_proxy(uri, timeout=40):
             starttime = time.time()
             while time.time() - starttime <= timeout:
@@ -92,7 +92,6 @@ class PyroRunner(running.BaseRunner):
                     time.sleep(SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
             raise RuntimeError("safe_get_proxy has timed out")
 
-        import Pyro.errors
         Pyro.core.initClient()
 
         queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
