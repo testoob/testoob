@@ -62,7 +62,7 @@ class PyroRunner(running.BaseRunner):
 
     def _server_code(self):
         import Pyro.core
-        Pyro.core.initServer()
+        Pyro.core.initServer(banner=0)
 
         daemon = Pyro.core.Daemon()
 
@@ -92,7 +92,7 @@ class PyroRunner(running.BaseRunner):
                     time.sleep(SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION)
             raise RuntimeError("safe_get_proxy has timed out")
 
-        Pyro.core.initClient()
+        Pyro.core.initClient(banner=0)
 
         queue = safe_get_proxy('PYROLOC://localhost/:testoob:queue')
         remote_reporter = safe_get_proxy('PYROLOC://localhost/:testoob:reporter')
@@ -128,12 +128,11 @@ class PyroRunner(running.BaseRunner):
                 id = queue.get()
                 if isinstance(id, NoMoreTests):
                     break
-                print "client:", id # XXX
                 fixture = self.fixture_ids[id]
                 fixture(local_reporter)
         except Pyro.errors.ConnectionClosedError:
             # report the error gracefully
-            print >>sys.stderr, "[%d] connection to server lost, exiting" % os.getpid()
+            print >>sys.stderr, "[TestOOB+Pyro pid=%d] child lost connection to parent, exiting" % os.getpid()
             sys.exit(1)
 
         sys.exit(0) # everything was successful
