@@ -91,6 +91,17 @@ def _count_relevant_tb_levels(tb):
         tb = tb.tb_next
     return length
 
+def _error_string(test, err):
+	"""
+	Convert the error to a string with _exc_info_to_string unless err
+	has already been converted (is a string)
+	"""
+	if isinstance(err, str):
+		# error has already been converted
+		return err
+	return _exc_info_to_string(err, test)
+
+
 import time as _time
 class BaseReporter(IReporter):
     """Base class for most reporters, with a sensible default implementation
@@ -118,10 +129,10 @@ class BaseReporter(IReporter):
         pass
 
     def addError(self, test, err):
-        self.errors.append((test, _exc_info_to_string(err, test)))
+        self.errors.append((test, _error_string(test, err)))
 
     def addFailure(self, test, err):
-        self.failures.append((test, _exc_info_to_string(err, test)))
+        self.failures.append((test, _error_string(test, err)))
 
     def addSuccess(self, test):
         pass
