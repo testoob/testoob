@@ -29,10 +29,39 @@ class PickleFriendlyReporterProxy:
     def addAssert(self, test, assertName, varList, err):
         raise NotImplementedError # TODO: check when we need this
 
-class NoMoreTests: pass # mark the end of the queue
+class QueueIterator:
+    """
+    Iterate over a Queue.Queue instance until a sentinel is reached
+    """
+    def __init__(self, queue, **kwargs):
+        """
+        __init__(queue, [sentinel=SENTINEL], **kwargs)
+
+        queue :
+                the queue to iterate over
+        sentinel : (optional keyword argument)
+                the value signifying the end of the queue
+
+        Other keyword arguments are passed to Queue.get
+        """
+        self.queue = queue
+        self.has_sentinel = kwargs.has_key("sentinel")
+        if self.has_sentinel:
+            self.sentinel = kwargs["sentinel"]
+            del kwargs["sentinel"]
+        self.kwargs = kwargs
+    def __iter__(self):
+        return self
+    def next(self):
+        result = self.queue.get(**self.kwargs)
+        if self.has_sentinel and result == self.sentinel:
+            raise StopIteration
+        return result
+
 from testoob import running
 class PyroRunner(running.BaseRunner):
     SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
+    GET_TIMEOUT = 20 # don't wait more than this for a test, on Python >= 2.3
     def __init__(self, num_processes):
         running.BaseRunner.__init__(self)
         from Queue import Queue
@@ -90,7 +119,7 @@ class PyroRunner(running.BaseRunner):
 
     def done(self):
         for i in xrange(self.num_processes):
-            self.queue.put(NoMoreTests())
+            self.queue.put(None)
 
         self._spawn_processes()
 
@@ -110,11 +139,8 @@ class PyroRunner(running.BaseRunner):
         result.delegateTo(self.reporter)
         return result
 
-    def _init_server(self):
-        import Pyro.core
-        Pyro.core.initServer(banner=False)
-
     def _server_code(self):
+        "The Pyro server code, runs in the parent"
         import Pyro.core
         Pyro.core.initServer(banner=False)
 
@@ -129,26 +155,31 @@ class PyroRunner(running.BaseRunner):
         # == cleanup
         daemon.shutdown()
 
-    def _client_code(self):
-        import Pyro.errors, Pyro.core
-
-        Pyro.core.initClient(banner=False)
-
+    def _run_fixtures(self):
         queue = self._get_pyro_proxy("queue")
         remote_reporter = self._get_pyro_proxy("reporter")
         local_reporter = PickleFriendlyReporterProxy(remote_reporter)
 
+        for id in QueueIterator(queue,
+                                sentinel=None,
+                                timeout=PyroRunner.GET_TIMEOUT):
+            fixture = self.fixture_ids[id]
+            fixture(local_reporter)
+
+    def _client_code(self):
+        "The Pyro client code, runs in the child"
+        import Pyro.errors, Pyro.core
+
+        Pyro.core.initClient(banner=False)
+
         import sys
         try:
-            while True:
-                id = queue.get()
-                if isinstance(id, NoMoreTests):
-                    break
-                fixture = self.fixture_ids[id]
-                fixture(local_reporter)
+            self._run_fixtures()
+
         except Pyro.errors.ConnectionClosedError:
             # report the error gracefully
-            print >>sys.stderr, "[TestOOB+Pyro pid=%d] child lost connection to parent, exiting" % os.getpid()
+            print >>sys.stderr, "[TestOOB+Pyro pid=%d] " \
+                  "child lost connection to parent, exiting" % os.getpid()
             sys.exit(1)
 
         sys.exit(0) # everything was successful
