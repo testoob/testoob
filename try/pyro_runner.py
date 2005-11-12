@@ -147,7 +147,6 @@ def main(num_processes=1):
             suites=[suite.suite()],
             reporters=[reporting.TextStreamReporter(sys.stderr, 0, 0)],
             runner=PyroRunner(num_processes),
-            extraction_decorators=[extracting.regex("WillFail")],
         )
 
 if __name__ == "__main__":
