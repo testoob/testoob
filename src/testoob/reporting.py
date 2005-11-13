@@ -143,7 +143,7 @@ class BaseReporter(IReporter):
     def isSuccessful(self):
         "Tells whether or not this result was a success"
         return len(self.failures) == len(self.errors) == 0
-    
+
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
     # Modified from unittest._TextTestResult
@@ -485,7 +485,7 @@ class XMLFileReporter(XMLReporter):
 
 class XSLTReporter(XMLReporter):
     "This reporter uses an XSL transformation scheme to convert an XML output"
-    
+
     class IXSLTApplier:
         "An interface for XSLT libs"
         def __init__(self, transform):
@@ -495,7 +495,7 @@ class XSLTReporter(XMLReporter):
             """Apply the transformation to the input and return the result.
             Params is a dictionary of extra parameters for the XSLT convertion"""
             pass
-    
+
     class FourSuiteXSLTApplier(IXSLTApplier):
         "XSLT applier that uses 4Suite"
         def __init__(self, transform):
@@ -504,7 +504,7 @@ class XSLTReporter(XMLReporter):
             self.processor = Processor.Processor()
             trans_source = InputSource.DefaultFactory.fromString(transform, "CONVERTER")
             self.processor.appendStylesheet(trans_source)
-        
+
         def apply(self, input, params={}):
             from Ft.Xml import InputSource
             input_source = InputSource.DefaultFactory.fromString(input, "XML")
@@ -516,14 +516,14 @@ class XSLTReporter(XMLReporter):
             import win32com.client
             self.trans_obj = win32com.client.Dispatch('Microsoft.XMLDOM')
             self.trans_obj.loadXML(transform)
-        
+
         def apply(self, input, params= {}):
             import win32com.client
             input_obj = win32com.client.Dispatch('Microsoft.XMLDOM')
             input_obj.loadXML(input)
             return input_obj.transformNode(self.trans_obj)
-            
-   
+
+
     def __init__(self, filename, converter):
         XMLReporter.__init__(self)
         self.filename = filename
@@ -533,7 +533,7 @@ class XSLTReporter(XMLReporter):
         xslt_applier = self._create_xslt_applier()(self.converter)
         result = xslt_applier.apply(self.get_xml(), params = {u'date': unicode(_time.asctime())})
         open(self.filename, "wt").write(result)
-    
+
     def _create_xslt_applier(self):
         try:
             import win32com.client
