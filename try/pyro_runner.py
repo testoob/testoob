@@ -29,34 +29,22 @@ class PickleFriendlyReporterProxy:
     def addAssert(self, test, assertName, varList, err):
         raise NotImplementedError # TODO: check when we need this
 
-class QueueIterator:
+def iter_queue(queue, sentinel, **kwargs):
     """
     Iterate over a Queue.Queue instance until a sentinel is reached
+    Will pass any extra keyword arguments to queue.get
+
+    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/252498
     """
-    def __init__(self, queue, **kwargs):
-        """
-        __init__(queue, [sentinel=SENTINEL], **kwargs)
-
-        queue :
-                the queue to iterate over
-        sentinel : (optional keyword argument)
-                the value signifying the end of the queue
-
-        Other keyword arguments are passed to Queue.get
-        """
-        self.queue = queue
-        self.has_sentinel = kwargs.has_key("sentinel")
-        if self.has_sentinel:
-            self.sentinel = kwargs["sentinel"]
-            del kwargs["sentinel"]
-        self.kwargs = kwargs
-    def __iter__(self):
-        return self
-    def next(self):
-        result = self.queue.get(**self.kwargs)
-        if self.has_sentinel and result == self.sentinel:
-            raise StopIteration
-        return result
+    while True:
+        try:
+            result = queue.get(**kwargs)
+        except TypeError:
+            # bad kwargs, probably Python < 2.3
+            result = queue.get()
+        if result == sentinel:
+            return
+        yield result
 
 from testoob import running
 class PyroRunner(running.BaseRunner):
@@ -160,9 +148,7 @@ class PyroRunner(running.BaseRunner):
         remote_reporter = self._get_pyro_proxy("reporter")
         local_reporter = PickleFriendlyReporterProxy(remote_reporter)
 
-        for id in QueueIterator(queue,
-                                sentinel=None,
-                                timeout=PyroRunner.GET_TIMEOUT):
+        for id in iter_queue(queue, None, timeout=PyroRunner.GET_TIMEOUT):
             fixture = self.fixture_ids[id]
             fixture(local_reporter)
 
