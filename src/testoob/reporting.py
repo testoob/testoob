@@ -553,55 +553,6 @@ class HTMLReporter(XSLTReporter):
         import xslconverters
         XSLTReporter.__init__(self, filename, xslconverters.BASIC_CONVERTER)
 
-class TestInfo:
-    """
-    Extract test info on construction, to enable pickling
-
-    Most methods aim to make TextStreamReporter.getDescription happy
-    """
-    def __init__(self, test):
-        # TODO: perhaps convert everyone to use TestInfo
-        self._id = test.id()
-        self._TestCase__testMethodName = test._TestCase__testMethodName
-        self.str = str(test)
-        self._shortDescription = test.shortDescription()
-    def id(self):
-        return self._id
-    def shortDescription(self):
-        return self._shortDescription
-    def __str__(self):
-        return self.str
-
-class PickleFriendlyReporterProxy:
-    """
-    Used for speaking with remote reporters, where the arguments passed
-    must be pickleable.
-    The tactic is to convert errors to strings locally and send the final
-    string to the remote reporter (tracebacks aren't pickleable).
-    """
-    def __init__(self, reporter):
-        self.reporter = reporter
-
-    # direct proxies
-    def addSuccess(self, test):
-        self.reporter.addSuccess(TestInfo(test))
-    def startTest(self, test):
-        self.reporter.startTest(TestInfo(test))
-    def stopTest(self, test):
-        self.reporter.stopTest(TestInfo(test))
-
-    # making tracebacks safe for pickling
-    def addError(self, test, err):
-        from testoob import reporting
-        self.reporter.addError(TestInfo(test), reporting._exc_info_to_string(err, test))
-    def addFailure(self, test, err):
-        from testoob import reporting
-        self.reporter.addFailure(TestInfo(test), reporting._exc_info_to_string(err, test))
-
-    def addAssert(self, test, assertName, varList, err):
-        raise NotImplementedError # TODO: check when we need this
-
-
 ###############################################################################
 # Reporter proxy
 ###############################################################################
