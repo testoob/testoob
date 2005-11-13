@@ -121,7 +121,9 @@ class PyroRunner(running.BaseRunner):
 
     def _server_code(self):
         "The Pyro server code, runs in the parent"
-        import Pyro.core
+        import Pyro.core, Pyro
+        Pyro.config.PYRO_MOBILE_CODE = True
+
         Pyro.core.initServer(banner=False)
 
         daemon = Pyro.core.Daemon()
@@ -147,7 +149,8 @@ class PyroRunner(running.BaseRunner):
 
     def _client_code(self):
         "The Pyro client code, runs in the child"
-        import Pyro.errors, Pyro.core
+        import Pyro.errors, Pyro.core, Pyro
+        Pyro.config.PYRO_MOBILE_CODE = True
 
         Pyro.core.initClient(banner=False)
 
