@@ -92,14 +92,14 @@ def _count_relevant_tb_levels(tb):
     return length
 
 def _error_string(test, err):
-	"""
-	Convert the error to a string with _exc_info_to_string unless err
-	has already been converted (is a string)
-	"""
-	if isinstance(err, str):
-		# error has already been converted
-		return err
-	return _exc_info_to_string(err, test)
+    """
+    Convert the error to a string with _exc_info_to_string unless err
+    has already been converted (is a string)
+    """
+    if isinstance(err, str):
+        # error has already been converted
+        return err
+    return _exc_info_to_string(err, test)
 
 
 import time as _time
@@ -552,6 +552,36 @@ class HTMLReporter(XSLTReporter):
     def __init__(self, filename):
         import xslconverters
         XSLTReporter.__init__(self, filename, xslconverters.BASIC_CONVERTER)
+
+class PickleFriendlyReporterProxy:
+    """
+    Used for speaking with remote reporters, where the arguments passed
+    must be pickleable.
+    The tactic is to convert errors to strings locally and send the final
+    string to the remote reporter (tracebacks aren't pickleable).
+    """
+    def __init__(self, reporter):
+        self.reporter = reporter
+
+    # direct proxies
+    def addSuccess(self, test):
+        self.reporter.addSuccess(test)
+    def startTest(self, test):
+        self.reporter.startTest(test)
+    def stopTest(self, test):
+        self.reporter.stopTest(test)
+
+    # making tracebacks safe for pickling
+    def addError(self, test, err):
+        from testoob import reporting
+        self.reporter.addError(test, reporting._exc_info_to_string(err, test))
+    def addFailure(self, test, err):
+        from testoob import reporting
+        self.reporter.addFailure(test, reporting._exc_info_to_string(err, test))
+
+    def addAssert(self, test, assertName, varList, err):
+        raise NotImplementedError # TODO: check when we need this
+
 
 ###############################################################################
 # Reporter proxy
