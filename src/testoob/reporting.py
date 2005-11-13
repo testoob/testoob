@@ -565,19 +565,19 @@ class PickleFriendlyReporterProxy:
 
     # direct proxies
     def addSuccess(self, test):
-        self.reporter.addSuccess(test)
+        self.reporter.addSuccess(str(test))
     def startTest(self, test):
-        self.reporter.startTest(test)
+        self.reporter.startTest(str(test))
     def stopTest(self, test):
-        self.reporter.stopTest(test)
+        self.reporter.stopTest(str(test))
 
     # making tracebacks safe for pickling
     def addError(self, test, err):
         from testoob import reporting
-        self.reporter.addError(test, reporting._exc_info_to_string(err, test))
+        self.reporter.addError(str(test), reporting._exc_info_to_string(err, test))
     def addFailure(self, test, err):
         from testoob import reporting
-        self.reporter.addFailure(test, reporting._exc_info_to_string(err, test))
+        self.reporter.addFailure(str(test), reporting._exc_info_to_string(err, test))
 
     def addAssert(self, test, assertName, varList, err):
         raise NotImplementedError # TODO: check when we need this
