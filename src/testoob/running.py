@@ -220,6 +220,9 @@ class ListingRunner(BaseRunner):
     def done(self):
         print self.history.get_string(max_functions_to_show=50)
 
+# Distributed runner using Pyro
+from pyro_runner import PyroRunner
+
 def run(suite=None, suites=None, **kwargs):
     "Convenience frontend for text_run_suites"
     if suite is None and suites is None:

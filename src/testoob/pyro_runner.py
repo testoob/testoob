@@ -1,29 +1,37 @@
-# vim:et:sw=4 ts=4
-def fix_include_path():
-    from sys import path
-    from os.path import join, dirname
-    path.insert(0, join(dirname(__file__), "..", "src"))
-fix_include_path()
-import os, sys
+# TestOOB, Python Testing Out Of (The) Box
+# Copyright (C) 2005 Ori Peleg and Misha Seltzer
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 def iter_queue(queue, sentinel, **kwargs):
     """
     Iterate over a Queue.Queue instance until a sentinel is reached
     Will pass any extra keyword arguments to queue.get
 
+    Created by Jimmy Retzlaff
     http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/252498
     """
     while True:
         try:
             result = queue.get(**kwargs)
         except TypeError:
-            # bad kwargs, probably Python < 2.3
+            # bad kwargs, probably timeout with Python < 2.3
             result = queue.get()
         if result == sentinel:
             return
         yield result
 
-from testoob import running
+import running
 class PyroRunner(running.BaseRunner):
     SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
     GET_TIMEOUT = 20 # don't wait more than this for a test, on Python >= 2.3
@@ -87,7 +95,6 @@ class PyroRunner(running.BaseRunner):
             self.queue.put(None)
 
         self._spawn_processes()
-
         self._server_code()
 
         running.BaseRunner.done(self)
@@ -123,7 +130,7 @@ class PyroRunner(running.BaseRunner):
     def _run_fixtures(self):
         queue = self._get_pyro_proxy("queue")
         remote_reporter = self._get_pyro_proxy("reporter")
-        from testoob.reporting import PickleFriendlyReporterProxy
+        from reporting import PickleFriendlyReporterProxy
         local_reporter = PickleFriendlyReporterProxy(remote_reporter)
 
         for id in iter_queue(queue, None, timeout=PyroRunner.GET_TIMEOUT):
@@ -148,19 +155,3 @@ class PyroRunner(running.BaseRunner):
 
         sys.exit(0) # everything was successful
 
-def main(num_processes=1):
-    print "num_processes=%s" % num_processes
-    import suite, sys
-    from testoob import reporting, extracting
-
-    running.run_suites(
-            suites=[suite.suite()],
-            reporters=[reporting.TextStreamReporter(sys.stderr, 0, 0)],
-            runner=PyroRunner(num_processes),
-        )
-
-if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        main(int(sys.argv[1]))
-    else:
-        main()
