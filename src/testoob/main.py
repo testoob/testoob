@@ -39,7 +39,8 @@ def _arg_parser(usage):
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
-    p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes")
+    p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
+    p.add_option("--processes_old", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, old implementation")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
 
     options, parameters = p.parse_args()
@@ -85,6 +86,12 @@ def _main(suite, defaultTest, options, test_names, parser):
             parser.error("option '%(option)s' requires missing modules "
                          "%(missing_modules)s" % vars())
 
+    def require_posix(option):
+        try:
+            import posix
+        except ImportError:
+            parser.error("option '%s' requires a POSIX environment" % option)
+
     def conflicting_options(*option_names):
         given_options = [
             name
@@ -96,10 +103,10 @@ def _main(suite, defaultTest, options, test_names, parser):
         if len(given_options) > 1:
             parser.error("The following options can't be specified together: %s" % ", ".join(given_options))
 
-    conflicting_options("regex", "glob")
     conflicting_options("threads", "timeout")
-    conflicting_options("threads", "processes", "stop_on_fail")
-    conflicting_options("threads", "processes", "list") # specify runners
+    conflicting_options("threads", "processes", "processes_old", "stop_on_fail")
+    conflicting_options("threads", "processes", "processes_old", "list") # specify runners
+    conflicting_options("processes", "processes_old", "debug")
 
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
@@ -159,15 +166,15 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["runner"] = ThreadedRunner(max_threads = options.threads)
 
     if options.processes is not None:
+        require_posix("--processes")
+        require_modules("--processes", "Pyro")
+        from running import PyroRunner
+        kwargs["runner"] = PyroRunner(max_processes = options.processes)
+        
+    if options.processes_old is not None:
+        require_posix("--processes_old")
         from running import ProcessedRunner
-        from sys import platform
-        if kwargs.has_key("runDebug"):
-            del kwargs["runDebug"]
-            print " -- WARNING: Processed running does not support --debug yet."
-            print
-        if platform == "win32":
-            require_modules("--processes", "Posix operation system")
-        kwargs["runner"] = ProcessedRunner(max_processes = options.processes)
+        kwargs["runner"] = ProcessedRunner(max_processes = options.processes_old)
 
     import running
     return running.text_run(**kwargs)

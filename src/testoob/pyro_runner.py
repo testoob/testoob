@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 def iter_queue(queue, sentinel, **kwargs):
     """
     Iterate over a Queue.Queue instance until a sentinel is reached
@@ -35,13 +37,14 @@ import running
 class PyroRunner(running.BaseRunner):
     SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
     GET_TIMEOUT = 20 # don't wait more than this for a test, on Python >= 2.3
-    def __init__(self, num_processes):
+    def __init__(self, max_processes):
         running.BaseRunner.__init__(self)
         from Queue import Queue
         self.queue = Queue()
-        self.num_processes = num_processes
+        self.max_processes = max_processes
         self.fixture_ids = {}
         self._parent_pid = os.getpid()
+        self.num_fixtures = 0
 
     def _pyro_name(self, basename):
         "Return the name mangled for use in TestOOB's RPC"
@@ -77,21 +80,26 @@ class PyroRunner(running.BaseRunner):
         assert id not in self.fixture_ids
         self.fixture_ids[id] = fixture
         self.queue.put(id)
+        self.num_fixtures += 1
 
     def _spawn_processes(self):
         # fork first child
         if os.fork() != 0: return # parent
 
         # fork the rest
-        for i in xrange(1, self.num_processes):
+        for i in xrange(1, self._num_processes()):
             if os.fork() == 0: # child
                 self._client_code()
 
         # run the client code on the first child too
         self._client_code()
 
+    def _num_processes(self):
+        "Don't spawn more processes than there are fixtures"
+        return min(self.max_processes, self.num_fixtures)
+
     def done(self):
-        for i in xrange(self.num_processes):
+        for i in xrange(self._num_processes()):
             self.queue.put(None)
 
         self._spawn_processes()
