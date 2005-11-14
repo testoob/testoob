@@ -25,8 +25,3 @@ import testing
 from asserter import Asserter
 Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")
 
-def alarm(sig, stack_frame):
-    raise AssertionError("Timeout")
-import signal
-signal.signal(signal.SIGALRM, alarm)
-

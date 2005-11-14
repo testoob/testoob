@@ -38,8 +38,10 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
 
     class Alarmed_fixture:
         def __init__(self, fixture):
-            from signal import alarm
-            self.alarm = alarm
+            self.alarm = lambda x:x
+            if timeout:
+                from signal import alarm
+                self.alarm = alarm
             self.fixture = fixture
         
         def __call__(self, *args):

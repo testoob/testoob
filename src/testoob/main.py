@@ -35,7 +35,7 @@ def _arg_parser(usage):
     p.add_option("--html", metavar="FILE", help="output results in HTML")
     p.add_option("--color", action="store_true", help="Color output")
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
-    p.add_option("--timeout", metavar="SECONDS", type="int", default=0, help="Fail test if passes timeout")
+    p.add_option("--timeout", metavar="SECONDS", type="int", help="Fail test if passes timeout")
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
@@ -116,8 +116,15 @@ def _main(suite, defaultTest, options, test_names, parser):
         "reporters" : [],
         "extraction_decorators" : [],
         "interval" : options.interval,
-        "timeout": options.timeout,
     }
+    kwargs.setdefault("timeout", 0)
+
+    if options.timeout is not None:
+        kwargs["timeout"] = options.timeout
+        def alarm(sig, stack_frame):
+            raise AssertionError("Timeout")
+        import signal
+        signal.signal(signal.SIGALRM, alarm)
 
     if options.regex is not None:
         import extracting
