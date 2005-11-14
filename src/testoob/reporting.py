@@ -215,7 +215,7 @@ class TextStreamReporter(BaseReporter):
     def _immediatePrint(self, test, error, flavour):
         if self.dots:
             self._write("\n")
-        self._printOneError(flavour, test,  _exc_info_to_string(error, test))
+        self._printOneError(flavour, test, _error_string(test, error))
         self._writeln(self.separator1)
         if self.showAll:
             self._write("\n")
