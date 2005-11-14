@@ -127,7 +127,7 @@ class PyroRunner(running.BaseRunner):
 
         Pyro.core.initServer(banner=False)
 
-        daemon = Pyro.core.Daemon()
+        daemon = Pyro.core.Daemon(host="localhost")
         
         daemon.connect(self._pyro_queue(), self._pyro_name("queue"))
         daemon.connect(self._pyro_reporter(), self._pyro_name("reporter"))
