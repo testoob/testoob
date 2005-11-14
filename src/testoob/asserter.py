@@ -32,21 +32,26 @@ class Asserter:
         variables = eval("Class.%s" % method_name).func_code.co_varnames
         setattr(Class, "_real_function_%s" % method_name, eval("Class.%s" % method_name))
         method = eval("Class._real_function_%s" % method_name)
-        def _assert_reporting_func(*args):
+        def _assert_reporting_func(*args, **kwargs):
+            num_free_args = len(variables)
+            additional_args = ()
+            if kwargs:
+                num_free_args -= 1
+                additional_args = (kwargs,)
+            if len(args) > num_free_args:
+                num_free_args -= 1
+                additional_args = args[num_free_args:] + additional_args
             # Can't be a dictionary, because the order matters.
-            varList = zip(variables[1:], args[1:])
+            varList = zip(variables[1:], (args[1:num_free_args] + additional_args))
             test = args[0]
             # If we run something that has no reporter, it should just run
             # (happens in testing of testoob with testoob).
             if not self._reporters.get(test):
-                return method(*args)
+                return method(*args, **kwargs)
             try:
-                method(*args)
+                method(*args, **kwargs)
             except Exception, e:
                 self._reporters[test].addAssert(test, method_name, varList, e)
-                raise
-            # Just in case of AssertionFail is not derived from Exception.
-            except:
                 raise
             self._reporters[test].addAssert(test, method_name, varList, None)
 

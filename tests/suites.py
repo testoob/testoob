@@ -89,6 +89,19 @@ class MoreTests(unittest.TestCase):
     def testAssertEqualWithFormatString(self):
         self.assertEquals("%s", "%s")
 
+class AssertRaisesTests(unittest.TestCase):
+    def rasingFunc(a,b,c):
+        raise Exception("Blah!")
+    def testAssertRaisesArgs(self):
+        self.assertRaises(Exception, self.rasingFunc, 1, 2, 3)
+    def testAssertRaisesArgsKwargs(self):
+        self.assertRaises(Exception, self.rasingFunc, 1, b = 2, c = 3)
+    def testAssertRaisesKwargs(self):
+        self.assertRaises(Exception, self.rasingFunc, a = 1, b = 2, c = 3)
+    def suite():
+        return unittest.makeSuite(AssertRaisesTests)
+    suite = staticmethod(suite)
+
 class CaseDocstring(unittest.TestCase):
     def testPass(self):
         "this test always passes"
