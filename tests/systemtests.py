@@ -263,5 +263,12 @@ Ran 2 tests in 2\.\d+s
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
+    def testProcessesImmediate(self):
+        args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
+                            options=["-v", "--immediate", "--processes=2"])
+        # Check that the fail message appears before testSuccess is run
+        regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*OK"
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
