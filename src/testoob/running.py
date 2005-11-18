@@ -133,35 +133,6 @@ class ProcessedRunner(BaseRunner):
         self._helper.start(self.reporter)
         BaseRunner.done(self)
 
-class _FixtureInfo:
-    def __init__(self, fixture):
-        self.fixture = fixture
-    
-    def module(self):
-        return self.fixture.__module__
-
-    def filename(self):
-        import sys
-        try:
-            return sys.modules[self.module()].__file__
-        except KeyError:
-            return "unknown file"
-
-    def classname(self):
-        return self.fixture.__class__.__name__
-
-    def funcname(self):
-        # parsing id() because the function name is a private fixture field
-        return self.fixture.id().split(".")[-1]
-
-    def docstring(self):
-        if getattr(self.fixture, self.funcname()).__doc__:
-            return getattr(self.fixture, self.funcname()).__doc__.splitlines()[0]
-        return ""
-
-    def funcinfo(self):
-        return (self.funcname(), self.docstring())
-
 class _TestHistory:
     def __init__(self):
         self.modules = {}
@@ -169,7 +140,8 @@ class _TestHistory:
     def record_fixture(self, fixture):
         """Store the info about each fixture, to show them later.
         """
-        fixture_info = _FixtureInfo(fixture)
+        from reporting import TestInfo
+        fixture_info = TestInfo(fixture)
         self._class_function_list(fixture_info).append(fixture_info.funcinfo())
 
     def get_string(self, max_functions_to_show):
