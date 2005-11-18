@@ -13,15 +13,16 @@ WEBDISTFILE = $(DISTDIR)/testoob_website-$(VERSION).tar.bz2
 all:
 	@echo nothing to be done
 
+test_with = $(1) ./src/testoob/testoob $(SUITEFILE) suite --color -i
 .PHONY: test
 test:
-	$(PYTHON) $(SUITEFILE)
+	$(call testall,python)
 
 .PHONY: testall
 testall:
-	python2.4 $(SUITEFILE)
-	python2.3 $(SUITEFILE)
-	python2.2 $(SUITEFILE)
+	$(call test_with,python2.4)
+	$(call test_with,python2.3)
+	$(call test_with,python2.2)
 
 .PHONY: clean
 clean:
