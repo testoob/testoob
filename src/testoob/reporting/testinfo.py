@@ -17,13 +17,7 @@ class TestInfo:
 	"""
 	An interface for getting information about tests.
 	Reporters receive instances of this class.
-
-	Instances are pickleable.
-	"""
-	def __init__(self, test):
-		failure_exception_type = test.failureException # TODO: do we need this?
-
-class TestInfo:
+    """
     def __init__(self, fixture):
         self.fixture = fixture
     
@@ -51,6 +45,9 @@ class TestInfo:
 
     def funcinfo(self):
         return (self.funcname(), self.docstring())
+
+    def failure_exception_type(self): # TODO: do we need this?
+        return self.fixture.failureException
 
 from testoob.utils import add_fields_pickling
 add_fields_pickling(TestInfo)
