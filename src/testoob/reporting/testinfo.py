@@ -52,3 +52,5 @@ class TestInfo:
     def funcinfo(self):
         return (self.funcname(), self.docstring())
 
+from testoob.utils import add_fields_pickling
+add_fields_pickling(TestInfo)
