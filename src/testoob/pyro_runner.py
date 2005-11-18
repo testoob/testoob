@@ -1,5 +1,5 @@
 # TestOOB, Python Testing Out Of (The) Box
-# Copyright (C) 2005 Ori Peleg and Misha Seltzer
+# Copyright (C) 2005 The TestOOB Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
