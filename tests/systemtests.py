@@ -190,11 +190,6 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             if os.path.exists(htmlfile):
                 os.unlink(htmlfile)
 
-    def testConflictingRegexGlob(self):
-        args = _testoob_args(options=["--regex=abc", "--glob=abc"], tests=["CaseLetters"])
-        regex=r"The following options can't be specified together: glob, regex"
-        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=None)
-
     def testGlob(self):
         args = _testoob_args(options=["-v", "--glob=*Database*"], tests=["CaseNames"])
         regex=r"""
