@@ -36,45 +36,45 @@ class TextStreamReporter(BaseReporter):
         self.immediate = immediate
         self.descriptions = descriptions
 
-    def startTest(self, test):
-        BaseReporter.startTest(self, test)
+    def startTest(self, test_info):
+        BaseReporter.startTest(self, test_info)
         self.multiLineOutput = False
         if self.showAll:
-            self._write(self.getDescription(test))
+            self._write(self.getDescription(test_info))
             self._write(" ... ")
 
-    def addSuccess(self, test):
-        BaseReporter.addSuccess(self, test)
+    def addSuccess(self, test_info):
+        BaseReporter.addSuccess(self, test_info)
         if self.showAll:
             self._write("\n" * self.multiLineOutput)
             self._writeln(self._decorateSuccess("OK"))
         elif self.dots:
             self._write(self._decorateSuccess('.'))
 
-    def addError(self, test, err):
-        BaseReporter.addError(self, test, err)
+    def addError(self, test_info, err):
+        BaseReporter.addError(self, test_info, err)
         if self.showAll:
             self._write("\n" * self.multiLineOutput)
             self._writeln(self._decorateFailure("ERROR"))
         elif self.dots:
             self._write(self._decorateFailure('E'))
         if self.immediate:
-            self._immediatePrint(test, err, "ERROR")
+            self._immediatePrint(test_info, err, "ERROR")
 
-    def addFailure(self, test, err):
-        BaseReporter.addFailure(self, test, err)
+    def addFailure(self, test_info, err):
+        BaseReporter.addFailure(self, test_info, err)
         if self.showAll:
             self._write("\n" * self.multiLineOutput)
             self._writeln(self._decorateFailure("FAIL"))
         elif self.dots:
             self._write(self._decorateFailure('F'))
         if self.immediate:
-            self._immediatePrint(test, err, "FAIL")
+            self._immediatePrint(test_info, err, "FAIL")
 
-    def stopTest(self, test):
-        BaseReporter.stopTest(self, test)
+    def stopTest(self, test_info):
+        BaseReporter.stopTest(self, test_info)
         if self.vassert and not self.immediate:
-            self._printVasserts(test)
+            self._printVasserts(test_info)
 
     def _vassertMessage(self, assertName, varList, isPassed):
         msg = "(" + assertName + ") "
@@ -82,14 +82,14 @@ class TextStreamReporter(BaseReporter):
         decoratedSign = self._decorateSign(isPassed)
         return "[ %(decoratedSign)s %(msg)s ]" % vars()
 
-    def _printVasserts(self, test):
-        for assertName, varList, err in self.asserts[test]:
+    def _printVasserts(self, test_info):
+        for assertName, varList, err in self.asserts[test_info]:
             self._writeln("  " + self._vassertMessage(assertName, varList, (err == None)))
 
-    def _immediatePrint(self, test, error, flavour):
+    def _immediatePrint(self, test_info, error, flavour):
         if self.dots:
             self._write("\n")
-        self._printOneError(flavour, test, _error_string(test, error))
+        self._printOneError(flavour, test_info, _error_string(test_info, error))
         self._writeln(self.separator1)
         if self.showAll:
             self._write("\n")
@@ -103,8 +103,8 @@ class TextStreamReporter(BaseReporter):
         self._writeln(self.separator2)
         self._printResults()
 
-    def addAssert(self, test, assertName, varList, err):
-        BaseReporter.addAssert(self, test, assertName, varList, err)
+    def addAssert(self, test_info, assertName, varList, err):
+        BaseReporter.addAssert(self, test_info, assertName, varList, err)
         if self.immediate and self.vassert:
             self._write("\n  " + self._vassertMessage(assertName, varList, (err == None)))
             self.multiLineOutput = True
@@ -144,13 +144,13 @@ class TextStreamReporter(BaseReporter):
         self._printErrorList('FAIL', self.failures)
 
     def _printErrorList(self, flavour, errors):
-        for test, err in errors:
-            self._printOneError(flavour, test, err)
+        for test_info, err in errors:
+            self._printOneError(flavour, test_info, err)
             self._write("\n")
 
-    def _printOneError(self, flavour, test, err):
+    def _printOneError(self, flavour, test_info, err):
         self._writeln(self.separator1)
-        self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test))))
+        self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test_info))))
         self._writeln(self.separator2)
         self._write("%s" % err)
 
@@ -160,10 +160,10 @@ class TextStreamReporter(BaseReporter):
         self.stream.write(s)
         self.stream.write("\n")
 
-    def getDescription(self, test):
-        default_description = test._TestCase__testMethodName + " (" + self.re.sub("^__main__.", "", test.id()) + ")"
+    def getDescription(self, test_info):
+        default_description = test_info.funcname() + " (" + self.re.sub("^__main__.", "", test_info.id()) + ")"
         if self.descriptions:
-            return test.shortDescription() or default_description
+            return test_info.short_description() or default_description
         else:
             return default_description
 

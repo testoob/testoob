@@ -25,7 +25,7 @@ def _exc_info_to_string(err, test):
     # Skip test runner traceback levels
     while tb and _is_relevant_tb_level(tb):
         tb = tb.tb_next
-    if exctype is test.failureException:
+    if exctype is test.failure_exception_type():
         # Skip assert*() traceback levels
         length = _count_relevant_tb_levels(tb)
         return ''.join(traceback.format_exception(exctype, value, tb, length))

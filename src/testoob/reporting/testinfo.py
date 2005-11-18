@@ -14,9 +14,9 @@
 # limitations under the License.
 
 class TestInfo:
-	"""
-	An interface for getting information about tests.
-	Reporters receive instances of this class.
+    """
+    An interface for getting information about tests.
+    Reporters receive instances of this class.
     """
     def __init__(self, fixture):
         self.fixture = fixture
@@ -48,6 +48,25 @@ class TestInfo:
 
     def failure_exception_type(self): # TODO: do we need this?
         return self.fixture.failureException
+
+    def id(self): # TODO: do we need this?
+        return self.fixture.id()
+
+    def short_description(self): # TODO: do we need this?
+        return self.fixture.shortDescription()
+
+    def __str__(self):
+        return str(self.fixture)
+
+    # should be usable as dictionary keys, so define __hash__ and __cmp__
+    def __unique_string_repr(self):
+        return "%s - %s" % (hash(self), str(self))
+
+    def __cmp__(self, other):
+        return cmp(self.__unique_string_repr(), other.__unique_string_repr())
+
+    def __hash__(self):
+        return hash(self.fixture)
 
 from testoob.utils import add_fields_pickling
 add_fields_pickling(TestInfo)

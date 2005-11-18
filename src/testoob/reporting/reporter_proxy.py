@@ -15,50 +15,51 @@
 
 "The proxy used as a result object for PyUnit suites"
 
-def ObserverProxy(method_names):
-    """
-	Create a thread-safe proxy that forwards methods to a group of observers.
-	Each method can return a boolean value, the proxy will return the '&'
-	between them.
-    See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/413701.
-    """
-    class Proxy:
-        def __init__(self):
-            self.observers = []
-            import threading
-            self.lock = threading.RLock()
-        def add_observer(self, observer):
-            self.observers.append(observer)
-        def remove_observer(self, observer):
-            self.observers.remove(observer)
+# TODO: separate the PyUnit result-object passed to the fixtures and
+#       the observable proxy that proxies everything to reporters.
+#       Notice the '_apply_method' duplication in each method, this should
+#       be removed.
 
-    def create_method_proxy(method_name):
-        def method_proxy(self, *args, **kwargs):
-            self.lock.acquire()
-            retVal = True
-            try:
-                for observer in self.observers:
-                    retVal &= bool(getattr(observer, method_name)(*args, **kwargs))
-            finally:
-                self.lock.release()
-            return retVal
-        return method_proxy
+from testinfo import TestInfo
 
-    for method_name in method_names:
-        setattr(Proxy, method_name, create_method_proxy(method_name))
+class ReporterProxy:
+    def __init__(self):
+        self.observing_reporters = []
+        import threading
+        self.lock = threading.RLock()
 
-    return Proxy
+    def add_observer(self, reporter):
+        self.observing_reporters.append(reporter)
 
-ReporterProxy = ObserverProxy([
-    "start",
-    "done",
-    "startTest",
-    "stopTest",
-    "addError",
-    "addFailure",
-    "addSuccess",
-    "addAssert",
-    "isSuccessful",
-])
+    def _apply_method(self, name, *args):
+        for reporter in self.observing_reporters:
+            getattr(reporter, name)(*args)
+    
+    def start(self):
+        self._apply_method("start")
 
+    def done(self):
+        self._apply_method("done")
 
+    def startTest(self, test):
+        self._apply_method("startTest", TestInfo(test))
+
+    def stopTest(self, test):
+        self._apply_method("stopTest", TestInfo(test))
+
+    def addError(self, test, err):
+        self._apply_method("addError", TestInfo(test), err)
+
+    def addFailure(self, test, err):
+        self._apply_method("addFailure", TestInfo(test), err)
+
+    def addSuccess(self, test):
+        self._apply_method("addSuccess", TestInfo(test))
+
+    def addAssert(self, test, assertName, varList, err):
+        self._apply_method("addAssert", TestInfo(test), assertName, varList, err)
+    def isSuccessful(self):
+        for reporter in self.observing_reporters:
+            if not reporter.isSuccessful():
+                return False # One failed reporter is enough
+        return True

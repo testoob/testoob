@@ -29,36 +29,36 @@ class IReporter:
     # Proxied result object methods
     ########################################
 
-    def startTest(self, test):
+    def startTest(self, test_info):
         "Called when the given test is about to be run"
         pass
 
-    def stopTest(self, test):
+    def stopTest(self, test_info):
         "Called when the given test has been run"
         pass
 
-    def addError(self, test, err):
+    def addError(self, test_info, err):
         """Called when an error has occurred. 'err' is a tuple of values as
         returned by sys.exc_info()."""
         pass
 
-    def addFailure(self, test, err):
+    def addFailure(self, test_info, err):
         """Called when an error has occurred. 'err' is a tuple of values as
         returned by sys.exc_info()."""
         pass
 
-    def addSuccess(self, test):
+    def addSuccess(self, test_info):
         "Called when a test has completed successfully"
         pass
 
-    def addAssert(self, test, assertName, varList, err):
+    def addAssert(self, test_info, assertName, varList, err):
         "Called when an assert was made (if err is None, the assert passed)"
         pass
 
     ########################################
     # Additional reporter's methods.
     ########################################
-    def getDescription(self, test):
+    def getDescription(self, test_info):
         "Get a nice printable description of the test"
         pass
 
@@ -87,24 +87,24 @@ class BaseReporter(IReporter):
         self.total_time = _time.time() - self.start_time
         del self.start_time
 
-    def startTest(self, test):
+    def startTest(self, test_info):
         self.testsRun += 1
-        self.asserts[test] = []
+        self.asserts[test_info] = []
 
-    def stopTest(self, test):
+    def stopTest(self, test_info):
         pass
 
-    def addError(self, test, err):
-        self.errors.append((test, _error_string(test, err)))
+    def addError(self, test_info, err):
+        self.errors.append((test_info, _error_string(test_info, err)))
 
-    def addFailure(self, test, err):
-        self.failures.append((test, _error_string(test, err)))
+    def addFailure(self, test_info, err):
+        self.failures.append((test_info, _error_string(test_info, err)))
 
-    def addSuccess(self, test):
+    def addSuccess(self, test_info):
         pass
 
-    def addAssert(self, test, assertName, varList, err):
-        self.asserts[test] += [(assertName, varList, err)]
+    def addAssert(self, test_info, assertName, varList, err):
+        self.asserts[test_info] += [(assertName, varList, err)]
 
     def isSuccessful(self):
         "Tells whether or not this result was a success"

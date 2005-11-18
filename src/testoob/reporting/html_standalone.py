@@ -67,33 +67,33 @@ class OldHTMLReporter(BaseReporter):
         str = re.sub(r'File "(.+)",', r'<a href="file:///\1"> File "\1",</a>', str)
         return str.replace("\n","<br>")
 
-    def startTest(self, test):
-        BaseReporter.startTest(self, test)
-        self.test_starts[test] = _time.time()
+    def startTest(self, test_info):
+        BaseReporter.startTest(self, test_info)
+        self.test_starts[test_info] = _time.time()
 
-    def addError(self, test, err):
-        BaseReporter.addError(self, test, err)
-        self._add_unsuccessful_testcase("error", test, err)
+    def addError(self, test_info, err):
+        BaseReporter.addError(self, test_info, err)
+        self._add_unsuccessful_testcase("error", test_info, err)
 
-    def addFailure(self, test, err):
-        BaseReporter.addFailure(self, test, err)
-        self._add_unsuccessful_testcase("failure", test, err)
+    def addFailure(self, test_info, err):
+        BaseReporter.addFailure(self, test_info, err)
+        self._add_unsuccessful_testcase("failure", test_info, err)
 
     _SuccessTemplate='<tr><td>%s</td><td>%s</td><td><font color="green">success</font></td></tr>'
-    def addSuccess(self, test):
-        BaseReporter.addSuccess(self, test)
-        self._sio.write(HTMLReporter._SuccessTemplate%(str(test), self._test_time(test)))
+    def addSuccess(self, test_info):
+        BaseReporter.addSuccess(self, test_info)
+        self._sio.write(HTMLReporter._SuccessTemplate%(str(test_info), self._test_time(test_info)))
 
     _FailTemplate="""
     <tr><td>%s</td><td>%s</td><td><font color="red">%s</font></td>
     <td>%s</td></tr>
     """
-    def _add_unsuccessful_testcase(self, failure_type, test, err):
-        self._sio.write(HTMLReporter._FailTemplate%(str(test), self._test_time(test), failure_type, self._encodeException(_exc_info_to_string(err, test))))
+    def _add_unsuccessful_testcase(self, failure_type, test_info, err):
+        self._sio.write(HTMLReporter._FailTemplate%(str(test_info), self._test_time(test_info), failure_type, self._encodeException(_exc_info_to_string(err, test_info))))
 
-    def _test_time(self, test):
-        result = _time.time() - self.test_starts[test]
-        del self.test_starts[test]
+    def _test_time(self, test_info):
+        result = _time.time() - self.test_starts[test_info]
+        del self.test_starts[test_info]
         return "%.4f" % result
 
 

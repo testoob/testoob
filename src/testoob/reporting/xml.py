@@ -48,36 +48,36 @@ class XMLReporter(BaseReporter):
     def get_xml(self):
         return self._sio.getvalue()
 
-    def startTest(self, test):
-        BaseReporter.startTest(self, test)
-        self.test_starts[test] = time.time()
+    def startTest(self, test_info):
+        BaseReporter.startTest(self, test_info)
+        self.test_starts[test_info] = time.time()
 
-    def addError(self, test, err):
-        BaseReporter.addError(self, test, err)
-        self._add_unsuccessful_testcase("error", test, err)
+    def addError(self, test_info, err):
+        BaseReporter.addError(self, test_info, err)
+        self._add_unsuccessful_testcase("error", test_info, err)
 
-    def addFailure(self, test, err):
-        BaseReporter.addFailure(self, test, err)
-        self._add_unsuccessful_testcase("failure", test, err)
+    def addFailure(self, test_info, err):
+        BaseReporter.addFailure(self, test_info, err)
+        self._add_unsuccessful_testcase("failure", test_info, err)
 
-    def addSuccess(self, test):
-        BaseReporter.addSuccess(self, test)
-        self._start_testcase_tag(test)
+    def addSuccess(self, test_info):
+        BaseReporter.addSuccess(self, test_info)
+        self._start_testcase_tag(test_info)
         self.writer.element("result", "success")
         self.writer.end("testcase")
 
-    def _add_unsuccessful_testcase(self, failure_type, test, err):
-        self._start_testcase_tag(test)
+    def _add_unsuccessful_testcase(self, failure_type, test_info, err):
+        self._start_testcase_tag(test_info)
         self.writer.element("result", failure_type)
-        self.writer.element(failure_type, _exc_info_to_string(err, test), type=str(err[0]), message=str(err[1]))
+        self.writer.element(failure_type, _exc_info_to_string(err, test_info), type=str(err[0]), message=str(err[1]))
         self.writer.end("testcase")
 
-    def _start_testcase_tag(self, test):
-        self.writer.start("testcase", name=str(test), time=self._test_time(test))
+    def _start_testcase_tag(self, test_info):
+        self.writer.start("testcase", name=str(test_info), time=self._test_time(test_info))
 
-    def _test_time(self, test):
-        result = time.time() - self.test_starts[test]
-        del self.test_starts[test]
+    def _test_time(self, test_info):
+        result = time.time() - self.test_starts[test_info]
+        del self.test_starts[test_info]
         return "%.4f" % result
 
 class XMLFileReporter(XMLReporter):

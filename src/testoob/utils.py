@@ -41,8 +41,8 @@ def add_fields_pickling(klass):
         result = {}
 
         for attr_name in dir(self):
-            if attr_name.startswith("__"):
-                continue # skip special attributes
+            if attr_name == "__init__":
+                continue # skip constructor
 
             attr = getattr(self, attr_name)
             if type(attr) == MethodType:
