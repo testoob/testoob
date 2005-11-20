@@ -13,7 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def add_fields_pickling(klass):
+def _is_pickleable(obj):
+    "Is the object pickleable?"
+    import cPickle as pickle
+    try:
+        pickle.dumps(obj)
+        return True
+    except TypeError:
+        return False
+
+class UnpickleableFieldError(Exception): pass
+
+def add_fields_pickling(klass, disable_unpickleable_fields=False):
     """
     Add pickling for 'fields' classes.
 
@@ -21,6 +32,7 @@ def add_fields_pickling(klass):
     arguments and for a given class's state always return the same value.
 
     Useful for 'fields' classes that contain unpickleable members.
+
     Used in TestOOB, http://testoob.sourceforge.net
 
     A contrived example for a 'fields' class:
@@ -33,31 +45,57 @@ def add_fields_pickling(klass):
         def mr(self):
           return "Mr. " + self.name
 
-    See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/456363
+    If a method returns an unpickleable value there are two options:
+    Default:
+      Allow the instance to be pickled. If the method is called on the
+      unpickled instance, an UnpickleableFieldError exception is raised.
+      There is a possible performance concern here: each return value is
+      pickled twice when pickling the instance.
+
+    With disable_unpickleable_fields=True:
+      Disallow pickling of instances with a method returning an unpickleable
+      object.
     """
     def state_extractor(self):
         from types import MethodType
 
-        result = {}
+        fields_dict = {}
+        unpickleable_fields = []
+
+        def save_field(name, method):
+            try:
+                retval = method()
+                if disable_unpickleable_fields or _is_pickleable(retval):
+                    fields_dict[name] = retval # call the method
+                else:
+                    unpickleable_fields.append(name)
+            except TypeError:
+                raise TypeError("""not a "fields" class, problem with method '%s'""" % name)
 
         for attr_name in dir(self):
-            if attr_name == "__init__":
-                continue # skip constructor
+            if attr_name in ("__init__", "__getstate__", "__setstate__"):
+                continue # skip constructor and state magic methods
 
             attr = getattr(self, attr_name)
-            if type(attr) == MethodType:
-                try:
-                    result[attr_name] = attr() # call the method
-                except TypeError:
-                    raise TypeError("""not a "fields" class, problem with method '%s'""" % attr_name)
 
-        return result
+            if type(attr) == MethodType:
+                save_field(attr_name, attr)
+
+        return (fields_dict, unpickleable_fields)
 
     def build_from_state(self, state):
-        for name in state.keys():
+        fields_dict, unpickleable_fields = state
+        # saved fields
+        for name in fields_dict.keys():
             # set the default name argument to prevent overwriting the name
-            setattr(self, name, lambda name=name:state[name])
+            setattr(self, name, lambda name=name:fields_dict[name])
+
+        # unpickleable fields
+        for name in unpickleable_fields:
+            def getter(name=name):
+                raise UnpickleableFieldError(
+                        "%s()'s result wasn't pickleable" % name)
+            setattr(self, name, getter)
 
     klass.__getstate__ = state_extractor
     klass.__setstate__ = build_from_state
-
