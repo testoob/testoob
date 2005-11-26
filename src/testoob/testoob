@@ -54,11 +54,11 @@ options, file_name, test_names, parser = parseArgs()
 try:
     # Add the path of the ran file to the python path, so that includes
     # from the same directory would work.
-    from os.path import dirname
+    from os.path import dirname, basename
     addPythonPath(dirname(file_name))
 
     name = __name__
-    __name__ = "".join(file_name.split("/")[-1].split(".")[0])
+    __name__ = basename(file_name).split(".")[0]
     execfile(file_name)
     __name__ = name
 
