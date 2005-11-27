@@ -16,12 +16,12 @@
 "test running logic"
 
 import unittest as _unittest
-from extracting import suite_iter as _suite_iter
+from testoob.extracting import suite_iter as _suite_iter
 
 ###############################################################################
 # apply_runner
 ###############################################################################
-from extracting import full_extractor as _full_extractor
+from testoob.extracting import full_extractor as _full_extractor
 
 def apply_decorators(callable, decorators):
     "Wrap the callable in all the decorators"
@@ -74,7 +74,7 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
 class BaseRunner(object):
     """default implementations of setting a reporter and done()"""
     def __init__(self):
-        from asserter import Asserter
+        from testoob.asserter import Asserter
         self._Asserter = Asserter
 
     def _set_reporter(self, reporter):
@@ -140,7 +140,7 @@ class _TestHistory:
     def record_fixture(self, fixture):
         """Store the info about each fixture, to show them later.
         """
-        from reporting import TestInfo
+        from testoob.reporting import TestInfo
         fixture_info = TestInfo(fixture)
         self._class_function_list(fixture_info).append(fixture_info.funcinfo())
 
@@ -225,7 +225,7 @@ def _apply_debug(reporter, runDebug):
     return reporter
 
 def _create_reporter_proxy(reporters, runDebug):
-    from reporting import ReporterProxy
+    from testoob.reporting import ReporterProxy
     result = ReporterProxy()
     for reporter in reporters:
         result.add_observer(_apply_debug(reporter, runDebug))
@@ -268,8 +268,9 @@ def text_run(*args, **kwargs):
 
     kwargs.setdefault("reporters", [])
 
-    import sys, reporting
-    reporter_class = _pop(kwargs, "reporter_class", reporting.TextStreamReporter)
+    import sys
+    from testoob.reporting import TextStreamReporter
+    reporter_class = _pop(kwargs, "reporter_class", TextStreamReporter)
 
     reporter_instance = reporter_class(
             verbosity=verbosity,
