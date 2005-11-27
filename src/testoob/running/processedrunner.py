@@ -13,12 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"test running logic"
-
 from baserunner import BaseRunner
-from threadedrunner import ThreadedRunner
-from processedrunner import ProcessedRunner
-from listingrunner import ListingRunner
-from pyro_runner import PyroRunner
 
-from convenience import run, text_run
+class ProcessedRunner(BaseRunner):
+    "Run tests using fork in different processes."
+    def __init__(self, max_processes=1):
+        from processed_helper import ProcessedRunnerHelper
+        BaseRunner.__init__(self)
+        self._helper = ProcessedRunnerHelper(max_processes)
+
+    def run(self, fixture):
+        BaseRunner.run(self, fixture)
+        self._helper.register_fixture(fixture)
+
+    def done(self):
+        self._helper.start(self.reporter)
+        BaseRunner.done(self)

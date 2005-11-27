@@ -13,12 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"test running logic"
+"Simple runner"
 
 from baserunner import BaseRunner
-from threadedrunner import ThreadedRunner
-from processedrunner import ProcessedRunner
-from listingrunner import ListingRunner
-from pyro_runner import PyroRunner
+class SimpleRunner(BaseRunner):
+    "Simple runner, simply runs each test (what more do you need? :-)"
+    def run(self, fixture):
+        BaseRunner.run(self, fixture)
+        fixture(self._reporter)
+        return self._reporter.isSuccessful()
 
-from convenience import run, text_run

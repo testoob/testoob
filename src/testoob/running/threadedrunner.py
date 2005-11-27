@@ -13,12 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"test running logic"
-
 from baserunner import BaseRunner
-from threadedrunner import ThreadedRunner
-from processedrunner import ProcessedRunner
-from listingrunner import ListingRunner
-from pyro_runner import PyroRunner
 
-from convenience import run, text_run
+class ThreadedRunner(BaseRunner):
+    """Run tests using a threadpool.
+    Uses TwistedPython's thread pool"""
+    def __init__(self, max_threads=None):
+        BaseRunner.__init__(self)
+
+        from twisted.python.threadpool import ThreadPool
+
+        min_threads = min(ThreadPool.min, max_threads)
+        self.pool = ThreadPool(minthreads = min_threads, maxthreads=max_threads)
+        self.pool.start()
+
+    def run(self, fixture):
+        BaseRunner.run(self, fixture)
+        self.pool.dispatch(None, fixture, self.reporter)
+
+    def done(self):
+        self.pool.stop()
+        BaseRunner.done(self)
