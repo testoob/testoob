@@ -37,22 +37,30 @@ class IReporter:
         "Called when the given test has been run"
         pass
 
-    def addError(self, test_info, err):
-        """Called when an error has occurred. 'err' is a tuple of values as
-        returned by sys.exc_info()."""
+    def addError(self, test_info, err_info):
+        """
+        Called when an error has occurred.
+
+        @param test_info a TestInfo instance
+        @param err_info an ErrInfo instance
+        """
         pass
 
-    def addFailure(self, test_info, err):
-        """Called when an error has occurred. 'err' is a tuple of values as
-        returned by sys.exc_info()."""
+    def addFailure(self, test_info, err_info):
+        """
+        Called when a failure has occurred.
+        
+        @param test_info a TestInfo instance
+        @param err_info an ErrInfo instance
+        """
         pass
 
     def addSuccess(self, test_info):
         "Called when a test has completed successfully"
         pass
 
-    def addAssert(self, test_info, assertName, varList, err):
-        "Called when an assert was made (if err is None, the assert passed)"
+    def addAssert(self, test_info, assertName, varList, exception):
+        "Called when an assert was made (if exception is None, the assert passed)"
         pass
 
     ########################################
@@ -94,17 +102,18 @@ class BaseReporter(IReporter):
     def stopTest(self, test_info):
         pass
 
-    def addError(self, test_info, err):
-        self.errors.append((test_info, _error_string(test_info, err)))
+    def addError(self, test_info, err_info):
+        self.errors.append((test_info, err_info))
 
-    def addFailure(self, test_info, err):
-        self.failures.append((test_info, _error_string(test_info, err)))
+    def addFailure(self, test_info, err_info):
+        self.failures.append((test_info, err_info))
 
     def addSuccess(self, test_info):
         pass
 
-    def addAssert(self, test_info, assertName, varList, err):
-        self.asserts[test_info] += [(assertName, varList, err)]
+    def addAssert(self, test_info, assertName, varList, exception):
+        # TODO: append?
+        self.asserts[test_info] += [(assertName, varList, exception)]
 
     def isSuccessful(self):
         "Tells whether or not this result was a success"

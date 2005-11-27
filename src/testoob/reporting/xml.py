@@ -52,13 +52,13 @@ class XMLReporter(BaseReporter):
         BaseReporter.startTest(self, test_info)
         self.test_starts[test_info] = time.time()
 
-    def addError(self, test_info, err):
-        BaseReporter.addError(self, test_info, err)
-        self._add_unsuccessful_testcase("error", test_info, err)
+    def addError(self, test_info, err_info):
+        BaseReporter.addError(self, test_info, err_info)
+        self._add_unsuccessful_testcase("error", test_info, err_info)
 
-    def addFailure(self, test_info, err):
-        BaseReporter.addFailure(self, test_info, err)
-        self._add_unsuccessful_testcase("failure", test_info, err)
+    def addFailure(self, test_info, err_info):
+        BaseReporter.addFailure(self, test_info, err_info)
+        self._add_unsuccessful_testcase("failure", test_info, err_info)
 
     def addSuccess(self, test_info):
         BaseReporter.addSuccess(self, test_info)
@@ -66,10 +66,10 @@ class XMLReporter(BaseReporter):
         self.writer.element("result", "success")
         self.writer.end("testcase")
 
-    def _add_unsuccessful_testcase(self, failure_type, test_info, err):
+    def _add_unsuccessful_testcase(self, failure_type, test_info, err_info):
         self._start_testcase_tag(test_info)
         self.writer.element("result", failure_type)
-        self.writer.element(failure_type, _exc_info_to_string(err, test_info), type=str(err[0]), message=str(err[1]))
+        self.writer.element(failure_type, str(err_info), type=err_info.exception_type(), message=err_info.exception_value())
         self.writer.end("testcase")
 
     def _start_testcase_tag(self, test_info):

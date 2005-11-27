@@ -166,6 +166,7 @@ class PyroRunner(running.BaseRunner):
 
         sys.exit(0) # everything was successful
 
+# TODO: merge with reporting.testinfo.TestInfo
 class TestInfo:
     """
     Extract test info on construction, to enable pickling
@@ -173,7 +174,6 @@ class TestInfo:
     Most methods aim to make reporting.TextStreamReporter.getDescription happy
     """
     def __init__(self, test):
-        # TODO: perhaps convert everyone to use TestInfo
         self._id = test.id()
         self._TestCase__testMethodName = test._TestCase__testMethodName
         self.str = str(test)
@@ -184,6 +184,8 @@ class TestInfo:
         return self._shortDescription
     def __str__(self):
         return self.str
+
+from reporting.err_info import ErrInfo
 
 class PickleFriendlyReporterProxy:
     """
@@ -205,13 +207,10 @@ class PickleFriendlyReporterProxy:
 
     # making tracebacks safe for pickling
     def addError(self, test, err):
-        import reporting
-        self.reporter.addError(TestInfo(test), reporting._exc_info_to_string(err, test))
+        self.reporter.addError(TestInfo(test), ErrInfo(test, err))
     def addFailure(self, test, err):
-        import reporting
-        self.reporter.addFailure(TestInfo(test), reporting._exc_info_to_string(err, test))
+        self.reporter.addFailure(TestInfo(test), ErrInfo(test, err))
 
-    def addAssert(self, test, assertName, varList, err):
+    def addAssert(self, test, assertName, varList, exception):
         raise NotImplementedError # TODO: check when we need this
-
 

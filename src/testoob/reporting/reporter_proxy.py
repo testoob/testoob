@@ -21,6 +21,7 @@
 #       be removed.
 
 from testinfo import TestInfo
+from err_info import ErrInfo
 
 class ReporterProxy:
     def __init__(self):
@@ -48,16 +49,17 @@ class ReporterProxy:
         self._apply_method("stopTest", TestInfo(test))
 
     def addError(self, test, err):
-        self._apply_method("addError", TestInfo(test), err)
+        self._apply_method("addError", TestInfo(test), ErrInfo(test, err))
 
     def addFailure(self, test, err):
-        self._apply_method("addFailure", TestInfo(test), err)
+        self._apply_method("addFailure", TestInfo(test), ErrInfo(test, err))
 
     def addSuccess(self, test):
         self._apply_method("addSuccess", TestInfo(test))
 
-    def addAssert(self, test, assertName, varList, err):
-        self._apply_method("addAssert", TestInfo(test), assertName, varList, err)
+    def addAssert(self, test, assertName, varList, exception):
+        self._apply_method("addAssert", TestInfo(test), assertName, varList, exception)
+
     def isSuccessful(self):
         for reporter in self.observing_reporters:
             if not reporter.isSuccessful():

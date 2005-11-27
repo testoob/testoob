@@ -71,13 +71,13 @@ class OldHTMLReporter(BaseReporter):
         BaseReporter.startTest(self, test_info)
         self.test_starts[test_info] = _time.time()
 
-    def addError(self, test_info, err):
-        BaseReporter.addError(self, test_info, err)
-        self._add_unsuccessful_testcase("error", test_info, err)
+    def addError(self, test_info, err_info):
+        BaseReporter.addError(self, test_info, err_info)
+        self._add_unsuccessful_testcase("error", test_info, err_info)
 
-    def addFailure(self, test_info, err):
-        BaseReporter.addFailure(self, test_info, err)
-        self._add_unsuccessful_testcase("failure", test_info, err)
+    def addFailure(self, test_info, err_info):
+        BaseReporter.addFailure(self, test_info, err_info)
+        self._add_unsuccessful_testcase("failure", test_info, err_info)
 
     _SuccessTemplate='<tr><td>%s</td><td>%s</td><td><font color="green">success</font></td></tr>'
     def addSuccess(self, test_info):
@@ -88,8 +88,8 @@ class OldHTMLReporter(BaseReporter):
     <tr><td>%s</td><td>%s</td><td><font color="red">%s</font></td>
     <td>%s</td></tr>
     """
-    def _add_unsuccessful_testcase(self, failure_type, test_info, err):
-        self._sio.write(HTMLReporter._FailTemplate%(str(test_info), self._test_time(test_info), failure_type, self._encodeException(_exc_info_to_string(err, test_info))))
+    def _add_unsuccessful_testcase(self, failure_type, test_info, err_info):
+        self._sio.write(HTMLReporter._FailTemplate%(str(test_info), self._test_time(test_info), failure_type, self._encodeException(str(err_info))))
 
     def _test_time(self, test_info):
         result = _time.time() - self.test_starts[test_info]

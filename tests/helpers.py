@@ -30,25 +30,26 @@ class ReporterWithMemory:
         self.has_started = False
         self.is_done = False
 
-    def _append_test(self, l, test):
-        l.append(str(test).split()[0])
+    def _append_test(self, l, test_info):
+        # TODO: use test_info.methodname()
+        l.append(str(test_info).split()[0])
 
     def start(self):
         self.has_started = True
     def done(self):
         self.is_done = True
-    def startTest(self, test):
-        self._append_test(self.started, test)
-    def stopTest(self, test):
-        self._append_test(self.finished, test)
-    def addError(self, test, err):
-        self._append_test(self.errors, test)
-    def addFailure(self, test, err):
-        self._append_test(self.failures, test)
-    def addSuccess(self, test):
-        self._append_test(self.successes, test)
-    def addAssert(self, test, assertName, varList, err):
-        self.asserts[str(test).split()[0]] = (assertName, err.__class__)
+    def startTest(self, test_info):
+        self._append_test(self.started, test_info)
+    def stopTest(self, test_info):
+        self._append_test(self.finished, test_info)
+    def addError(self, test_info, err_info):
+        self._append_test(self.errors, test_info)
+    def addFailure(self, test_info, err_info):
+        self._append_test(self.failures, test_info)
+    def addSuccess(self, test_info):
+        self._append_test(self.successes, test_info)
+    def addAssert(self, test_info, assertName, varList, exception):
+        self.asserts[str(test_info).split()[0]] = (assertName, exception.__class__)
     def isSuccessful(self):
         pass
 

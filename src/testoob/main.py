@@ -157,14 +157,14 @@ def _main(suite, defaultTest, options, test_names, parser):
 
     if options.debug is not None:
         import pdb
-        def runDebug(test, err, flavour, reporter, real_add):
+        def runDebug(test, err_info, flavour, reporter, real_add):
             from signal import alarm
             alarm(0) # Don't timeout on debug.
             assert flavour in ("error", "failure")
-            real_add(test, err)
+            real_add(test, err_info)
             print "\nDebugging for %s in test: %s" % (
                     flavour, reporter.getDescription(test))
-            pdb.post_mortem(err[2])
+            pdb.post_mortem(err_info.traceback())
         kwargs["runDebug"] = runDebug
 
     if options.threads is not None:
