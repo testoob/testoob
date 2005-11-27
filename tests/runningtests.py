@@ -70,15 +70,22 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
     def testAssertRaises(self):
         self._run(suite=suites.AssertRaisesTests.suite())
         self._check_reporter(
-                started   = ["testAssertRaisesArgs", "testAssertRaisesArgsKwargs", "testAssertRaisesKwargs"],
-                finished  = ["testAssertRaisesArgs", "testAssertRaisesArgsKwargs", "testAssertRaisesKwargs"],
-                successes = ["testAssertRaisesArgs", "testAssertRaisesArgsKwargs", "testAssertRaisesKwargs"],
+                started   = ["testAssertRaisesArgs",
+                             "testAssertRaisesArgsKwargs",
+                             "testAssertRaisesKwargs"],
+                finished  = ["testAssertRaisesArgs",
+                             "testAssertRaisesArgsKwargs",
+                             "testAssertRaisesKwargs"],
+                successes = ["testAssertRaisesArgs",
+                             "testAssertRaisesArgsKwargs",
+                             "testAssertRaisesKwargs"],
                 failures  = [],
                 errors    = [],
-                asserts   = {"testAssertRaisesArgs": ("assertRaises", None.__class__),
-                             "testAssertRaisesArgsKwargs": ("assertRaises", None.__class__),
-                             "testAssertRaisesKwargs": ("assertRaises", None.__class__),
-                            },
+                asserts   = {
+                    "testAssertRaisesArgs"       : ("assertRaises", None.__class__),
+                    "testAssertRaisesArgsKwargs" : ("assertRaises", None.__class__),
+                    "testAssertRaisesKwargs"     : ("assertRaises", None.__class__),
+                    },
                 stdout    = "",
                 stderr    = "",
             )
