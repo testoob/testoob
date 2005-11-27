@@ -20,4 +20,4 @@ from html_xslt import HTMLReporter
 from textstream import TextStreamReporter
 from xml import XMLFileReporter
 from reporter_proxy import ReporterProxy
-from testinfo import TestInfo
+from test_info import TestInfo

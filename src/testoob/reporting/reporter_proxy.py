@@ -20,7 +20,7 @@
 #       Notice the '_apply_method' duplication in each method, this should
 #       be removed.
 
-from testinfo import TestInfo
+from test_info import TestInfo
 from err_info import ErrInfo
 
 class ReporterProxy:

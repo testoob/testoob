@@ -166,7 +166,7 @@ class PyroRunner(running.BaseRunner):
 
         sys.exit(0) # everything was successful
 
-# TODO: merge with reporting.testinfo.TestInfo
+# TODO: merge with reporting.test_info.TestInfo
 class TestInfo:
     """
     Extract test info on construction, to enable pickling
