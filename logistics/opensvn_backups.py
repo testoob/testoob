@@ -146,6 +146,7 @@ if __name__ == "__main__":
     while True:
         counter += 1
         if counter > options.retries:
+            import sys
             print >>sys.stderr, "too many failures, exiting"
             sys.exit(1)
 
