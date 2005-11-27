@@ -16,7 +16,7 @@ all:
 test_with = $(1) ./src/testoob/testoob $(SUITEFILE) suite --color -i --stop-on-fail
 .PHONY: test
 test:
-	$(call testall,python)
+	$(call test_with,python)
 
 .PHONY: testall
 testall:
