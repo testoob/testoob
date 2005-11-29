@@ -57,6 +57,7 @@ try:
     from os.path import dirname, basename
     addPythonPath(dirname(file_name))
 
+    # run the file given on the command line
     name = __name__
     __name__ = basename(file_name).split(".")[0]
     execfile(file_name)
