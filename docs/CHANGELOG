@@ -1,8 +1,45 @@
+
                            -== TestOOB Changelog ==-
 
-TestOOB is an advanced testing framework for Python. It is
-designed to integrate effortlessly with existing PyUnit
-(standard module 'unittest') test suites.
+TestOOB is an advanced testing framework for Python. It is designed to
+integrate effortlessly with existing PyUnit (standard module 'unittest') test
+suites.
+
+== TestOOB 0.8, 30 November, 2005
+
+Many updates are introduced in this release.
+
+Release focus: stability, new features, and a mailing list
+
+Mailing list:
+   The TestOOB mailing list is the preferred way to ask questions, offer
+   assistance, and discuss TestOOB in general.
+
+   For more information, visit:
+
+       http://lists.sourceforge.net/lists/listinfo/testoob-user
+
+Enhancements:
+ * New '--list' option to lists tests, courtesy of Wolfram Kriesing
+ * New '--version' option
+ * New '--stop-on-fail' option to stop on the first failure or error
+ * New '--timeout' option to limit the maximum time a test can run
+ * New convenience functions for gathering tests from modules: testoob.collect and
+   testoob.collect_from_modules
+ * '--processes' option reimplemented with optimized distribution across
+   processes, and much better reporting. It uses Pyro for RPC. Reverts to the
+   old implementation if Pyro isn't available.
+   Visit Pyro at http://pyro.sourceforge.net
+ 
+Bugfixes:
+ * Fixed immediate reporting with multiple processes
+ * Fixed local imports on Windows
+ * _Many_ vassert (verbose assert) fixes, enhancements, and design improvements
+ * Various other fixes
+
+Internal:
+ * TestOOB tests extended and improved
+ * Extensive refactoring
 
 == TestOOB 0.7, 17 October, 2005
 
