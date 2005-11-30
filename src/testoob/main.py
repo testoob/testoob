@@ -39,7 +39,8 @@ def _arg_parser(usage):
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
-    p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
+    p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, use Pyro if available")
+    p.add_option("--processes_pyro", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
     p.add_option("--processes_old", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, old implementation")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
 
@@ -73,6 +74,8 @@ def _get_suites(suite, defaultTest, test_names):
         test_names = [defaultTest]
     return TestLoader().loadTestsFromNames(test_names, __main__)
 
+class ArgumentsError(Exception): pass
+
 def _main(suite, defaultTest, options, test_names, parser):
 
     def require_modules(option, *modules):
@@ -83,14 +86,15 @@ def _main(suite, defaultTest, options, test_names, parser):
             except ImportError:
                 missing_modules.append(modulename)
         if missing_modules:
-            parser.error("option '%(option)s' requires missing modules "
-                         "%(missing_modules)s" % vars())
+            raise ArgumentsError(
+                    "option '%(option)s' requires missing modules "
+                    "%(missing_modules)s" % vars())
 
     def require_posix(option):
         try:
             import posix
         except ImportError:
-            parser.error("option '%s' requires a POSIX environment" % option)
+            raise ArgumentsError("option '%s' requires a POSIX environment" % option)
 
     def conflicting_options(*option_names):
         given_options = [
@@ -101,12 +105,14 @@ def _main(suite, defaultTest, options, test_names, parser):
         given_options.sort()
 
         if len(given_options) > 1:
-            parser.error("The following options can't be specified together: %s" % ", ".join(given_options))
+            raise ArgumentsError(
+                    "The following options can't be specified together: %s" %
+                    ", ".join(given_options))
 
     conflicting_options("threads", "timeout")
-    conflicting_options("threads", "processes", "processes_old", "stop_on_fail")
-    conflicting_options("threads", "processes", "processes_old", "list") # specify runners
-    conflicting_options("processes", "processes_old", "debug")
+    conflicting_options("threads", "processes", "processes_old", "processes_pyro", "stop_on_fail")
+    conflicting_options("threads", "processes", "processes_old", "processes_pyro", "list") # specify runners
+    conflicting_options("processes", "processes_old", "processes_pyro", "debug")
 
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
@@ -172,16 +178,28 @@ def _main(suite, defaultTest, options, test_names, parser):
         from running import ThreadedRunner
         kwargs["runner"] = ThreadedRunner(max_threads = options.threads)
 
-    if options.processes is not None:
-        require_posix("--processes")
-        require_modules("--processes", "Pyro")
+    def enable_processes_pyro():
+        require_posix("--processes_pyro")
+        require_modules("--processes_pyro", "Pyro")
         from running import PyroRunner
         kwargs["runner"] = PyroRunner(max_processes = options.processes)
-        
-    if options.processes_old is not None:
+
+    def enable_processes_old():
         require_posix("--processes_old")
         from running import ProcessedRunner
         kwargs["runner"] = ProcessedRunner(max_processes = options.processes_old)
+
+    if options.processes_pyro is not None:
+        enable_processes_pyro()
+        
+    if options.processes_old is not None:
+        enable_processes_old()
+
+    if options.processes is not None:
+        try:
+            enable_processes_pyro()
+        except ArgumentsError:
+            enable_processes_old()
 
     import running
     return running.text_run(**kwargs)
@@ -198,5 +216,8 @@ examples:
     parser = _arg_parser(usage)
     options, test_names = parser.parse_args()
 
-    return _main(suite, defaultTest, options, test_names, parser)
+    try:
+        return _main(suite, defaultTest, options, test_names, parser)
+    except ArgumentsError, e:
+        parser.error(str(e))
 
