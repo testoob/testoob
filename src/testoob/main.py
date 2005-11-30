@@ -178,28 +178,28 @@ def _main(suite, defaultTest, options, test_names, parser):
         from running import ThreadedRunner
         kwargs["runner"] = ThreadedRunner(max_threads = options.threads)
 
-    def enable_processes_pyro():
+    def enable_processes_pyro(nprocesses):
         require_posix("--processes_pyro")
         require_modules("--processes_pyro", "Pyro")
         from running import PyroRunner
-        kwargs["runner"] = PyroRunner(max_processes = options.processes)
+        kwargs["runner"] = PyroRunner(max_processes = nprocesses)
 
-    def enable_processes_old():
+    def enable_processes_old(nprocesses):
         require_posix("--processes_old")
         from running import ProcessedRunner
-        kwargs["runner"] = ProcessedRunner(max_processes = options.processes_old)
+        kwargs["runner"] = ProcessedRunner(max_processes = nprocesses)
 
     if options.processes_pyro is not None:
-        enable_processes_pyro()
+        enable_processes_pyro(options.processes_pyro)
         
     if options.processes_old is not None:
-        enable_processes_old()
+        enable_processes_old(options.processes_old)
 
     if options.processes is not None:
         try:
-            enable_processes_pyro()
+            enable_processes_pyro(options.processes)
         except ArgumentsError:
-            enable_processes_old()
+            enable_processes_old(options.processes)
 
     import running
     return running.text_run(**kwargs)
