@@ -10,8 +10,6 @@ Lets assume we're releasing version 6.2
 
     ./logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.
 
-* Create a news announcement from the most recent changelog entry.
-
 * Create a SourceForge release
   (Admin -> File Releases -> Add Release)
   Or directly:
@@ -20,6 +18,8 @@ Lets assume we're releasing version 6.2
   Call the release '6.2', choose the distfile
 
 * Download the release, see that it works
+
+* Create a news announcement from the most recent changelog entry.
 
 * Upload news announcement:
   - Sourceforge (http://sourceforge.net/news/submit.php?group_id=138557)
