@@ -34,8 +34,8 @@ def iter_queue(queue, sentinel, **kwargs):
             return
         yield result
 
-import running
-class PyroRunner(running.BaseRunner):
+from baserunner import BaseRunner
+class PyroRunner(BaseRunner):
     SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
     GET_TIMEOUT = 20 # don't wait more than this for a test, on Python >= 2.3
     def __init__(self, max_processes):
@@ -185,7 +185,7 @@ class TestInfo:
     def __str__(self):
         return self.str
 
-from reporting.err_info import ErrInfo
+from testoob.reporting.err_info import ErrInfo
 
 class PickleFriendlyReporterProxy:
     """
