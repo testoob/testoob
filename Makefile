@@ -44,10 +44,14 @@ web: $(WEBSITEDIR)
 distutils = $(PYTHON) ./setup.py -q $(1) --dist-dir=$(DISTDIR) $(2)
 distutils_sdist = $(call distutils,sdist,--format=$(strip $(1)))
 distutils_wininst = $(call distutils,bdist_wininst)
-.PHONY: dist
-dist: $(WEBSITEDIR)
+
+.PHONY: distfiles
+distfiles:
 	$(RM) MANIFEST
 	$(call distutils_sdist, gztar)
 	$(call distutils_sdist, bztar)
 	$(call distutils_wininst)
+
+.PHONY: dist
+dist: $(WEBSITEDIR) distfiles
 	cd $(WEBSITEDIR); tar jcf $(WEBDISTFILE) .
