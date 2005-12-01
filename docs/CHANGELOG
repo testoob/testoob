@@ -5,6 +5,11 @@ TestOOB is an advanced testing framework for Python. It is designed to
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
+== TestOOB 0.8.1, 1 December, 2005
+
+Bugfix release (critical bug prevented importing).
+Reported by Oli and Ryan - Thanks!
+
 == TestOOB 0.8, 30 November, 2005
 
 Many updates are introduced in this release.
