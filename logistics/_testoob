@@ -1,0 +1,40 @@
+#compdef testoob
+
+_testoob() {
+	if (( ! $+_lines_array )); then
+		lines=`echo \`$words[0] --help | grep -A3 "^--" | sed 'N; s/^\(\S*\)\n/\1/' | sed 's/\(--\w*\), \(-\w\)\(\s\s*.*\)/(\2 \1)\2\3\n(\2 \1)\1\3/' | sed 's/\s\s\s*\(.*\)/[\1]/' | sed 's/=\(.*\)\(\[.*\]\)/=\2:\1:\1/' | sed 's/:FILE$/:_files/' | sed 's/:\(SECONDS\|NUM_THREADS\|NUM_PROCESSES\|NUM_TIMES\)$/:_int/' | sed 's/:\(REGEX\|PATTERN\)$/:_regex/' | sed "s/$/;/"\` | sed 's/; /;/g'`
+		set -A _lines_array ${(s.;.)lines}
+	fi
+
+	_arguments -s -w $_lines_array \
+		'1::Tests file:_test_files' \
+		'2::Test Suites:_test_suites'
+
+}
+
+(( $+functions[_test_files] )) || _test_files () {
+	_call_function _file_names _files
+	export _file_name_pos=$CURRENT
+}
+
+(( $+functions[_test_suites] )) || _test_suites () {
+	_file_name="$words[$_file_name_pos]"
+	_message -r "<Suites>"
+}
+
+(( $+functions[_regex] )) || _regex () {
+	_message -r "<Regular Expression>"
+}
+
+(( $+functions[_pattern] )) || _pattern () {
+	_message -r "<Pattern>"
+}
+
+(( $+functions[_int] )) || _int () {
+	_message -r "<Integer>"
+}
+
+(( $+functions[_float] )) || _float () {
+	_message -r "<Float>"
+}
+
