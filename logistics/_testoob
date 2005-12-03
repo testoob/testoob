@@ -25,29 +25,40 @@ _testoob() {
 	fi
 
 	_arguments -s -w $_args_array \
-		'1::Tests file:_test_files' \
-		'2::Test Suites:_test_suites'
-
+		':Tests file:_files' \
+		'*:Test Suites:_test_suites'
 }
 
 ###
 # Completion functions
 ###
-(( $+functions[_test_files] )) || _test_files () {
-	_call_function _file_names _files
-	export _file_name_pos=$CURRENT
-}
-
 (( $+functions[_test_suites] )) || _test_suites () {
-	# TODO: Fix if something is added before file name after it exists.
-	# TODO: Call this more then once.
-	_file_name="$words[$_file_name_pos]"
+    local _file_name
+    _file_name="--"
+    typeset -i _idx
+    _idx=2
+    while [[ $_idx < $CURRENT && $_file_name[1] = "-" ]]; do
+        _file_name=$words[$_idx]
+        _idx+=1
+    done
 	_suites=`$words[0] --list $_file_name |& grep "^Module:" |& sed 's/Module: \(\w*\) (.*)/\1/'`
 	_call_function _call_ret _to_array $_suites
-	if (( ! $#_to_array_ret && ! $#words[$CURRENT] )); then
+    typeset -U _suites_array
+    _suites_array=$_to_array_ret
+    for (( ; _idx < $CURRENT; _idx+=1 )); do
+        _suite=$words[$_idx]
+        if [[ $_suite[1] != "-" ]]; then
+            _suites=`$words[0] --list $_file_name $_suite |& grep "^Module:" |& sed 's/Module: \(\w*\) (.*)/\1/'`
+            _call_function _call_ret _to_array $_suites
+            if (( $#_to_array_ret )); then
+                _suites_array+=($_to_array_ret)
+            fi
+        fi
+    done
+	if (( ! $#_suites_array && ! $#words[$CURRENT] )); then
 		_message -r "<Suites>"
 	fi		
-	compadd -- $_to_array_ret
+	compadd -- $_suites_array
 }
 
 (( $+functions[_regex] )) || _regex () {
@@ -75,4 +86,5 @@ _to_array() {
 	_lines=`echo \`echo $_lines | sed "s/$/;/"\` | sed 's/; /;/g'`
 	export _to_array_ret
 	set -A _to_array_ret ${(s.;.)_lines}
+    typeset -U _to_array_ret
 }
