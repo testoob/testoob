@@ -43,6 +43,7 @@ def _arg_parser(usage):
     p.add_option("--processes_pyro", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
     p.add_option("--processes_old", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, old implementation")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
+    p.add_option("--timed-repeat", metavar="SECONDS", type="float", help="Repeate each test, for a limited time")
 
     options, parameters = p.parse_args()
     if options.version:
@@ -124,6 +125,11 @@ def _main(suite, defaultTest, options, test_names, parser):
         "fixture_decorators" : [],
         "interval" : options.interval,
     }
+
+    if options.timed_repeat is not None:
+        from running import fixture_decorators
+        kwargs["fixture_decorators"].append(
+                fixture_decorators.get_timed_fixture(options.timed_repeat))
 
     if options.timeout is not None:
         from running import fixture_decorators

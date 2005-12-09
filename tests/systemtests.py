@@ -258,6 +258,27 @@ Ran 2 tests in 2\.\d+s
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
+    def testTimedRepeat(self):
+        args = _testoob_args(options=["--timed-repeat=1"], tests=["CaseMixed", "CaseSlow"])
+        regex=r"""EF\.\.\.
+======================================================================
+ERROR: testError \(suites\.CaseMixed\.testError\)
+----------------------------------------------------------------------
+.*
+RuntimeError
+
+======================================================================
+FAIL: testFailure \(suites\.CaseMixed\.testFailure\)
+----------------------------------------------------------------------
+.*
+AssertionError
+
+----------------------------------------------------------------------
+Ran 5 tests in 5\.0\d+s
+FAILED \(failures=1, errors=1\)
+"""
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
     def testProcessesImmediate(self):
         return # XXX TODO remove this
         args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],

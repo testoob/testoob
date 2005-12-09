@@ -23,7 +23,10 @@ class BaseFixture:
         self.fixture(*args)
 
     def get_fixture(self):
-        return self.fixture
+        result = self.fixture
+        while hasattr(result, "get_fixture"):
+            result = result.get_fixture()
+        return result
 
 def get_alarmed_fixture(timeout):
     class AlarmedFixture(BaseFixture):
@@ -42,12 +45,16 @@ def get_timed_fixture(time_limit):
     class TimedFixture(BaseFixture):
         def __init__(self, fixture):
             BaseFixture.__init__(self, fixture)
-            from time import time
-            self.time = time
+            testMethodName = fixture.id().split(".")[-1]
+            testMethod = getattr(fixture, testMethodName)
+            def timedTest():
+                from time import time
+                start = time()
+                while time() - start < time_limit:
+                    testMethod()
+            setattr(fixture, testMethodName, timedTest)
 
         def __call__(self, *args):
-            start = self.time()
-            while self.time() - start < time_limit:
-                BaseFixture.__call__(self, *args)
+            BaseFixture.__call__(self, *args)
     return TimedFixture
 
