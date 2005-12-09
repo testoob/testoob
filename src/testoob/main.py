@@ -121,12 +121,14 @@ def _main(suite, defaultTest, options, test_names, parser):
         "stop_on_fail" : options.stop_on_fail,
         "reporters" : [],
         "extraction_decorators" : [],
+        "fixture_decorators" : [],
         "interval" : options.interval,
     }
-    kwargs.setdefault("timeout", 0)
 
     if options.timeout is not None:
-        kwargs["timeout"] = options.timeout
+        from running import fixture_decorators
+        kwargs["fixture_decorators"].append(
+                fixture_decorators.get_alarmed_fixture(options.timeout))
         def alarm(sig, stack_frame):
             raise AssertionError("Timeout")
         import signal

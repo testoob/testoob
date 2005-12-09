@@ -29,36 +29,23 @@ def apply_decorators(callable, decorators):
     return result
 
 def apply_runner(suites, runner, interval=None, stop_on_fail=False,
-                 extraction_decorators = None, timeout=0):
+                 extraction_decorators=None, fixture_decorators=None):
     """Runs the suite."""
+    from fixture_decorators import BaseFixture
+    if not fixture_decorators: fixture_decorators = [BaseFixture]
     if extraction_decorators is None: extraction_decorators = []
     test_extractor = apply_decorators(_full_extractor, extraction_decorators)
 
-    class Alarmed_fixture:
-        def __init__(self, fixture):
-            self.alarm = lambda x:x
-            if timeout:
-                from signal import alarm
-                self.alarm = alarm
-            self.fixture = fixture
-        
-        def __call__(self, *args):
-            self.alarm(timeout) # Set timeout for a fixture.
-            self.fixture(*args)
-            self.alarm(0) # Release the alarm that was set.
-
-        def get_fixture(self):
-            return self.fixture
-    
     def running_loop():
         import time
         first = True
         for suite in _suite_iter(suites):
             for fixture in test_extractor(suite):
+                decorated_fixture = apply_decorators(fixture, fixture_decorators)
                 if not first and interval is not None:
                     time.sleep(interval)
                 first = False
-                if not runner.run(Alarmed_fixture(fixture)) and stop_on_fail:
+                if not runner.run(decorated_fixture) and stop_on_fail:
                     return
 
     running_loop()
