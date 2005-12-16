@@ -45,14 +45,15 @@ def get_timed_fixture(time_limit):
     class TimedFixture(BaseFixture):
         def __init__(self, fixture):
             BaseFixture.__init__(self, fixture)
-            testMethodName = fixture.id().split(".")[-1]
-            testMethod = getattr(fixture, testMethodName)
+            coreFixture = self.get_fixture()
+            testMethodName = coreFixture.id().split(".")[-1]
+            testMethod = getattr(coreFixture, testMethodName)
             def timedTest():
                 from time import time
                 start = time()
                 while time() - start < time_limit:
                     testMethod()
-            setattr(fixture, testMethodName, timedTest)
+            setattr(coreFixture, testMethodName, timedTest)
 
         def __call__(self, *args):
             BaseFixture.__call__(self, *args)
