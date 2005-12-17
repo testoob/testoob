@@ -44,6 +44,7 @@ def _arg_parser(usage):
     p.add_option("--processes_old", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, old implementation")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
     p.add_option("--timed-repeat", metavar="SECONDS", type="float", help="Repeate each test, for a limited time")
+    p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
 
     options, parameters = p.parse_args()
     if options.version:
@@ -114,6 +115,7 @@ def _main(suite, defaultTest, options, test_names, parser):
     conflicting_options("threads", "processes", "processes_old", "processes_pyro", "stop_on_fail")
     conflicting_options("threads", "processes", "processes_old", "processes_pyro", "list") # specify runners
     conflicting_options("processes", "processes_old", "processes_pyro", "debug")
+    conflicting_options("capture", "list")
 
     kwargs = {
         "suites" : _get_suites(suite, defaultTest, test_names),
@@ -126,6 +128,11 @@ def _main(suite, defaultTest, options, test_names, parser):
         "interval" : options.interval,
     }
 
+    if options.capture is not None:
+        from running import fixture_decorators
+        kwargs["fixture_decorators"].append(
+                fixture_decorators.get_capture_fixture())
+    
     if options.timed_repeat is not None:
         from running import fixture_decorators
         kwargs["fixture_decorators"].append(

@@ -119,4 +119,10 @@ class BaseReporter(IReporter):
         "Tells whether or not this result was a success"
         return len(self.failures) == len(self.errors) == 0
 
+    def getTestsOutput(self, test_info):
+        "Get the output (stdout and stderr) captured from the test"
+        try:
+            return test_info.fixture._testOOB_output_txt
+        except AttributeError:
+            return ""
 

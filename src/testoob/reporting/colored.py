@@ -43,6 +43,10 @@ class ColoredTextReporter(TextStreamReporter):
     def _green(self, str):
         "make it green!"
         return ColoredTextReporter.codes['green'] + str + ColoredTextReporter.codes['reset']
+    
+    def _yellow(self, str):
+        "make it yellow!"
+        return ColoredTextReporter.codes['yellow'] + str + ColoredTextReporter.codes['reset']
 
     def _decorateFailure(self, errString):
         return self._red(errString)
@@ -50,4 +54,6 @@ class ColoredTextReporter(TextStreamReporter):
     def _decorateSuccess(self, sccString):
         return self._green(sccString)
 
+    def _decorateWarning(self, warString):
+        return self._yellow(warString)
 

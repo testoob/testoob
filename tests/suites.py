@@ -40,6 +40,25 @@ class CaseDigits(unittest.TestCase):
     def test8(self): self.assertEquals("8" + "8", "88")
     def test9(self): self.assertEquals("9" + "9", "99")
 
+class CaseVerbous(unittest.TestCase):
+    def testSuccess(self):
+        print "Starting test"
+        print "Asserting..."
+        self.assertEquals(1,1)
+        print "Finished test"
+
+    def testError(self):
+        print "Starting test"
+        print "Erroring..."
+        raise RuntimeError
+        print "Finished test"
+
+    def testFailure(self):
+        print "Starting test"
+        print "Failing..."
+        self.fail()
+        print "Finished test"
+
 class CaseSlow(unittest.TestCase):
     def testSleep(self):
         import time

@@ -137,6 +137,9 @@ class TextStreamReporter(BaseReporter):
     def _decorateSuccess(self, sccString):
         return sccString
 
+    def _decorateWarning(self, warString):
+        return warString
+
     def _printErrors(self):
         if self.dots or self.showAll:
             self._write("\n")
@@ -153,6 +156,12 @@ class TextStreamReporter(BaseReporter):
         self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test_info))))
         self._writeln(self.separator2)
         self._write(str(err_info))
+        output = self.getTestsOutput(test_info)
+        if output != "":
+            self._writeln(self.separator1)
+            self._writeln(self._decorateWarning("Run's output"))
+            self._writeln(self.separator2)
+            self._write(output)
 
     def _write(self, s):
         self.stream.write(s)

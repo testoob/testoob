@@ -28,6 +28,16 @@ class BaseFixture:
             result = result.get_fixture()
         return result
 
+class ManipulativeFixture(BaseFixture):
+    def __init__(self, fixture):
+        BaseFixture.__init__(self, fixture)
+        self.coreFixture = self.get_fixture()
+        self.testMethodName = self.coreFixture.id().split(".")[-1]
+        self.testMethod = getattr(self.coreFixture, self.testMethodName)
+
+    def updateMethod(self, newMethod):
+        setattr(self.coreFixture, self.testMethodName, newMethod)
+
 def get_alarmed_fixture(timeout):
     class AlarmedFixture(BaseFixture):
         def __init__(self, fixture):
@@ -42,17 +52,36 @@ def get_alarmed_fixture(timeout):
     return AlarmedFixture
 
 def get_timed_fixture(time_limit):
-    class TimedFixture(BaseFixture):
+    class TimedFixture(ManipulativeFixture):
         def __init__(self, fixture):
-            BaseFixture.__init__(self, fixture)
-            coreFixture = self.get_fixture()
-            testMethodName = coreFixture.id().split(".")[-1]
-            testMethod = getattr(coreFixture, testMethodName)
+            ManipulativeFixture.__init__(self, fixture)
             def timedTest():
                 from time import time
                 start = time()
                 while time() - start < time_limit:
-                    testMethod()
-            setattr(coreFixture, testMethodName, timedTest)
+                    self.testMethod()
+            self.updateMethod(timedTest)
     return TimedFixture
 
+def get_capture_fixture():
+    class CaptureFixture(ManipulativeFixture):
+        def __init__(self, fixture):
+            ManipulativeFixture.__init__(self, fixture)
+            def CaptureTest():
+                import sys, os
+                stdout_fh = sys.stdout
+                stderr_fh = sys.stderr
+                (read_fd, write_fd) = os.pipe()
+                writer = os.fdopen(write_fd, "w")
+                reader = os.fdopen(read_fd,  "r")
+                sys.stdout = sys.stderr = writer
+                try:
+                    self.testMethod()
+                finally:
+                    writer.close()
+                    self.coreFixture._testOOB_output_txt = reader.read()
+                    reader.close()
+                    sys.stdout = stdout_fh
+                    sys.stderr = stderr_fh
+            self.updateMethod(CaptureTest)
+    return CaptureFixture

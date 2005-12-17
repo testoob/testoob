@@ -274,7 +274,7 @@ FAIL: testFailure \(suites\.CaseMixed\.testFailure\)
 AssertionError
 
 ----------------------------------------------------------------------
-Ran 5 tests in 5\.0\d+s
+Ran 5 tests in (5|6)\.\d+s
 FAILED \(failures=1, errors=1\)
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
@@ -285,6 +285,70 @@ FAILED \(failures=1, errors=1\)
                             options=["-v", "--immediate", "--processes=2"])
         # Check that the fail message appears before testSuccess is run
         regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*OK"
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
+    def testCaptureOutput(self):
+        args = _testoob_args(options=["--capture"], tests=["CaseVerbous"])
+        regex=r"""EF\.
+======================================================================
+ERROR: testError \(suites\.CaseVerbous\.testError\)
+----------------------------------------------------------------------
+.*
+RuntimeError
+======================================================================
+Run's output
+----------------------------------------------------------------------
+Starting test
+Erroring\.\.\.
+
+======================================================================
+FAIL: testFailure \(suites\.CaseVerbous\.testFailure\)
+----------------------------------------------------------------------
+.*
+AssertionError
+======================================================================
+Run's output
+----------------------------------------------------------------------
+Starting test
+Failing\.\.\.
+
+----------------------------------------------------------------------
+Ran 3 tests in 0\.\d+s
+FAILED \(failures=1, errors=1\)
+"""
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
+    def testCaptureImmediate(self):
+        args = _testoob_args(options=["--capture", "--immediate"], tests=["CaseVerbous"])
+        regex=r"""E
+======================================================================
+ERROR: testError \(suites\.CaseVerbous\.testError\)
+----------------------------------------------------------------------
+.*
+RuntimeError
+======================================================================
+Run's output
+----------------------------------------------------------------------
+Starting test
+Erroring\.\.\.
+======================================================================
+F
+======================================================================
+FAIL: testFailure \(suites\.CaseVerbous\.testFailure\)
+----------------------------------------------------------------------
+.*
+AssertionError
+======================================================================
+Run's output
+----------------------------------------------------------------------
+Starting test
+Failing\.\.\.
+======================================================================
+\.
+----------------------------------------------------------------------
+Ran 3 tests in 0\.\d+s
+FAILED \(failures=1, errors=1\)
+"""
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
