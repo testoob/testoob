@@ -54,8 +54,5 @@ def get_timed_fixture(time_limit):
                 while time() - start < time_limit:
                     testMethod()
             setattr(coreFixture, testMethodName, timedTest)
-
-        def __call__(self, *args):
-            BaseFixture.__call__(self, *args)
     return TimedFixture
 
