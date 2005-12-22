@@ -12,7 +12,7 @@ _testoob() {
 			  )
 
 	if (( ! $+_args_array )); then
-		_args=`$words[0] --help | grep -A3 "^--" | sed 'N; s/^\(\S*\)\n/\1/' | sed 's/\(--\w*\), \(-\w\)\(\s\s*.*\)/(\2 \1)\2\3\n(\2 \1)\1\3/' | sed 's/\s\s\s*\(.*\)/[\1]/' | sed 's/=\(.*\)\(\[.*\]\)/=\2:\1:\1/'`
+		_args=`$words[0] --help | grep -A3 "^--" | sed 'N; s/^\(\S*\)\n/\1/' | sed 'N; s/^\(.*\)\n\s\s*/\1 /' | sed 's/\(--\w*\), \(-\w\)\(\s\s*.*\)/(\2 \1)\2\3\n(\2 \1)\1\3/' | sed 's/\s\s\s*\(.*\)/[\1]/' | sed 's/=\(.*\)\(\[.*\]\)/=\2:\1:\1/'`
 		
 		for key ( ${(k)_completion_types} ); do
 			for value ( ${(s. .)_completion_types[$key]} ); do
