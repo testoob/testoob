@@ -19,14 +19,18 @@ class ListingRunner(BaseRunner):
     """Just list the test names, don't run them.
     """
     
-    def __init__(self):
+    def __init__(self, output_format=None):
+        self.output_format = output_format
         self.history = _TestHistory()
 
     def run(self, fixture):
         self.history.record_fixture(fixture.get_fixture())
 
     def done(self):
-        print self.history.get_string(max_functions_to_show=50)
+        if self.output_format == None:
+            print self.history.get_string()
+        elif self.output_format.lower() == "csv":
+            print self.history.get_csv()
 
 class _TestHistory:
     def __init__(self):
@@ -39,8 +43,8 @@ class _TestHistory:
         fixture_info = TestInfo(fixture)
         self._class_function_list(fixture_info).append(fixture_info.funcinfo())
 
-    def get_string(self, max_functions_to_show):
-        """Show the test methods, if there are too many list the classes only.
+    def get_string(self):
+        """Show all test methods.
         """
         result = []
         for (module_name, module_info) in self.modules.items():
@@ -49,10 +53,26 @@ class _TestHistory:
             for (class_name, functions) in module_info["classes"].items():
                 result.append("\tClass: %s (%d test functions)" %\
                       (class_name, len(functions)))
-                if self._num_functions() <= max_functions_to_show:
-                    for func in functions:
-                        result.append("\t\t%s()%s" % \
-                                (func[0], func[1] and " - "+func[1] or ""))
+                for func in functions:
+                    result.append("\t\t%s()%s" % \
+                            (func[0], func[1] and " - "+func[1] or ""))
+        return "\n".join(result)
+
+    def get_csv(self):
+        """Returns a CSV file structure for parsing.
+        """
+        #FIXXXME may be i should add the path that needs to be in sys.path 
+        # in order to import the module....
+        result = ["file,module,class,method,docstring"]
+        for (module_name, module_info) in self.modules.items():
+            for (class_name, functions) in module_info["classes"].items():
+                for func in functions:
+                    data = [module_info["filename"],
+                            module_name,
+                            class_name,
+                            func[0], 
+                            func[1]]
+                    result.append(",".join(data))
         return "\n".join(result)
 
     def _module(self, fixture_info):
