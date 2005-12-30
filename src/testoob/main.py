@@ -29,7 +29,7 @@ def _arg_parser(usage):
     p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
     p.add_option("--vassert", action="store_true", help="Make asserts verbose")
     p.add_option("-l", "--list", action="store_true", help="List the test classes and methods found")
-    p.add_option("--list-formatted", help="Like option '-l', just formatted (e.g. csv).")
+    p.add_option("--list-formatted", metavar="FORMATTER", help="Like option '-l', just formatted (e.g. csv).")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
