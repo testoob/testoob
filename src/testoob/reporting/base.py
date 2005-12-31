@@ -76,7 +76,6 @@ class IReporter:
 
 
 import time as _time
-from common import _error_string
 class BaseReporter(IReporter):
     """Base class for most reporters, with a sensible default implementation
     for most of the reporter methods"""

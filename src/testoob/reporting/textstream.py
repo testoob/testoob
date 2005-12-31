@@ -16,7 +16,6 @@
 "A text-stream reporter, the most commonly-used kind"
 
 from base import BaseReporter
-from common import _error_string
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
     # Modified from unittest._TextTestResult

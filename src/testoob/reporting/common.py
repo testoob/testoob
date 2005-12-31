@@ -40,14 +40,3 @@ def _count_relevant_tb_levels(tb):
         length += 1
         tb = tb.tb_next
     return length
-
-def _error_string(test, err):
-    """
-    Convert the error to a string with _exc_info_to_string unless err
-    has already been converted (is a string)
-    """
-    if isinstance(err, str):
-        # error has already been converted
-        return err
-    return _exc_info_to_string(err, test)
-
