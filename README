@@ -45,6 +45,15 @@ check the documentation.
 See docs/INSTALL
 
 ===========================================================
+= Testing
+===========================================================
+
+Use GNU make (usually 'make' or 'gmake') from the project root:
+
+  make test    # test with the default python version
+  make testall # test with different python versions
+
+===========================================================
 = License:
 ===========================================================
 
