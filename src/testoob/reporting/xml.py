@@ -16,7 +16,6 @@
 "Report results in XML format"
 
 from base import BaseReporter
-from common import exc_info_to_string
 import time
 class XMLReporter(BaseReporter):
     """Reports test results in XML, in a format resembling Ant's JUnit xml
