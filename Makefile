@@ -26,8 +26,7 @@ testall:
 
 .PHONY: clean
 clean:
-	$(RM) `find . -name "*~"`
-	$(RM) `find . -name "*.pyc"`
+	zsh --nullglob -c 'rm -f **/{*{~,.pyc},svn-commit*.tmp*}'
 	$(RM) -r $(DISTDIR) $(BUILDDIR) web/output
 	$(RM) MANIFEST
 
