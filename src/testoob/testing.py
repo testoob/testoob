@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+__testoob = True # help skip this file in tracebacks
+
 """Useful testing fuctions."""
 def _run_command(args, input=None):
     """_run_command(args, input=None) -> stdoutstring, stderrstring, returncode

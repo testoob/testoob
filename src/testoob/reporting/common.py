@@ -32,7 +32,8 @@ def _exc_info_to_string(err, test):
     return ''.join(traceback.format_exception(exctype, value, tb))
 
 def _is_relevant_tb_level(tb):
-    return tb.tb_frame.f_globals.has_key('__unittest')
+    globals = tb.tb_frame.f_globals
+    return globals.has_key('__unittest') or globals.has_key('__testoob')
 
 def _count_relevant_tb_levels(tb):
     length = 0
