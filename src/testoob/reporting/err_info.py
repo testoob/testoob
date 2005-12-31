@@ -23,9 +23,9 @@ class ErrInfo:
         self.exc_info = exc_info
 
     def __str__(self):
-        from common import _exc_info_to_string
+        from common import exc_info_to_string
         from test_info import TestInfo
-        return _exc_info_to_string(self.exc_info, TestInfo(self.test))
+        return exc_info_to_string(self.exc_info, TestInfo(self.test))
 
     def exception_type(self):
         return str(self.exc_info[0])

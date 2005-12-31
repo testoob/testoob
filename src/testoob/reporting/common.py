@@ -18,26 +18,26 @@
 # Code mostly taken from PyUnit (unittest.py)
 
 # Constructing meaningful report strings from exception info
-def _exc_info_to_string(err, test):
+def exc_info_to_string(err, test):
     "Converts a sys.exc_info()-style tuple of values into a string."
     import traceback
     exctype, value, tb = err
     # Skip test runner traceback levels
-    while tb and _is_relevant_tb_level(tb):
+    while tb and is_framework_traceback(tb):
         tb = tb.tb_next
     if exctype is test.failure_exception_type():
         # Skip assert*() traceback levels
-        length = _count_relevant_tb_levels(tb)
+        length = count_framework_traceback_levels(tb)
         return ''.join(traceback.format_exception(exctype, value, tb, length))
     return ''.join(traceback.format_exception(exctype, value, tb))
 
-def _is_relevant_tb_level(tb):
+def is_framework_traceback(tb):
     globals = tb.tb_frame.f_globals
     return globals.has_key('__unittest') or globals.has_key('__testoob')
 
-def _count_relevant_tb_levels(tb):
+def count_framework_traceback_levels(tb):
     length = 0
-    while tb and not _is_relevant_tb_level(tb):
+    while tb and not is_framework_traceback(tb):
         length += 1
         tb = tb.tb_next
     return length
