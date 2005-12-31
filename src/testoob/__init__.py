@@ -25,33 +25,4 @@ import testing
 from asserter import Asserter
 Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")
 
-# Some functions for public use.
-def collect(globals_dict):
-    """
-    Collects all TestCases from the given globals dictionary, and regeisters
-    them in a new TestSuite, returning it.
-    """
-    import unittest
-    def suite():
-        result = unittest.TestSuite()
-        for item in globals_dict.values():
-            from types import ClassType
-            if isinstance(item, ClassType) and issubclass(item, unittest.TestCase):
-                result.addTest(unittest.makeSuite(item))
-        return result
-    return suite
-
-def collect_from_modules(modules, globals_dict):
-    """
-    Collects all TestCases from the given module name list, and the given
-    globals dictionary, and registers them in a new TestSuite, returning it.
-    """
-    import unittest
-    def suite():
-        result = unittest.TestSuite()
-        for modulename in modules:
-            NONEMPTYLIST = [None] # don't ask us why, help(__import__) told us to do this.
-            result.addTeest(__import(modulename, globals_dict, None, NONEMPTYLIST).suite())
-        return result
-    return suite
-
+from collecting import collect, collect_from_modules
