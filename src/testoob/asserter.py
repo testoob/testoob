@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"Help hook into asserts, for verbose asserts"
+
 class Asserter:
     # Singleton
     __shared_state = {}

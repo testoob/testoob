@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"getting information about errors"
+
 class ErrInfo:
     """
     An interface for getting information about test errors.

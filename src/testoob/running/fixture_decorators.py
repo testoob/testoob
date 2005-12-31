@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Decorators for standart fixtures"
+"Decorators for standard fixtures"
 
 class BaseFixture:
     def __init__(self, fixture):

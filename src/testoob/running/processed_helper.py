@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"Helper for processed running"
+
 class ProcessedRunnerHelper:
     "A helper class to make ProcessedRunner shorter and clearer."
     def __init__(self, max_processes):

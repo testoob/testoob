@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"Run tests in multiple processes, communicating with Pyro"
+
 from __future__ import generators
 import os
 

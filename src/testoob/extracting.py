@@ -14,6 +14,7 @@
 # limitations under the License.
 
 "Extracting tests from a test suite"
+
 from __future__ import generators # Python 2.2 compatibility
 
 try:

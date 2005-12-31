@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"getting information about tests"
+
 class TestInfo:
     """
     An interface for getting information about tests.
