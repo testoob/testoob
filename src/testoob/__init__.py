@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"An alternative running scheme for unittest test suites"
+"An unittest-compatible Python testing framework"
 
-__author__ = 'Ori Peleg'
+__author__ = 'The TestOOB Team'
 __version__ = '__TESTOOB_VERSION__'
 
 from main import main
