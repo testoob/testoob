@@ -38,7 +38,7 @@ def _arg_parser(usage):
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
     p.add_option("--timeout", metavar="SECONDS", type="int", help="Fail test if passes timeout")
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
-    p.add_option("--debug", action="store_true", help="Run pdb on tests that fail on Error")
+    p.add_option("--debug", action="store_true", help="Run pdb on tests that fail")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
     p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, use Pyro if available")
     p.add_option("--processes_pyro", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
