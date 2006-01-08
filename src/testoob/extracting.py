@@ -91,3 +91,21 @@ def _irepeat_items(num_times, iterable):
 def repeat(num_times):
     "Repeat each test a number of times"
     return _iterable_decorator(lambda iterable: _irepeat_items(num_times, iterable))
+
+def _irandomize(iterable, seed=None):
+    """
+    Randomize the iterable.
+
+    Note: this evaluates the entire iterable to a sequence in memory, use
+    this when this isn't an issue
+    """
+    from random import Random
+    random = Random(seed)
+    result = list(iterable)
+    random.shuffle(result)
+    return iter(result)
+
+def randomize(seed=None):
+    "Randomize the order of the tests"
+    return _iterable_decorator(lambda iterable: _irandomize(iterable, seed))
+

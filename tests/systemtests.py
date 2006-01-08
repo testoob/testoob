@@ -11,6 +11,21 @@ def _testoob_args(tests=None, options=None):
     if tests is not None: result += tests
     return result
 
+def _grep(pattern, string):
+    import re
+    compiled = re.compile(pattern)
+    return "\n".join([
+            line
+            for line in string.splitlines()
+            if compiled.search(line)
+        ])
+
+def _run_testoob(args, grep=None):
+    stdout, stderr, rc = testoob.testing._run_command(args)
+    if grep is not None:
+        return _grep(grep, stderr)
+    return stderr
+
 class CommandLineTestCase(unittest.TestCase):
     def testSuccesfulRunNormal(self):
         args = _testoob_args(options=[], tests=["CaseDigits"])
@@ -350,6 +365,41 @@ Ran 3 tests in 0\.\d+s
 FAILED \(failures=1, errors=1\)
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
+    def testRandomizeOrderSanity(self):
+        args = _testoob_args(options=["--randomize-order"], tests=["CaseDigits"])
+        regex = "Ran 10 tests in \d\.\d+s\nOK"
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
+    def testRandomizeOrder(self):
+        # Given a perfect RNG, this has a chance of 2^(-88) of failing randomly
+        # (on 26 tests), which is probably smaller than the chance I'll find a
+        # million dollars in my socks.
+        args = _testoob_args(options=["-v", "--randomize-order"],
+                             tests=["CaseLetters"])
+
+        stderr1 = _run_testoob(args, grep="^test.*OK$")
+        stderr2 = _run_testoob(args, grep="^test.*OK$")
+
+        self.assertNotEqual(stderr1, stderr2)
+
+    def testRandomizeSeed(self):
+        # Same chances of random failure as testRandomizeOrder
+        args = _testoob_args(options=["-v", "--randomize-order"],
+                             tests=["CaseLetters"])
+        stderr_order = _run_testoob(args)
+
+        # extract seed from the output
+        seed = int(_grep('^seed=', stderr_order).split("=")[1])
+
+        # keep just the tests
+        stderr_order = _grep("^test.*OK$", stderr_order)
+
+        args_seed = _testoob_args(options=["-v", "--randomize-seed=%d"%seed],
+                                  tests=["CaseLetters"])
+        stderr_seed = _run_testoob(args_seed, grep="^test.*OK$")
+
+        self.assertEqual(stderr_order, stderr_seed)
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
