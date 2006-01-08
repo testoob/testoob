@@ -99,10 +99,13 @@ def _irandomize(iterable, seed=None):
     Note: this evaluates the entire iterable to a sequence in memory, use
     this when this isn't an issue
     """
-    from random import Random
-    random = Random(seed)
+    if seed is None:
+        from random import shuffle
+    else:
+        from random import Random
+        shuffle = Random(seed).shuffle
     result = list(iterable)
-    random.shuffle(result)
+    shuffle(result)
     return iter(result)
 
 def randomize(seed=None):
