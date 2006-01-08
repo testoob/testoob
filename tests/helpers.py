@@ -57,21 +57,30 @@ class ReporterWithMemory:
         attrs = ("started","successes","errors","failures","finished","stdout","stderr")
         return "\n".join(["%s = %s" % (attr, getattr(self,attr)) for attr in attrs])
 
-import unittest
-import testoob.running
-class TestoobBaseTestCase(unittest.TestCase):
-    def setUp(self):
+class TestoobRunnerWithMemory:
+    def __init__(self):
         self.reporter = ReporterWithMemory()
-    def tearDown(self):
-        del self.reporter
-    def _check_reporter(self, **kwargs):
+
+    def run(self, **kwargs):
+        testoob.running.run(reporters=[self.reporter], **kwargs)
+
+    def check_reporter(self, **kwargs):
         for attr, expected in kwargs.items():
             actual = getattr(self.reporter, attr)
             if type(expected) == type([]):
                 expected.sort()
                 actual.sort()
-            self.assertEqual(expected, actual)
+            from testoob.testing import assert_equals
+            assert_equals(expected, actual)
 
+import unittest
+import testoob.running
+class TestoobBaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.runner = TestoobRunnerWithMemory()
+    def tearDown(self):
+        del self.runner
+    def _check_reporter(self, **kwargs):
+        self.runner.check_reporter(**kwargs)
     def _run(self, **kwargs):
-        testoob.running.run(reporters=[self.reporter], **kwargs)
-
+        self.runner.run(**kwargs)
