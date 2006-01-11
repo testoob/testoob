@@ -22,16 +22,18 @@ class Coverage:
     Python code coverage module built specifically for checking code coverage
     in tests performed by TestOOB.
 
-    NOTE: This class uses the 'trace' module, so it may collide with anything
-    else that uses 'trace' (such as debugging)
+    NOTE: This class depends on the 'trace' module.
     """
     def __init__(self, ignoredirs=()):
         """
         initialize the code coverage module, gets list of directories of files
         which's coverage is not needed.
         """
-        # self._covered_lines is dictionary mapping filenames to lines called.
-        self._covered_lines = {}
+        # coverage is a dictinary mapping filenames to another dictionary with
+        # the following keys:
+        #    lines   - a set of number of executable lines in the file.
+        #    covered - a set of numbers of executed lines in the file.
+        self.coverage = {}
         self._dirs_not_covered = ignoredirs
 
     def runfunc(self, func, *args, **kwargs):
@@ -56,7 +58,7 @@ class Coverage:
         holds the statistics for all the files together.
         """
         statistics = {}
-        for filename, coverage in self.getcoverage().items():
+        for filename, coverage in self.coverage.items():
             statistics[filename] = {
                 "lines"  : len(coverage["lines"]),
                 "covered": len(coverage["covered"]),
@@ -67,46 +69,35 @@ class Coverage:
     def _sum_coverage(self, callable):
         "Helper method for _total_{lines,covered}"
         return sum([callable(coverage)
-                    for coverage in self.getcoverage().values()])
-    def _total_lines(self):
+                    for coverage in self.coverage.values()])
+    def total_lines(self):
         return self._sum_coverage(lambda coverage: len(coverage["lines"]))
-    def _total_lines_covered(self):
+    def total_lines_covered(self):
         return self._sum_coverage(lambda coverage: len(coverage["covered"]))
-    def _total_coverage_percentage(self):
-        if self._total_lines() == 0:
-            return 0 # TODO: maybe raise an error?
-        return int(100 * self._total_lines_covered() / self._total_lines())
+    def total_coverage_percentage(self):
+        if self.total_lines() == 0:
+            return 0
+        return int(100 * self.total_lines_covered() / self.total_lines())
     
-    def getcoverage(self):
-        """
-        Returns a dictionary of covered lines. The dictionary maps filenames to
-        another dictionary with the following keys:
-            lines   - a set of number of executable lines in the file.
-            covered - a set of numbers of executed lines in the file.
-        """
-        coverage = {}
-        for filename, lines in self._covered_lines.items():
-            coverage[filename] = {
-                "lines"  : set(trace.find_executable_linenos(filename)),
-                "covered": lines
-            }
-        return coverage
-    
-    def _should_check_file(self, filename):
+    def _should_cover_frame(self, frame):
         "Should we check coverage for this file?"
+        filename = frame.f_code.co_filename
+        lineno = frame.f_lineno
         for dir in self._dirs_not_covered:
             if filename.startswith(dir):
                 return False
-        return True
+        self.coverage.setdefault(filename, {
+                "lines": set(trace.find_executable_linenos(filename)),
+                "covered": set()
+            })
+        return lineno in self.coverage[filename]["lines"]
     
     def _tracer(self, frame, why, arg):
         "Trace function to be put as input for sys.settrace()"
-        filename = frame.f_code.co_filename
-        lineno = frame.f_lineno
-
-        if self._should_check_file(filename):
-            self._covered_lines.setdefault(filename, set())
-            self._covered_lines[filename].add(lineno)
+        if self._should_cover_frame(frame):
+            filename = frame.f_code.co_filename
+            lineno = frame.f_lineno
+            self.coverage[filename]["covered"].add(lineno)
 
         return self._tracer
 
