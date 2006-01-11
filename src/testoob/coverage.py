@@ -55,30 +55,15 @@ class Coverage:
         This dictionary also has a special "file" (key) called '__total__', which
         holds the statistics for all the files together.
         """
-        statistics = {
-            "__total__": {
-                "lines"  : 0,
-                "covered": 0,
-                "percent": 0,
-            }
-        }
-
+        statistics = {}
         for filename, coverage in self.getcoverage().items():
             statistics[filename] = {
                 "lines"  : len(coverage["lines"]),
                 "covered": len(coverage["covered"]),
                 "percent": int(100 * len(coverage["covered"]) / len(coverage["lines"]))
             }
-            statistics["__total__"]["lines"]   += statistics[filename]["lines"]
-            statistics["__total__"]["covered"] += statistics[filename]["covered"]
-
-        statistics["__total__"]["percent"] = int(
-            100 * statistics["__total__"]["covered"] / statistics["__total__"]["lines"])
-
         return statistics
 
-    # TODO: suggested replacement for '__total__' key in getstatistics() retval
-    # TODO: above. Either remove __total__, or remove these methods.
     def _sum_coverage(self, callable):
         "Helper method for _total_{lines,covered}"
         return sum([callable(coverage)
