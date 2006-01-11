@@ -19,10 +19,11 @@ import trace, os, sys
 
 class Coverage:
     """
-    Python code coverage module built specificly for checking code coverage in
-    tests performed by testOOB.
+    Python code coverage module built specifically for checking code coverage
+    in tests performed by TestOOB.
 
-    NOTE: This module strongly depends on 'trace' module.
+    NOTE: This class uses the 'trace' module, so it may collide with anything
+    else that uses 'trace' (such as debugging)
     """
     def __init__(self, ignoredirs=()):
         """
@@ -31,17 +32,15 @@ class Coverage:
         """
         # self._covered_lines is dictionary mapping filenames to lines called.
         self._covered_lines = {}
-        self._ignoredirs = ignoredirs
+        self._dirs_not_covered = ignoredirs
 
     def runfunc(self, func, *args, **kwargs):
         "Gets a function and it's arguments to run and perform code coverage test"
-        result = None
         sys.settrace(self._tracer)
         try:
-            result = func(*args, **kwargs)
+            return func(*args, **kwargs)
         finally:
             sys.settrace(None)
-        return result
 
     def getstatistics(self):
         """
@@ -63,8 +62,7 @@ class Coverage:
                 "percent": 0,
             }
         }
-        total_lines = 0
-        total_covered = 0
+
         for filename, coverage in self.getcoverage().items():
             statistics[filename] = {
                 "lines"  : len(coverage["lines"]),
@@ -78,6 +76,19 @@ class Coverage:
             100 * statistics["__total__"]["covered"] / statistics["__total__"]["lines"])
 
         return statistics
+
+    # TODO: suggested replacement for '__total__' key in getstatistics() retval
+    # TODO: above. Either remove __total__, or remove these methods.
+    def _sum_coverage(self, callable):
+        "Helper method for _total_{lines,covered}"
+        return sum([callable(coverage)
+                    for coverage in self.getcoverage().values()])
+    def _total_lines(self):
+        return self._sum_coverage(lambda coverage: len(coverage["lines"]))
+    def _total_lines_covered(self):
+        return self._sum_coverage(lambda coverage: len(coverage["covered"]))
+    def _total_coverage_percentage(self):
+        return int(100 * self._total_covered() / self._total_lines())
     
     def getcoverage(self):
         """
@@ -94,20 +105,21 @@ class Coverage:
             }
         return coverage
     
-    def _check_ignorance(self, filename):
-        "This function checks if we should test coverage for this file"
-        for dir in self._ignoredirs:
+    def _should_check_file(self, filename):
+        "Should we check coverage for this file?"
+        for dir in self._dirs_not_covered:
             if filename.startswith(dir):
-                return True
-        return False
+                return False
+        return True
     
     def _tracer(self, frame, why, arg):
         "Trace function to be put as input for sys.settrace()"
         filename = frame.f_code.co_filename
         lineno = frame.f_lineno
-        if not self._check_ignorance(filename):
-            if not self._covered_lines.has_key(filename):
-                self._covered_lines[filename] = set()
+
+        if self._should_check_file(filename):
+            self._covered_lines.setdefault(filename, set())
             self._covered_lines[filename].add(lineno)
+
         return self._tracer
 
