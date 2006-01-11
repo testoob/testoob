@@ -75,7 +75,7 @@ class Coverage:
     def _total_coverage_percentage(self):
         if self._total_lines() == 0:
             return 0 # TODO: maybe raise an error?
-        return int(100 * self._total_covered() / self._total_lines())
+        return int(100 * self._total_lines_covered() / self._total_lines())
     
     def getcoverage(self):
         """
