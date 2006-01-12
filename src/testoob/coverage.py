@@ -34,7 +34,7 @@ class Coverage:
         #    lines   - a set of number of executable lines in the file.
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
-        self.ignorepaths = ignorepaths
+        self.ignorepaths = map(os.path.abspath, ignorepaths)
         self.modname = trace.modname
 
     def runfunc(self, func, *args, **kwargs):
@@ -85,7 +85,7 @@ class Coverage:
         filename = frame.f_code.co_filename
         lineno = frame.f_lineno
         for path in self.ignorepaths:
-            if filename.startswith(path):
+            if os.path.abspath(filename).startswith(path):
                 return False
         
         if not self.coverage.has_key(filename):
