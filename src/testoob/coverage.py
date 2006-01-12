@@ -34,7 +34,7 @@ class Coverage:
         #    lines   - a set of number of executable lines in the file.
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
-        self._dirs_not_covered = ignoredirs
+        self.ignoredirs = ignoredirs
 
     def runfunc(self, func, *args, **kwargs):
         "Gets a function and it's arguments to run and perform code coverage test"
@@ -83,7 +83,7 @@ class Coverage:
         "Should we check coverage for this file?"
         filename = frame.f_code.co_filename
         lineno = frame.f_lineno
-        for dir in self._dirs_not_covered:
+        for dir in self.ignoredirs:
             if filename.startswith(dir):
                 return False
         
