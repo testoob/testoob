@@ -78,6 +78,19 @@ class Coverage:
         if self.total_lines() == 0:
             return 0
         return int(100 * self.total_lines_covered() / self.total_lines())
+
+    def print_statistics(self):
+        print "lines   cov_n   cov%   module   (path)"
+        print "--------------------------------------"
+        for filename, stats in self.getstatistics().items():
+            print "%5d   %5d   %3d%%   %s   (%s)" % (
+                stats["lines"], stats["percent"], stats["covered"], trace.modname(filename), filename)
+        print "--------------------------------------"
+        print "%5d   %5d   %3d%%   TOTAL" % (
+            self.total_lines(), self.total_lines_covered(), self.total_coverage_percentage())
+
+    def print_coverage(self):
+        pass
     
     def _should_cover_frame(self, frame):
         "Should we check coverage for this file?"

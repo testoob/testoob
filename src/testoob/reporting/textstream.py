@@ -110,6 +110,13 @@ class TextStreamReporter(BaseReporter):
             self.multiLineOutput = True
 
     def _printResults(self):
+        if self.cover_amount is not None and self.cover_amount != "slim":
+            if self.cover_amount == "normal":
+                self.coverage.print_statistics()
+            if self.cover_amount == "massive":
+                self.coverage.print_coverage()
+            self._writeln(self.separator2)
+
         testssuffix = self.testsRun > 1 and "s" or ""
         self._write("Ran %d test%s in %.3fs" %
                 (self.testsRun, testssuffix, self.total_time))
