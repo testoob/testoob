@@ -124,6 +124,7 @@ def text_run(*args, **kwargs):
 
     verbosity = _pop(kwargs, "verbosity", 1)
     immediate = _pop(kwargs, "immediate", False)
+    coverage  = _pop(kwargs, "coverage",  (None, None))
 
     kwargs.setdefault("reporters", [])
 
@@ -134,6 +135,7 @@ def text_run(*args, **kwargs):
     reporter_instance = reporter_class(
             verbosity=verbosity,
             immediate=immediate,
+            coverage=coverage,
             descriptions=1,
             stream=sys.stderr)
 

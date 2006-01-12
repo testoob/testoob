@@ -24,7 +24,7 @@ class TextStreamReporter(BaseReporter):
     separator1 = '=' * 70
     separator2 = '-' * 70
 
-    def __init__(self, stream, descriptions, verbosity, immediate = False):
+    def __init__(self, stream, descriptions, verbosity, immediate = False, coverage = (None, None)):
         import re
         self.re = re
         BaseReporter.__init__(self)
@@ -34,6 +34,7 @@ class TextStreamReporter(BaseReporter):
         self.vassert = verbosity == 3
         self.immediate = immediate
         self.descriptions = descriptions
+        self.cover_amount, self.coverage = coverage
 
     def startTest(self, test_info):
         BaseReporter.startTest(self, test_info)
@@ -110,8 +111,11 @@ class TextStreamReporter(BaseReporter):
 
     def _printResults(self):
         testssuffix = self.testsRun > 1 and "s" or ""
-        self._writeln("Ran %d test%s in %.3fs" %
+        self._write("Ran %d test%s in %.3fs" %
                 (self.testsRun, testssuffix, self.total_time))
+        if self.cover_amount is not None:
+            self._write(" (covered %s%% of the code)" % self.coverage.total_coverage_percentage())
+        self._write("\n")
 
         if self.isSuccessful():
             self._writeln(self._decorateSuccess("OK"))
