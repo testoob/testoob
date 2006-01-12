@@ -48,6 +48,7 @@ def _arg_parser(usage):
     p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
     p.add_option("--randomize-order", action="store_true", help="Randomize the test order")
     p.add_option("--randomize-seed", metavar="SEED", type="int", help="Seed for randomizing the test order, implies --randomize-order")
+    p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=["silent", "slim", "normal", "massive"], help="Test the coverage of the tested code")
 
     options, parameters = p.parse_args()
     if options.version:
@@ -130,7 +131,16 @@ def _main(suite, defaultTest, options, test_names, parser):
         "fixture_decorators" : [],
         "interval" : options.interval,
     }
-
+    
+    if options.coverage is not None:
+        from running import fixture_decorators
+        from coverage import Coverage
+        cov = Coverage()
+        kwargs["fixture_decorators"].append(
+                fixture_decorators.get_coverage_fixture(cov))
+        if options.coverage is not "silent":
+            kwargs["coverage"] = (options.coverage, cov)
+    
     if options.capture is not None:
         from running import fixture_decorators
         kwargs["fixture_decorators"].append(
