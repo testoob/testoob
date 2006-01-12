@@ -103,10 +103,12 @@ class Coverage:
         for dir in self._dirs_not_covered:
             if filename.startswith(dir):
                 return False
-        self.coverage.setdefault(filename, {
+        
+        if not self.coverage.has_key(filename):
+            self.coverage[filename] = {
                 "lines": set(trace.find_executable_linenos(filename)),
                 "covered": set()
-            })
+            }
         return lineno in self.coverage[filename]["lines"]
     
     def _tracer(self, frame, why, arg):
