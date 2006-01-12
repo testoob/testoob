@@ -15,7 +15,7 @@
 
 "Code coverage module"
 
-import trace, os, sys
+import os, sys, trace
 
 class Coverage:
     """
@@ -35,6 +35,7 @@ class Coverage:
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
         self.ignorepaths = ignorepaths
+        self.modname = trace.modname
 
     def runfunc(self, func, *args, **kwargs):
         "Gets a function and it's arguments to run and perform code coverage test"
@@ -79,49 +80,6 @@ class Coverage:
             return 0
         return int(100 * self.total_lines_covered() / self.total_lines())
 
-    def print_statistics(self):
-        print "lines   cov_n   cov%   module   (path)"
-        print "--------------------------------------"
-        for filename, stats in self.getstatistics().items():
-            print "%5d   %5d   %3d%%   %s   (%s)" % (
-                stats["lines"], stats["covered"], stats["percent"], trace.modname(filename), filename)
-        print "--------------------------------------"
-        print "%5d   %5d   %3d%%   TOTAL" % (
-            self.total_lines(), self.total_lines_covered(), self.total_coverage_percentage())
-
-    def print_coverage(self):
-        maxmodule = max(map(lambda x: len(trace.modname(x)), self.coverage.keys()))
-        module_tmpl = "%%- %ds" % maxmodule
-        print module_tmpl % "module" + "   lines   cov_n   cov%   missing"
-        print "-" * maxmodule +        "---------------------------------"
-        for filename, stats in self.getstatistics().items():
-            print (module_tmpl + "   %5d   %5d   %3d%%   %s") % (
-                trace.modname(filename), stats["lines"], stats["covered"], stats["percent"],
-                self._get_missing_str(filename))
-        print "-" * maxmodule +        "---------------------------------"
-        print (module_tmpl + "   %5d   %5d   %3d%%") % ("TOTAL", self.total_lines(),
-                self.total_lines_covered(), self.total_coverage_percentage())
-            
-    def _get_missing_str(self, filename):
-        lines, covered = self.coverage[filename].values()
-        return self._shrinker([line for line in covered if line not in lines])
-
-    def _shrinker(self, l):
-        l.sort()
-        # adding a 'strange' value to the end of the list, so the last value
-        # will be checked (iterating until (len(l) - 1)).
-        l.append("")
-        result = [""]
-        for i in xrange(len(l) - 1):
-            if l[i+1] == (l[i] + 1):
-                if result[-1] == "":
-                    result[-1] = str(l[i]) + "-"
-            else:
-                result[-1] += str(l[i])
-                result.append("")
-        result.pop()
-        return result
-    
     def _should_cover_frame(self, frame):
         "Should we check coverage for this file?"
         filename = frame.f_code.co_filename

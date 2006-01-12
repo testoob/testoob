@@ -112,9 +112,9 @@ class TextStreamReporter(BaseReporter):
     def _printResults(self):
         if self.cover_amount is not None and self.cover_amount != "slim":
             if self.cover_amount == "normal":
-                self.coverage.print_statistics()
+                self._print_coverage_statistics(self.coverage)
             if self.cover_amount == "massive":
-                self.coverage.print_coverage()
+                self._print_coverage(self.coverage)
             self._writeln(self.separator2)
 
         testssuffix = self.testsRun > 1 and "s" or ""
@@ -135,6 +135,50 @@ class TextStreamReporter(BaseReporter):
 
             self._writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
 
+    def _print_coverage_statistics(self, coverage):
+        modname = coverage.modname
+        print "lines   cov_n   cov%   module   (path)"
+        print "--------------------------------------"
+        for filename, stats in coverage.getstatistics().items():
+            print "%5d   %5d   %3d%%   %s   (%s)" % (
+                stats["lines"], stats["covered"], stats["percent"], modname(filename), filename)
+        print "--------------------------------------"
+        print "%5d   %5d   %3d%%   TOTAL" % (
+            coverage.total_lines(), coverage.total_lines_covered(), coverage.total_coverage_percentage())
+
+    def _print_coverage(self, coverage):
+        modname = coverage.modname
+        maxmodule = max(map(lambda x: len(modname(x)), coverage.coverage.keys()))
+        module_tmpl = "%%- %ds" % maxmodule
+        print module_tmpl % "module" + "   lines   cov_n   cov%   missing"
+        print "-" * maxmodule +        "---------------------------------"
+        for filename, stats in coverage.getstatistics().items():
+            print (module_tmpl + "   %5d   %5d   %3d%%   %s") % (
+                modname(filename), stats["lines"], stats["covered"], stats["percent"],
+                self._get_missing_lines_str(*coverage.coverage[filename].values()))
+        print "-" * maxmodule +        "---------------------------------"
+        print (module_tmpl + "   %5d   %5d   %3d%%") % ("TOTAL", coverage.total_lines(),
+                coverage.total_lines_covered(), coverage.total_coverage_percentage())
+            
+    def _get_missing_lines_str(self, lines, covered):
+        return self._lines_list_shrinker([line for line in covered if line not in lines])
+
+    def _lines_list_shrinker(self, l):
+        l.sort()
+        # adding a 'strange' value to the end of the list, so the last value
+        # will be checked (iterating until (len(l) - 1)).
+        l.append("")
+        result = [""]
+        for i in xrange(len(l) - 1):
+            if l[i+1] == (l[i] + 1):
+                if result[-1] == "":
+                    result[-1] = str(l[i]) + "-"
+            else:
+                result[-1] += str(l[i])
+                result.append("")
+        result.pop()
+        return result
+    
     def _decorateSign(self, isPassed):
         if isPassed:
             return self._decorateSuccess("PASSED")
