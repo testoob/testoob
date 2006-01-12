@@ -51,6 +51,16 @@ def get_alarmed_fixture(timeout):
             self.alarm(0) # Release the alarm that was set.
     return AlarmedFixture
 
+def get_coverage_fixture(coverage):
+    class CoveredFixture(BaseFixture):
+        def __init(self, fixture):
+            BaseFixture.__init__(self, fixture)
+
+        def __call__(self, *args):
+            # TODO: add exlusion of the test file itself from coverage here.
+            coverage.runfunc(BaseFixture.__call__, self, *args)
+    return CoveredFixture
+
 def get_timed_fixture(time_limit):
     class TimedFixture(ManipulativeFixture):
         def __init__(self, fixture):
