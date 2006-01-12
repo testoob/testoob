@@ -139,7 +139,7 @@ def _main(suite, defaultTest, options, test_names, parser):
         cov = Coverage()
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_coverage_fixture(cov))
-        if options.coverage is not "silent":
+        if options.coverage != "silent":
             kwargs["coverage"] = (options.coverage, cov)
     
     if options.capture is not None:
