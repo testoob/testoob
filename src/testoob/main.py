@@ -135,8 +135,10 @@ def _main(suite, defaultTest, options, test_names, parser):
     if options.coverage is not None:
         from running import fixture_decorators
         from coverage import Coverage
-        # TODO: exclude testoob and system libraries from coverage
-        cov = Coverage()
+        import os
+        # Ignore coverage from the 'testoob' library (where this file is), and
+        # from the python system library (assuming 'os' module placed there).
+        cov = Coverage(map(os.path.dirname, [__file__, os.__file__]))
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_coverage_fixture(cov))
         if options.coverage != "silent":
