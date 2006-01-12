@@ -35,31 +35,14 @@ class Coverage:
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
         self._dirs_not_covered = ignoredirs
-        self.tracing = False
 
     def runfunc(self, func, *args, **kwargs):
         "Gets a function and it's arguments to run and perform code coverage test"
-        if self.tracing:
-            raise RuntimeException("Can't start a new coverage trace.")
-        self.tracing = True
         sys.settrace(self._tracer)
         try:
             return func(*args, **kwargs)
         finally:
             sys.settrace(None)
-            self.tracing = False
-
-    def start(self):
-        "Starts covering everything from here on."
-        if self.tracing:
-            raise RuntimeException("Can't start a new coverage trace.")
-        self.tracing = True
-        sys.settrace(self._tracer)
-
-    def stop(self):
-        "Stops covering what was started earlier."
-        self.tracing = False
-        sys.settrace(None)
 
     def getstatistics(self):
         """
