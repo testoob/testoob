@@ -24,9 +24,9 @@ class Coverage:
 
     NOTE: This class depends on the 'trace' module.
     """
-    def __init__(self, ignoredirs=()):
+    def __init__(self, ignorepaths=()):
         """
-        initialize the code coverage module, gets list of directories of files
+        initialize the code coverage module, gets list of directories and files
         which's coverage is not needed.
         """
         # coverage is a dictinary mapping filenames to another dictionary with
@@ -34,7 +34,7 @@ class Coverage:
         #    lines   - a set of number of executable lines in the file.
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
-        self.ignoredirs = ignoredirs
+        self.ignorepaths = ignorepaths
 
     def runfunc(self, func, *args, **kwargs):
         "Gets a function and it's arguments to run and perform code coverage test"
@@ -83,8 +83,8 @@ class Coverage:
         "Should we check coverage for this file?"
         filename = frame.f_code.co_filename
         lineno = frame.f_lineno
-        for dir in self.ignoredirs:
-            if filename.startswith(dir):
+        for path in self.ignorepaths:
+            if filename.startswith(path):
                 return False
         
         if not self.coverage.has_key(filename):
