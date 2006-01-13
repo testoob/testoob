@@ -52,12 +52,15 @@ def get_alarmed_fixture(timeout):
     return AlarmedFixture
 
 def get_coverage_fixture(coverage):
+    from os.path import abspath
     class CoveredFixture(BaseFixture):
-        def __init(self, fixture):
+        def __init__(self, fixture):
             BaseFixture.__init__(self, fixture)
+            modfile = eval("__import__('%s').__file__" % self.get_fixture().__module__)
+            modfile = modfile[-3:] == "pyc" and modfile[:-3] + "py"
+            coverage.ignorepaths.append(abspath(modfile))
 
         def __call__(self, *args):
-            # TODO: add exlusion of the test file itself from coverage here.
             coverage.runfunc(BaseFixture.__call__, self, *args)
     return CoveredFixture
 
