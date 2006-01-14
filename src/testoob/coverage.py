@@ -82,10 +82,10 @@ class Coverage:
 
     def _should_cover_frame(self, frame):
         "Should we check coverage for this file?"
-        filename = frame.f_code.co_filename
+        filename = os.path.abspath(frame.f_code.co_filename)
         lineno = frame.f_lineno
         for path in self.ignorepaths:
-            if os.path.abspath(filename).startswith(path):
+            if (filename).startswith(path):
                 return False
         
         if not self.coverage.has_key(filename):
@@ -98,7 +98,7 @@ class Coverage:
     def _tracer(self, frame, why, arg):
         "Trace function to be put as input for sys.settrace()"
         if self._should_cover_frame(frame):
-            filename = frame.f_code.co_filename
+            filename = os.path.abspath(frame.f_code.co_filename)
             lineno = frame.f_lineno
             self.coverage[filename]["covered"].add(lineno)
 
