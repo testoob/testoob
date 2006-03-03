@@ -41,7 +41,7 @@ class PyroRunner(BaseRunner):
     SLEEP_INTERVAL_BETWEEN_RETRYING_CONNECTION = 0.5
     GET_TIMEOUT = 20 # don't wait more than this for a test, on Python >= 2.3
     def __init__(self, max_processes):
-        running.BaseRunner.__init__(self)
+        BaseRunner.__init__(self)
         from Queue import Queue
         self.queue = Queue()
         self.max_processes = max_processes
@@ -108,7 +108,7 @@ class PyroRunner(BaseRunner):
         self._spawn_processes()
         self._server_code()
 
-        running.BaseRunner.done(self)
+        BaseRunner.done(self)
 
     def _pyro_queue(self):
         import Pyro.core
