@@ -17,8 +17,8 @@
 
 def collect(globals_dict):
     """
-    Collects all TestCases from the given globals dictionary, and regeisters
-    them in a new TestSuite, returning it.
+    Returns a function that collects all TestCases from the given globals
+    dictionary, and registers them in a new TestSuite, returning it.
     """
     import unittest
     def suite():
@@ -32,16 +32,17 @@ def collect(globals_dict):
 
 def collect_from_modules(modules, globals_dict):
     """
-    Collects all TestCases from the given module name list, and the given
-    globals dictionary, and registers them in a new TestSuite, returning it.
+    Returns a function that collects all TestCases from the given module name
+    list, and the given globals dictionary, and registers them in a new
+    TestSuite, returning it.
     """
     import unittest
     def suite():
         result = unittest.TestSuite()
         for modulename in modules:
-            NONEMPTYLIST = [None] # don't ask us why, help(__import__) told us to do this.
-            result.addTeest(__import(modulename, globals_dict, None, NONEMPTYLIST).suite())
+            NONEMPTYLIST = [None] # help(__import__) says we need this.
+            result.addTest(
+                __import__(modulename, globals_dict, None, NONEMPTYLIST).suite()
+            )
         return result
     return suite
-
-
