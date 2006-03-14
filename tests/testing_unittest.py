@@ -41,5 +41,9 @@ class TestingUnitTest(unittest.TestCase):
     def testRunCommandError(self):
         self.assertEqual(("", "def\n", 0), _get_results(error="def\n"))
 
+    def testCommandLineDefaultIsIgnore(self):
+        args = _generate_command(output="aaa", error="bbb", rc=77)
+        testing.command_line(args)
+
 def suite(): return unittest.makeSuite(TestingUnitTest)
 if __name__ == "__main__": unittest.main()
