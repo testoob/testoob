@@ -45,5 +45,19 @@ class TestingUnitTest(unittest.TestCase):
         args = _generate_command(output="aaa", error="bbb", rc=77)
         testing.command_line(args)
 
+    def testCommandLineExpectedOutputSuccess(self):
+        testing.command_line(
+            args=_generate_command(output="a\nb\n"),
+            expected_output="a\nb\n",
+        )
+
+    def testCommandLineExpectedOutputFailure(self):
+        self.assertRaises(
+            AssertionError,
+            testing.command_line,
+            args=_generate_command(output="c\nd\n"),
+            expected_output="e\nf\n",
+        )
+
 def suite(): return unittest.makeSuite(TestingUnitTest)
 if __name__ == "__main__": unittest.main()
