@@ -16,6 +16,13 @@
 "Some useful test-collecting functions"
 
 def collect(globals_dict):
+    import warnings
+    warnings.warn(
+        "'collect' has been renamed to 'collector_from_globals'",
+        category=DeprecationWarning
+    )
+    return collector_from_globals(globals_dict)
+def collector_from_globals(globals_dict):
     """
     Returns a function that collects all TestCases from the given globals
     dictionary, and registers them in a new TestSuite, returning it.
@@ -31,6 +38,13 @@ def collect(globals_dict):
     return suite
 
 def collect_from_modules(modules, globals_dict):
+    import warnings
+    warnings.warn(
+        "'collect_from_modules' has been renamed to 'collector_from_modules'",
+        category=DeprecationWarning
+    )
+    return collector_from_modules(modules, globals_dict)
+def collector_from_modules(modules, globals_dict):
     """
     Returns a function that collects all TestCases from the given module name
     list, and the given globals dictionary, and registers them in a new
