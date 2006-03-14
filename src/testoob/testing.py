@@ -56,6 +56,16 @@ def assert_matches(regex, actual, msg=None, filter=None):
         msg = "'%(actual)s' doesn't match regular expression '%(regex)s'" % vars()
     raise AssertionError(msg)
 
+def assert_raises(exception_class, callable, *args, **kwargs):
+    "Code similar to unittest.py's assertRaises"
+    try:
+        callable(*args, **kwargs)
+    except exception_class:
+        pass
+    else:
+        excName = getattr(exception_class, "__name__", str(exception_class))
+        raise AssertionError("%s not raised" % excName)
+
 def conditionally_assert_equals(expected, actual, **kwargs):
     "assert_equals only if expected is not None"
     if expected is not None:
