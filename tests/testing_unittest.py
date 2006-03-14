@@ -64,5 +64,41 @@ class TestingUnitTest(unittest.TestCase):
     def testCommandLineExpectedOutputFailure(self):
         _verify_command_line_failure(output="c\nd\n", expected_output="e\nf\n")
 
+    def testCommandLineExpectedErrorSuccess(self):
+        _verify_command_line_success(error="g\nh\n", expected_error="g\nh\n")
+
+    def testCommandLineExpectedErrorFailure(self):
+        _verify_command_line_failure(error="i\nj\n", expected_error="k\nl\n")
+
+    def testCommandLineOutputRegexSuccess(self):
+        _verify_command_line_success(
+                output="abc",
+                expected_output_regex="a.c",
+            )
+
+    def testCommandLineOutputRegexFailure(self):
+        _verify_command_line_failure(
+                output="def",
+                expected_output_regex="a.c",
+            )
+
+    def testCommandLineRcSuccess(self):
+        _verify_command_line_success(rc=17, expected_rc=17)
+
+    def testCommandLineRcFailure(self):
+        _verify_command_line_failure(rc=17, expected_rc=18)
+
+    def testCommandLineErrorRegexSuccess(self):
+        _verify_command_line_success(
+                error="ghijkl",
+                expected_error_regex="gh.*l",
+            )
+
+    def testCommandLineErrorRegexFailure(self):
+        _verify_command_line_failure(
+                error="123456",
+                expected_error_regex="2468",
+            )
+
 def suite(): return unittest.makeSuite(TestingUnitTest)
 if __name__ == "__main__": unittest.main()
