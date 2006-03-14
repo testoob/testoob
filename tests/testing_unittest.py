@@ -34,6 +34,20 @@ def _get_results(**kwargs):
     output, error, rc = testing._run_command(_generate_command(**kwargs))
     return testing._normalize_newlines(output), testing._normalize_newlines(error), rc
 
+def _verify_command_line_success(output=None, error=None, rc=0, **kwargs):
+    "Convenience function"
+    args = _generate_command(output=output, error=error, rc=rc)
+    testing.command_line(args, **kwargs)
+
+def _verify_command_line_failure(output=None, error=None, rc=0, **kwargs):
+    args = _generate_command(output=output, error=error, rc=rc)
+    testing.assert_raises(
+        AssertionError,
+        testing.command_line,
+        args, 
+        **kwargs
+    )
+    
 class TestingUnitTest(unittest.TestCase):
     def testRunCommandOutput(self):
         self.assertEqual(("abc\n", "", 0), _get_results(output="abc\n"))
@@ -42,22 +56,13 @@ class TestingUnitTest(unittest.TestCase):
         self.assertEqual(("", "def\n", 0), _get_results(error="def\n"))
 
     def testCommandLineDefaultIsIgnore(self):
-        args = _generate_command(output="aaa", error="bbb", rc=77)
-        testing.command_line(args)
+        _verify_command_line_success(output="aaa", error="bbb", rc=77)
 
     def testCommandLineExpectedOutputSuccess(self):
-        testing.command_line(
-            args=_generate_command(output="a\nb\n"),
-            expected_output="a\nb\n",
-        )
+        _verify_command_line_success(output="a\nb\n", expected_output="a\nb\n")
 
     def testCommandLineExpectedOutputFailure(self):
-        self.assertRaises(
-            AssertionError,
-            testing.command_line,
-            args=_generate_command(output="c\nd\n"),
-            expected_output="e\nf\n",
-        )
+        _verify_command_line_failure(output="c\nd\n", expected_output="e\nf\n")
 
 def suite(): return unittest.makeSuite(TestingUnitTest)
 if __name__ == "__main__": unittest.main()
