@@ -5,26 +5,24 @@ import unittest, testoob
 
 import testoob.testing as testing
 
-def _generate_command(output=None, error=None, rc=0):
+def _generate_command(output="", error="", rc=0):
     """
     Generate an args list that produces the given output, error, and
     return code
     """
-    commands = ["import sys"]
+    assert output.find('"""') < 0
+    assert error.find('"""') < 0
+    python_commands = (
+        'import sys',
+        'sys.stdout.write("""%s""")' % output,
+        'sys.stdout.flush()',
+        'sys.stderr.write("""%s""")' % error,
+        'sys.stderr.flush()',
+        'sys.exit(%d)' % rc,
+    )
 
-    if output is not None:
-        assert output.find('"""') < 0
-        commands.append(
-            'sys.stdout.write("""%s"""); sys.stdout.flush()' % output
-        )
-
-    if error is not None:
-        assert error.find('"""') < 0
-        commands.append('sys.stderr.write("""%s""")' % error)
-
-    commands.append("sys.exit(%d)" % rc)
-
-    return ["python", "-c", "; ".join(commands)]
+    import sys
+    return [sys.executable, "-c", "; ".join(python_commands)]
 
 def _get_results(**kwargs):
     """
@@ -100,5 +98,6 @@ class TestingUnitTest(unittest.TestCase):
                 expected_error_regex="2468",
             )
 
-def suite(): return unittest.makeSuite(TestingUnitTest)
-if __name__ == "__main__": unittest.main()
+suite = testoob.collector_from_globals(globals())
+
+if __name__ == "__main__": testoob.main()
