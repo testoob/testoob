@@ -98,6 +98,18 @@ class TestingUnitTest(unittest.TestCase):
                 expected_error_regex="2468",
             )
 
+    def testCommandLineRcPredicateSuccess(self):
+        _verify_command_line_success(
+                rc = 17,
+                rc_predicate = lambda rc: rc != 0
+            )
+
+    def testCommandLineRcPredicateFailure(self):
+        _verify_command_line_failure(
+                rc = 0,
+                rc_predicate = lambda rc: rc != 0
+            )
+
 suite = testoob.collector_from_globals(globals())
 
 if __name__ == "__main__": testoob.main()

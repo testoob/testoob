@@ -34,6 +34,12 @@ def _normalize_newlines(string):
     import re
     return re.sub(r'(\r\n|\r|\n)', '\n', string)
 
+def assert_true(condition, msg=None):
+    if condition: return
+    if msg is None:
+        msg = "condition not true"
+    raise AssertionError(msg)
+
 def assert_equals(expected, actual, msg=None, filter=None):
     "works like unittest.TestCase.assertEquals"
     if filter is not None:
@@ -84,6 +90,7 @@ def command_line(
         expected_output_regex=None,
         expected_error_regex=None,
         expected_rc=None,
+        rc_predicate=None,
     ):
 
     # TODO: make errors print full status like working directory, etc.
@@ -97,3 +104,5 @@ def command_line(
     conditionally_assert_matches(expected_output_regex, output, filter=_normalize_newlines)
     conditionally_assert_matches(expected_error_regex, error, filter=_normalize_newlines)
     conditionally_assert_equals(expected_rc, rc)
+    if rc_predicate is not None:
+        assert_true(rc_predicate(rc))
