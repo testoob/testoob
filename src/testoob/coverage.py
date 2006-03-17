@@ -60,10 +60,17 @@ class Coverage:
         """
         statistics = {}
         for filename, coverage in self.coverage.items():
+            def num_lines(): return len(coverage["lines"])
+            def num_lines_covered(): return len(coverage["covered"])
+            def percentage():
+                if num_lines() > 0:
+                    return int(100 * num_lines_covered()) / num_lines()
+                else:
+                    return 0
             statistics[filename] = {
-                "lines"  : len(coverage["lines"]),
-                "covered": len(coverage["covered"]),
-                "percent": int(100 * len(coverage["covered"]) / len(coverage["lines"]))
+                "lines"  : num_lines(),
+                "covered": num_lines_covered(),
+                "percent": percentage(),
             }
         return statistics
 
