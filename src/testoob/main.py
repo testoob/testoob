@@ -48,7 +48,8 @@ def _arg_parser(usage):
     p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
     p.add_option("--randomize-order", action="store_true", help="Randomize the test order")
     p.add_option("--randomize-seed", metavar="SEED", type="int", help="Seed for randomizing the test order, implies --randomize-order")
-    p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=["silent", "slim", "normal", "massive"], help="Test the coverage of the tested code")
+    coverage_choices = ["silent", "slim", "normal", "massive"]
+    p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=coverage_choices, help="Test the coverage of the tested code, choices are: %s" % coverage_choices)
 
     options, parameters = p.parse_args()
     if options.version:
