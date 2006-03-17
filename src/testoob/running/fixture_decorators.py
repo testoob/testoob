@@ -51,14 +51,27 @@ def get_alarmed_fixture(timeout):
             self.alarm(0) # Release the alarm that was set.
     return AlarmedFixture
 
+def _fix_sourcefile_extension(filename):
+    # from Python's logging module
+    # TODO: support py2exe?
+    #import sys
+    #if hasattr(sys, 'frozen'): #support for py2exe
+    #    return "logging%s__init__%s" % (os.sep, filename[-4:])
+    if filename[-4:].lower() in ['.pyc', '.pyo']:
+        return filename[:-4] + '.py'
+    return filename
+def _fix_sourcefile(filename):
+    from os.path import normcase, abspath
+    return abspath(normcase(_fix_sourcefile_extension(filename)))
+def _module_sourcefile(module_name):
+    return _fix_sourcefile(__import__(module_name).__file__)
+
 def get_coverage_fixture(coverage):
     from os.path import abspath
     class CoveredFixture(BaseFixture):
         def __init__(self, fixture):
             BaseFixture.__init__(self, fixture)
-            modfile = eval("__import__('%s').__file__" % self.get_fixture().__module__)
-            modfile = modfile[-3:] == "pyc" and modfile[:-3] + "py"
-            coverage.ignorepaths.append(abspath(modfile))
+            coverage.ignorepaths.append(_module_sourcefile(fixture.__module__))
 
         def __call__(self, *args):
             coverage.runfunc(BaseFixture.__call__, self, *args)
