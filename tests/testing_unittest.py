@@ -32,12 +32,12 @@ def _get_results(**kwargs):
     output, error, rc = testing._run_command(_generate_command(**kwargs))
     return testing._normalize_newlines(output), testing._normalize_newlines(error), rc
 
-def _verify_command_line_success(output=None, error=None, rc=0, **kwargs):
+def _verify_command_line_success(output="", error="", rc=0, **kwargs):
     "Convenience function"
     args = _generate_command(output=output, error=error, rc=rc)
     testing.command_line(args, **kwargs)
 
-def _verify_command_line_failure(output=None, error=None, rc=0, **kwargs):
+def _verify_command_line_failure(output="", error="", rc=0, **kwargs):
     args = _generate_command(output=output, error=error, rc=rc)
     testing.assert_raises(
         AssertionError,
