@@ -5,8 +5,8 @@ import unittest, testoob, os, sys
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
-def _testoob_args(tests=None, options=None):
-    result = [sys.executable, helpers.executable_path(), _suite_file]
+def _testoob_args(tests=None, options=None, suite_file = _suite_file):
+    result = [sys.executable, helpers.executable_path(), suite_file]
     if options is not None: result += options
     if tests is not None: result += tests
     return result
@@ -402,6 +402,35 @@ FAILED \(failures=1, errors=1\)
         stderr_seed = _run_testoob(args_seed, grep="^test.*OK$")
 
         self.assertEqual(stderr_order, stderr_seed)
+
+    def _coverageArgs(self, coverage_amount):
+        return _testoob_args(
+            options=["--coverage=%s" % coverage_amount],
+            suite_file=helpers.project_subpath("tests/dummyprojecttests.py"),
+        )
+
+    def testSilentCoverage(self):
+        testoob.testing.command_line(
+            self._coverageArgs("silent"),
+            expected_rc=0,
+        )
+    def testSlimCoverage(self):
+        testoob.testing.command_line(
+            self._coverageArgs("slim"),
+            expected_error_regex="covered [0-9]+% of the code",
+        )
+    def testNormalCoverage(self):
+        testoob.testing.command_line(
+            self._coverageArgs("normal"),
+            expected_error_regex="covered [0-9]+% of the code",
+            expected_output_regex="lines.*cov_n.*module.*path.*TOTAL",
+        )
+    def testMassiveCoverage(self):
+        testoob.testing.command_line(
+            self._coverageArgs("massive"),
+            expected_error_regex="covered [0-9]+% of the code",
+            expected_output_regex="missing.*\['[0-9]+'",
+        )
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
