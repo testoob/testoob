@@ -15,6 +15,8 @@
 
 "Useful testing fuctions."
 
+__unittest=1
+
 def _run_command(args, input=None):
     """_run_command(args, input=None) -> stdoutstring, stderrstring, returncode
     Runs the command, giving the input if any.
