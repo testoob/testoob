@@ -155,6 +155,7 @@ def _main(suite, defaultTest, options, test_names, parser):
                 fixture_decorators.get_timed_fixture(options.timed_repeat))
 
     if options.timeout is not None:
+        require_posix("--timeout")
         from running import fixture_decorators
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_alarmed_fixture(options.timeout))
@@ -222,8 +223,9 @@ def _main(suite, defaultTest, options, test_names, parser):
     if options.debug is not None:
         import pdb
         def runDebug(test, err_info, flavour, reporter, real_add):
-            from signal import alarm
-            alarm(0) # Don't timeout on debug.
+            if options.timeout is not None:
+                from signal import alarm
+                alarm(0) # Don't timeout on debug.
             assert flavour in ("error", "failure")
             real_add(test, err_info)
             print "\nDebugging for %s in test: %s" % (
