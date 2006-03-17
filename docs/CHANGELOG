@@ -1,9 +1,40 @@
+                           -== testoob Changelog ==-
 
-                           -== TestOOB Changelog ==-
-
-TestOOB is an advanced testing framework for Python. It is designed to
+'testoob' is an advanced testing framework for Python. It is designed to
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
+
+== testoob 0.9, 17 March, 2006
+
+'TestOOB' has been renamed to 'testoob', to encourage the correct
+pronunciation, "tess-toob", like "test tube".
+Too many people were calling it "Test Oh-Oh-Bee"...
+
+Enhancements:
+ * New '--coverage' option to print a coverage report
+ * New '--timed-repeat' option that repeats each test for a given time interval
+ * New '--capture' option prints stdout only on failure, like py.test and nose
+ * New '--list-formatted' option can list tests in CSV format
+ * New '--randomize-order' and '--randomize-seed' to randomize test order
+ * '--list' no longer stops at 50 tests (there was no real need)
+ * zsh completion module, see logistics/_testoob
+ * New 'rc_predicate' parameter for testoob.testing.command_line
+ * Improved testoob.testing.command_line's default behavior
+ * Added more assert functions to testoob.testing
+
+Changes:
+ * Renamed collectors to testoob.collector_from_{globals,modules}
+
+Bugfixes:
+ * Fixed running in multiple processes with Pyro
+ * Fixed '--debug' on Windows
+ * Fixed collectors
+ * Cleaner stack-trace printing with testoob.testing functions
+ * '--timeout' now checks for Posix
+
+Internal:
+ * Lots of refactoring
+ * More tests
 
 == TestOOB 0.8.1, 1 December, 2005
 
