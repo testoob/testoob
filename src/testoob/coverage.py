@@ -17,6 +17,13 @@
 
 import os, sys, trace
 
+try:
+    sum
+except NameError:
+    # Python 2.2 compatibility
+    import operator
+    sum = lambda seq: reduce(operator.add, seq)
+
 class Coverage:
     """
     Python code coverage module built specifically for checking code coverage
