@@ -15,6 +15,21 @@
 
 "Some useful test-collecting functions"
 
+from __future__ import generators
+
+try:
+    from itertools import ifilter as _ifilter
+except ImportError:
+    from compatibility.itertools import ifilter as _ifilter
+
+def _is_test_case(x):
+    import types, unittest
+    try:
+        return issubclass(x, unittest.TestCase)
+    except TypeError:
+        # x isn't a class
+        return False
+
 def collect(globals_dict):
     import warnings
     warnings.warn(
@@ -30,10 +45,8 @@ def collector_from_globals(globals_dict):
     import unittest
     def suite():
         result = unittest.TestSuite()
-        for item in globals_dict.values():
-            from types import ClassType
-            if isinstance(item, ClassType) and issubclass(item, unittest.TestCase):
-                result.addTest(unittest.makeSuite(item))
+        for test_case in _ifilter(_is_test_case, globals_dict.values()):
+            result.addTest(unittest.makeSuite(test_case))
         return result
     return suite
 
