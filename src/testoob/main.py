@@ -44,7 +44,7 @@ def _arg_parser(usage):
     p.add_option("--processes_pyro", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
     p.add_option("--processes_old", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, old implementation")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
-    p.add_option("--timed-repeat", metavar="SECONDS", type="float", help="Repeate each test, for a limited time")
+    p.add_option("--timed-repeat", metavar="SECONDS", type="float", help="Repeat each test, for a limited time")
     p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
     p.add_option("--randomize-order", action="store_true", help="Randomize the test order")
     p.add_option("--randomize-seed", metavar="SEED", type="int", help="Seed for randomizing the test order, implies --randomize-order")
