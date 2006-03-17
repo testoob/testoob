@@ -254,6 +254,8 @@ ERROR: testError \(suites\.CaseMixed\.testError\)
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testTimeOut(self):
+        if sys.platform.startswith("win"):
+            return # XXX disabled on windows, no SIGALRM
         args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
         regex=r"""FF
 ======================================================================
