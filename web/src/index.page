@@ -12,6 +12,12 @@ h1. TestOOB: Advanced Testing in Python
 
 h2. News
 
+h3. 17 March, 2006: testoob 0.9 released
+
+* New features: code coverage, timed-repeat, improved command-line application testing, and more!
+* Several important bugfixes
+* "Full change list":http://sourceforge.net/project/shownotes.php?release_id=402463&group_id=138557
+
 h3. 1 December, 2005: TestOOB 0.8.1 Released
 
 * Bugfix release (critical bug prevented importing). Reported by Oli and Ryan - Thanks!!!
@@ -24,12 +30,3 @@ h3. 30 November, 2005: TestOOB 0.8 Released
 * Verbose asserts enhancements and fixes
 * Many other bug fixes
 * "Changelog":http://sourceforge.net/project/shownotes.php?release_id=374720&group_id=138557
-
-h3. 17 October, 2005: TestOOB 0.7 released
-
-* run tests in multiple processes!
-* repeat tests
-* filter tests with glob patterns
-* non-zero exit code on test failures
-* "Changelog":http://sourceforge.net/project/shownotes.php?release_id=364123
-
