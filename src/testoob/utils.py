@@ -25,7 +25,7 @@ def _is_pickleable(obj):
     try:
         _pickle.dumps(obj)
         return True
-    except TypeError:
+    except:
         return False
 
 class UnpickleableFieldError(Exception): pass
