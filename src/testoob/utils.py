@@ -15,11 +15,15 @@
 
 "General utilities used internally"
 
+try:
+    import cPickle as _pickle
+except ImportError:
+    import pickle as _pickle
+
 def _is_pickleable(obj):
     "Is the object pickleable?"
-    import cPickle as pickle
     try:
-        pickle.dumps(obj)
+        _pickle.dumps(obj)
         return True
     except TypeError:
         return False
