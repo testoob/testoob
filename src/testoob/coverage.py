@@ -24,6 +24,15 @@ except NameError:
     import operator
     sum = lambda seq: reduce(operator.add, seq)
 
+try:
+    set
+except NameError:
+    # Python 2.3 compatibility
+    from sets import Set as set
+except ImportError:
+    # Python 2.2. compatibility
+    from compatibility.sets import Set as set
+
 class Coverage:
     """
     Python code coverage module built specifically for checking code coverage
