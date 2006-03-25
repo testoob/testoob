@@ -17,6 +17,23 @@
 
 __unittest=1
 
+class TestoobAssertionError(AssertionError):
+    def __init__(self, message, long_message=None, description=None):
+        AssertionError.__init__(self, message)
+        self.message = message
+        self.long_message = long_message
+        self.description = description
+
+    def __str__(self):
+        result = []
+        if self.description is not None:
+            result.append( "[%s]" % self.description )
+        result.append( self.message )
+        if self.long_message is not None:
+            result.append( "----- long message -----" )
+            result.append(self.long_message)
+        return "\n".join(result)
+
 def _run_command(args, input=None):
     """_run_command(args, input=None) -> stdoutstring, stderrstring, returncode
     Runs the command, giving the input if any.
@@ -40,7 +57,7 @@ def assert_true(condition, msg=None):
     if condition: return
     if msg is None:
         msg = "condition not true"
-    raise AssertionError(msg)
+    raise TestoobAssertionError(msg, description="assert_true failed")
 
 def assert_equals(expected, actual, msg=None, filter=None):
     "works like unittest.TestCase.assertEquals"
@@ -50,7 +67,7 @@ def assert_equals(expected, actual, msg=None, filter=None):
     if expected == actual: return
     if msg is None:
         msg = '%s != %s' % (expected, actual)
-    raise AssertionError(msg)
+    raise TestoobAssertionError(msg, description="assert_equals failed")
 
 def assert_matches(regex, actual, msg=None, filter=None):
     "fail unless regex matches actual (using re.search)"
@@ -62,7 +79,7 @@ def assert_matches(regex, actual, msg=None, filter=None):
 
     if msg is None:
         msg = "'%(actual)s' doesn't match regular expression '%(regex)s'" % vars()
-    raise AssertionError(msg)
+    raise TestoobAssertionError(msg, description="assert_matches failed")
 
 def assert_raises(exception_class, callable, *args, **kwargs):
     "Code similar to unittest.py's assertRaises"
@@ -72,7 +89,8 @@ def assert_raises(exception_class, callable, *args, **kwargs):
         pass
     else:
         excName = getattr(exception_class, "__name__", str(exception_class))
-        raise AssertionError("%s not raised" % excName)
+        raise TestoobAssertionError(
+            "%s not raised" % excName, description="assert_raises failed")
 
 def conditionally_assert_equals(expected, actual, **kwargs):
     "assert_equals only if expected is not None"
@@ -101,10 +119,29 @@ def command_line(
     output, error, rc = _run_command(args, input)
 
     # test
-    conditionally_assert_equals(expected_error, error, filter=_normalize_newlines)
-    conditionally_assert_equals(expected_output, output, filter=_normalize_newlines)
-    conditionally_assert_matches(expected_output_regex, output, filter=_normalize_newlines)
-    conditionally_assert_matches(expected_error_regex, error, filter=_normalize_newlines)
-    conditionally_assert_equals(expected_rc, rc)
-    if rc_predicate is not None:
-        assert_true(rc_predicate(rc))
+    try:
+        conditionally_assert_equals(expected_error, error, filter=_normalize_newlines)
+        conditionally_assert_equals(expected_output, output, filter=_normalize_newlines)
+        conditionally_assert_matches(expected_output_regex, output, filter=_normalize_newlines)
+        conditionally_assert_matches(expected_error_regex, error, filter=_normalize_newlines)
+        conditionally_assert_equals(expected_rc, rc)
+        if rc_predicate is not None:
+            assert_true(rc_predicate(rc))
+    except TestoobAssertionError, e:
+        assert e.long_message is None
+        long_message = []
+        long_message += ["== args: %s" % args]
+        long_message += ["== rc: %s" % rc]
+        def err_string_list(name, value):
+            if not value: return ["== %s: NONE" % name]
+            import re
+            annotation_pattern = re.compile("^", re.MULTILINE)
+            annotated_value = annotation_pattern.sub("%s: "%name, value)
+            return [
+                "== %s" % name,
+                annotated_value,
+            ]
+        long_message += err_string_list("stdout", output)
+        long_message += err_string_list("stderr", error)
+        e.long_message = "\n".join(long_message)
+        raise
