@@ -92,16 +92,6 @@ def assert_raises(exception_class, callable, *args, **kwargs):
         raise TestoobAssertionError(
             "%s not raised" % excName, description="assert_raises failed")
 
-def conditionally_assert_equals(expected, actual, **kwargs):
-    "assert_equals only if expected is not None"
-    if expected is not None:
-        assert_equals(expected, actual, **kwargs)
-
-def conditionally_assert_matches(expected_regex, actual, **kwargs):
-    "assert_matches only if expected_regex is not None"
-    if expected_regex is not None:
-        assert_matches(expected_regex, actual, **kwargs)
-
 def command_line(
         args,
         input=None,
@@ -113,36 +103,36 @@ def command_line(
         rc_predicate=None,
     ):
 
-    # TODO: make errors print full status like working directory, etc.
-
     # run command
     output, error, rc = _run_command(args, input)
 
     # test
     try:
-        conditionally_assert_equals(expected_error, error, filter=_normalize_newlines)
-        conditionally_assert_equals(expected_output, output, filter=_normalize_newlines)
-        conditionally_assert_matches(expected_output_regex, output, filter=_normalize_newlines)
-        conditionally_assert_matches(expected_error_regex, error, filter=_normalize_newlines)
-        conditionally_assert_equals(expected_rc, rc)
+        if expected_error is not None:
+            assert_equals(expected_error, error, filter=_normalize_newlines)
+        if expected_output is not None:
+            assert_equals(expected_output, output, filter=_normalize_newlines)
+        if expected_output_regex is not None:
+            assert_matches(expected_output_regex, output, filter=_normalize_newlines)
+        if expected_error_regex is not None:
+            assert_matches(expected_error_regex, error, filter=_normalize_newlines)
+        if expected_rc is not None:
+            assert_equals(expected_rc, rc)
         if rc_predicate is not None:
             assert_true(rc_predicate(rc))
     except TestoobAssertionError, e:
         assert e.long_message is None
-        long_message = []
-        long_message += ["== command_line test failed"]
-        long_message += ["== args: %s" % args]
-        long_message += ["== rc: %s" % rc]
-        def err_string_list(name, value):
-            if not value: return ["== %s: NONE" % name]
+        def annotated_err_string(name, value):
+            if not value: return "== %s: NONE" % name
             import re
             annotation_pattern = re.compile("^", re.MULTILINE)
             annotated_value = annotation_pattern.sub("%s: "%name, value)
-            return [
-                "== %s" % name,
-                annotated_value,
-            ]
-        long_message += err_string_list("stdout", output)
-        long_message += err_string_list("stderr", error)
-        e.long_message = "\n".join(long_message)
+            return "== %s\n%s" % (name, annotated_value)
+        e.long_message = "\n".join([
+            "command_line test failed",
+            "== args: %s" % args,
+            "== rc: %s" % rc,
+            annotated_err_string("stdout", output),
+            annotated_err_string("stderr", error),
+        ])
         raise
