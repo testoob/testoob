@@ -130,6 +130,7 @@ def command_line(
     except TestoobAssertionError, e:
         assert e.long_message is None
         long_message = []
+        long_message += ["== command_line test failed"]
         long_message += ["== args: %s" % args]
         long_message += ["== rc: %s" % rc]
         def err_string_list(name, value):
