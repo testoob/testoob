@@ -84,7 +84,18 @@ def _get_suites(suite, defaultTest, test_names, test_loader=None):
 
     if len(test_names) == 0:
         test_names = [defaultTest]
-    return test_loader.loadTestsFromNames(test_names, __main__)
+
+    try:
+        return test_loader.loadTestsFromNames(test_names, __main__)
+    except AttributeError, e:
+        def testName(exception):
+            import re
+            mo = re.search("has no attribute '([^']+)'", str(e))
+            assert mo is not None
+            return mo.group(1)
+        import sys
+        print >>sys.stderr, "ERROR: Can't find test case '%s'" % testName(e)
+        sys.exit(1)
 
 class ArgumentsError(Exception): pass
 
