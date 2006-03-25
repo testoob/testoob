@@ -83,6 +83,7 @@ class BaseReporter(IReporter):
 
     def __init__(self):
         self.testsRun = 0
+        self.successes = []
         self.failures = []
         self.errors = []
         self.asserts = {}
@@ -108,7 +109,7 @@ class BaseReporter(IReporter):
         self.failures.append((test_info, err_info))
 
     def addSuccess(self, test_info):
-        pass
+        self.successes.append(test_info)
 
     def addAssert(self, test_info, assertName, varList, exception):
         # TODO: append?
@@ -116,7 +117,10 @@ class BaseReporter(IReporter):
 
     def isSuccessful(self):
         "Tells whether or not this result was a success"
-        return len(self.failures) == len(self.errors) == 0
+        if len(self.failures)   > 0: return False
+        if len(self.errors)     > 0: return False
+        if len(self.successes) == 0: return False
+        return True
 
     def getTestsOutput(self, test_info):
         "Get the output (stdout and stderr) captured from the test"
