@@ -1,24 +1,18 @@
-from __future__ import generators # Python 2.2 friendly
+"""
+Run all tests
+"""
 
-import unittest
-from types import ModuleType
-
-import runningtests
-import extractingtests
-import systemtests
-import testing_unittest
-
-def imported_test_modules():
-    for val in globals().values():
-        if type(val) == ModuleType and \
-           hasattr(val, "suite") and \
-           callable(val.suite):
-               yield val
+test_modules = [
+    'runningtests',
+    'extractingtests',
+    'systemtests',
+    'testing_unittest',
+]
 
 def suite():
-    result = unittest.TestSuite()
-    for module in imported_test_modules():
-        result.addTest(module.suite())
-    return result
+    import unittest
+    return unittest.TestLoader().loadTestsFromNames(test_modules)
 
-if __name__ == "__main__": unittest.main(defaultTest="suite")
+if __name__ == "__main__":
+    import testoob
+    testoob.main(defaultTest="suite")
