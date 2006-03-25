@@ -431,6 +431,20 @@ FAILED \(failures=1, errors=1\)
             expected_error_regex="covered [0-9]+% of the code",
             expected_output_regex="missing.*\['[0-9]+'",
         )
+    def testTestMethodRegex(self):
+        testoob.testing.command_line(
+                _testoob_args(options=["--test-method-regex=Test$"],
+                              tests=["CaseDifferentTestNameSignatures"]),
+                expected_error_regex="Ran 1 test.*OK",
+                expected_rc=0,
+        )
+    def testTestMethodGlob(self):
+        testoob.testing.command_line(
+                _testoob_args(options=["--test-method-glob=check*"],
+                              tests=["CaseDifferentTestNameSignatures"]),
+                expected_error_regex="Ran 1 test.*OK",
+                expected_rc=0,
+        )
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()

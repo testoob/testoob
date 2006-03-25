@@ -132,6 +132,10 @@ all_asserts = {}
 for test_name in all_test_names:
     all_asserts[test_name] = ("assertEquals", None.__class__)
 
+class CaseDifferentTestNameSignatures(unittest.TestCase):
+    def checkSomething(self): pass
+    def numericalTest(self): pass
+
 def suite():
     result = unittest.TestSuite()
     result.addTest( unittest.makeSuite(CaseLetters) )

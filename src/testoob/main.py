@@ -50,6 +50,8 @@ def _arg_parser(usage):
     p.add_option("--randomize-seed", metavar="SEED", type="int", help="Seed for randomizing the test order, implies --randomize-order")
     coverage_choices = ["silent", "slim", "normal", "massive"]
     p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=coverage_choices, help="Test the coverage of the tested code, choices are: %s" % coverage_choices)
+    p.add_option("--test-method-glob", metavar="PATTERN", help="Collect test methods based on a glob pattern")
+    p.add_option("--test-method-regex", metavar="REGEX", help="Collect test methods based on a regular expression")
 
     options, parameters = p.parse_args()
     if options.version:
@@ -66,20 +68,23 @@ def _get_verbosity(options):
     if options.verbose: return 2
     return 1
 
-def _get_suites(suite, defaultTest, test_names):
+def _get_suites(suite, defaultTest, test_names, test_loader=None):
     if suite is not None:
         # an explicit suite always wins
         return [suite]
 
-    from unittest import TestLoader
+    if test_loader is None:
+        import unittest
+        test_loader = unittest.TestLoader()
+
     import __main__
     if len(test_names) == 0 and defaultTest is None:
         # load all tests from __main__
-        return TestLoader().loadTestsFromModule(__main__)
+        return test_loader.loadTestsFromModule(__main__)
 
     if len(test_names) == 0:
         test_names = [defaultTest]
-    return TestLoader().loadTestsFromNames(test_names, __main__)
+    return test_loader.loadTestsFromNames(test_names, __main__)
 
 class ArgumentsError(Exception): pass
 
@@ -123,7 +128,6 @@ def _main(suite, defaultTest, options, test_names, parser):
     conflicting_options("capture", "list")
 
     kwargs = {
-        "suites" : _get_suites(suite, defaultTest, test_names),
         "verbosity" : _get_verbosity(options),
         "immediate" : options.immediate,
         "stop_on_fail" : options.stop_on_fail,
@@ -132,6 +136,18 @@ def _main(suite, defaultTest, options, test_names, parser):
         "fixture_decorators" : [],
         "interval" : options.interval,
     }
+
+    def get_test_loader():
+        if options.test_method_regex is not None:
+            from test_loaders import RegexLoader
+            return RegexLoader(options.test_method_regex)
+        if options.test_method_glob is not None:
+            from test_loaders import GlobLoader
+            return GlobLoader(options.test_method_glob)
+        return None # use the default
+
+    kwargs["suites"] = _get_suites(
+        suite, defaultTest, test_names, test_loader=get_test_loader())
     
     if options.coverage is not None:
         from running import fixture_decorators
