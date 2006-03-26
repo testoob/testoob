@@ -34,7 +34,9 @@ def _arg_parser(usage):
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
-    p.add_option("--color", action="store_true", help="Color output")
+    p.add_option("--color", action="store_true", help="Color output (deprecated)")
+    color_choices = ["never", "always", "auto"]
+    p.add_option("--color-mode", metavar="WHEN", type="choice", choices=color_choices, default="auto", help="When should output be in color? Choices are " + str(color_choices) + ", default is '%default'")
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
     p.add_option("--timeout", metavar="SECONDS", type="int", help="Fail test if passes timeout")
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
@@ -245,6 +247,33 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["reporters"].append( HTMLReporter(filename=options.html) )
 
     if options.color is not None:
+        import warnings
+        warnings.warn("--color is deprecated, use --color-mode instead",
+                      category=DeprecationWarning)
+        options.color_mode = "always"
+
+    def auto_color_support(stream):
+        if not hasattr(stream, "isatty"):
+            return False
+        if not stream.isatty():
+            return False # auto color only on TTYs
+
+        try:
+            import curses
+            curses.setupterm()
+            return curses.tigetnum("colors") > 2
+        except:
+            # guess false in case of error
+            return False
+    def color_output():
+        if options.color_mode == "always":
+            return True
+        # TODO: currently hard-coded to sys.stderr, fix this
+        import sys
+        if options.color_mode == "auto" and auto_color_support(sys.stderr):
+            return True
+        return False
+    if color_output():
         from reporting import ColoredTextReporter
         kwargs["reporter_class"] = ColoredTextReporter
 
