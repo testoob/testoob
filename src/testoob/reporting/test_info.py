@@ -38,7 +38,8 @@ class TestInfo:
 
     def funcname(self):
         # parsing id() because the function name is a private fixture field
-        return self.fixture.id().split(".")[-1]
+        return "%s%s" % \
+            (self.fixture.id().split(".")[-1], self.fixture._testoob_extra_description)
 
     def docstring(self):
         if getattr(self.fixture, self.funcname()).__doc__:

@@ -42,10 +42,16 @@ def _breadth_first(tree,children=iter):
 def suite_iter(suite):
     """suite_iter(suite) -> an iterator on its direct sub-suites.
     For compatibility with Python versions before 2.4"""
+
+    def add_extra_description_field(test):
+        test._testoob_extra_description = ""
+        return True
+
     try:
-        return iter(suite)
+        return _ifilter(add_extra_description_field, suite)
     except TypeError:
-        return iter(suite._tests) # Before 2.4, test suites weren't iterable
+        # Before 2.4, test suites weren't iterable
+        return _ifilter(add_extra_description_field, suite._tests)
 
 def full_extractor(suite, recursive_iterator=_breadth_first):
     """Extract the text fixtures from a suite.
@@ -83,9 +89,14 @@ def glob(pattern):
     def pred(test): return fnmatch.fnmatchcase(test.id(), pattern)
     return predicate(pred)
 
+number_suffixes = {1: "st",
+                   2: "nd",
+                   3: "ed",
+                  }
 def _irepeat_items(num_times, iterable):
     for x in iterable:
         for i in xrange(num_times):
+            x._testoob_extra_description = " (%d%s iteration)" % (i + 1, number_suffixes.get(i + 1, "th"))
             yield x
 
 def repeat(num_times):

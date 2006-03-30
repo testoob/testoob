@@ -219,6 +219,23 @@ testDatabaseError \(.*suites\.CaseNames\.testDatabaseError\) \.\.\. OK
         regex=r"Ran 70 tests"
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testRepeatIterationPrint(self):
+        args = _testoob_args(options=["--repeat=10", "-v"], tests=["MoreTests"])
+        regex = r""".*\(1st iteration\).*
+.*\(2nd iteration\).* OK
+.*\(3ed iteration\).* OK
+.*\(4th iteration\).* OK
+.*\(5th iteration\).* OK
+.*\(6th iteration\).* OK
+.*\(7th iteration\).* OK
+.*\(8th iteration\).* OK
+.*\(9th iteration\).* OK
+.*\(10th iteration\).* OK
+
+----------------------------------------------------------------------
+"""
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
     def testList(self):
         args = _testoob_args(options=["--list"], tests=["CaseDigits"])
         expected="""Module: suites (unknown file)
