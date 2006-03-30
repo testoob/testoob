@@ -321,7 +321,7 @@ def _main(suite, defaultTest, options, test_names, parser):
     import running
     return running.text_run(**kwargs)
 
-def main(suite=None, defaultTest=None):
+def main(suite=None, defaultTest=None, **kwargs):
     usage="""%prog [options] [test1 [test2 [...]]]
 
 examples:
@@ -330,6 +330,13 @@ examples:
   %prog MyTestCase.testSomething - run MyTestCase.testSomething
   %prog MyTestCase               - run all 'test*' test methods in MyTestCase"""
 
+    import sys
+    for arg, value in kwargs.items():
+        if value is True:
+            sys.argv.append("--%s" % arg)
+        else:
+            sys.argv.append("--%s=%s" % (arg, value))
+    
     parser = _arg_parser(usage)
     options, test_names = parser.parse_args()
 
