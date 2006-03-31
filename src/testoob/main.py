@@ -321,6 +321,13 @@ def _main(suite, defaultTest, options, test_names, parser):
     import running
     return running.text_run(**kwargs)
 
+def kwarg_to_option(arg, value):
+    cmdarg = arg.replace("_", "-")
+    if value is True:
+        return "--%s" % cmdarg
+    else:
+        return "--%s=%s" % (arg, value)
+
 def main(suite=None, defaultTest=None, **kwargs):
     usage="""%prog [options] [test1 [test2 [...]]]
 
@@ -332,10 +339,7 @@ examples:
 
     import sys
     for arg, value in kwargs.items():
-        if value is True:
-            sys.argv.append("--%s" % arg)
-        else:
-            sys.argv.append("--%s=%s" % (arg, value))
+        sys.argv.append(kwarg_to_option(arg, value))
     
     parser = _arg_parser(usage)
     options, test_names = parser.parse_args()
