@@ -423,7 +423,7 @@ FAILED \(failures=1, errors=1\)
     def _coverageArgs(self, coverage_amount):
         return _testoob_args(
             options=["--coverage=%s" % coverage_amount],
-            suite_file=helpers.project_subpath("tests/dummyprojecttests.py"),
+            suite_file=helpers.project_subpath("tests/system/dummyprojecttests.py"),
         )
 
     def _coverage_supported(self):
