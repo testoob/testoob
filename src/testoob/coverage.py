@@ -63,32 +63,36 @@ class Coverage:
 
     def getstatistics(self):
         """
-        Returns a dictionary of statistics. the dictionary maps between a filename
-        and the statistics associated to it.
+        Returns a dictionary of statistics. the dictionary maps between a
+        filename and the statistics associated to it.
 
         The statistics dictionary has 3 keys:
             lines   - the number of executable lines in the file
             covered - the number of lines covered in the file
             percent - the percentage of covered lines.
 
-        This dictionary also has a special "file" (key) called '__total__', which
-        holds the statistics for all the files together.
+        This dictionary also has a special "file" (key) called '__total__',
+        which holds the statistics for all the files together.
         """
         statistics = {}
         for filename, coverage in self.coverage.items():
-            def num_lines(): return len(coverage["lines"])
-            def num_lines_covered(): return len(coverage["covered"])
-            def percentage():
-                if num_lines() > 0:
-                    return int(100 * num_lines_covered()) / num_lines()
-                else:
-                    return 0
-            statistics[filename] = {
-                "lines"  : num_lines(),
-                "covered": num_lines_covered(),
-                "percent": percentage(),
-            }
+            statistics[filename] = self._single_file_statistics(coverage)
         return statistics
+
+    def _single_file_statistics(self, coverage_dict):
+        def num_lines(): return len(coverage_dict["lines"])
+        def num_lines_covered(): return len(coverage_dict["covered"])
+        def percentage():
+            if num_lines() > 0:
+                return int(100 * num_lines_covered()) / num_lines()
+            else:
+                return 0
+        return {
+            "lines"  : num_lines(),
+            "covered": num_lines_covered(),
+            "percent": percentage(),
+        }
+
 
     def _sum_coverage(self, callable):
         "Helper method for _total_{lines,covered}"
