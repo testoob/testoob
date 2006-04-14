@@ -291,7 +291,6 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["runDebug"] = runDebug
 
     if options.threads is not None:
-        require_modules("--threads", "twisted.python.threadpool")
         from running import ThreadedRunner
         kwargs["runner"] = ThreadedRunner(num_threads = options.threads)
 
