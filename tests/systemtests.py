@@ -468,6 +468,12 @@ FAILED \(failures=1, errors=1\)
                 expected_error_regex="Can't find test case 'NoSuchTest'",
                 expected_rc=1,
         )
+    def testThreadsSanity(self):
+        testoob.testing.command_line(
+                _testoob_args(options=["--threads=3"], tests=["CaseDigits"]),
+                expected_error_regex='Ran 10 tests.*OK',
+                expected_rc=0,
+        )
 
 def suite(): return unittest.makeSuite(CommandLineTestCase)
 if __name__ == "__main__": unittest.main()
