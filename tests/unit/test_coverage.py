@@ -56,6 +56,17 @@ class unit_tests(CoverageTest):
 
         self.failIf( self.coverage._should_cover_frame(mock_frame) )
 
+    def test_single_file_statistics(self):
+        coverage_dict = {
+            "lines"   : range(10),
+            "covered" : range(5)
+        }
+
+        result = self.coverage._single_file_statistics(coverage_dict)
+        self.assertEqual( 10, result["lines"] )
+        self.assertEqual( 5, result["covered"] )
+        self.assertEqual( 50, result["percent"] )
+
 class system_tests(CoverageTest):
     "Large-grain tests for Coverage"
 
