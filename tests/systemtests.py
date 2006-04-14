@@ -426,23 +426,31 @@ FAILED \(failures=1, errors=1\)
             suite_file=helpers.project_subpath("tests/dummyprojecttests.py"),
         )
 
+    def _coverage_supported(self):
+        # Coverage requires 'trace' module, Python 2.3 and higher
+        return sys.version_info >= (2, 3)
+
     def testSilentCoverage(self):
+        if not self._coverage_supported(): return # SKIP
         testoob.testing.command_line(
             self._coverageArgs("silent"),
             expected_rc=0,
         )
     def testSlimCoverage(self):
+        if not self._coverage_supported(): return # SKIP
         testoob.testing.command_line(
             self._coverageArgs("slim"),
             expected_error_regex="covered [0-9]+% of the code",
         )
     def testNormalCoverage(self):
+        if not self._coverage_supported(): return # SKIP
         testoob.testing.command_line(
             self._coverageArgs("normal"),
             expected_error_regex="covered [0-9]+% of the code",
             expected_output_regex="lines.*cov_n.*module.*path.*TOTAL",
         )
     def testMassiveCoverage(self):
+        if not self._coverage_supported(): return # SKIP
         testoob.testing.command_line(
             self._coverageArgs("massive"),
             expected_error_regex="covered [0-9]+% of the code",
