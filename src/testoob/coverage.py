@@ -27,11 +27,12 @@ except NameError:
 try:
     set
 except NameError:
-    # Python 2.3 compatibility
-    from sets import Set as set
-except ImportError:
-    # Python 2.2. compatibility
-    from compatibility.sets import Set as set
+    try:
+        # Python 2.3 compatibility
+        from sets import Set as set
+    except ImportError:
+        # Python 2.2 compatibility
+        from compatibility.sets import Set as set
 
 class Coverage:
     """
@@ -54,7 +55,10 @@ class Coverage:
         self.modname = trace.modname
 
     def runfunc(self, func, *args, **kwargs):
-        "Gets a function and it's arguments to run and perform code coverage test"
+        """
+        Runs the function with arguments and keyword arguments, and checks the
+        code coverage.
+        """
         sys.settrace(self._tracer)
         try:
             return func(*args, **kwargs)
