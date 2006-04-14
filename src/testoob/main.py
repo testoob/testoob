@@ -293,7 +293,7 @@ def _main(suite, defaultTest, options, test_names, parser):
     if options.threads is not None:
         require_modules("--threads", "twisted.python.threadpool")
         from running import ThreadedRunner
-        kwargs["runner"] = ThreadedRunner(max_threads = options.threads)
+        kwargs["runner"] = ThreadedRunner(num_threads = options.threads)
 
     def enable_processes_pyro(nprocesses):
         require_posix("--processes_pyro")

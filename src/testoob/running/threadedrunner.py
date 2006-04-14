@@ -18,20 +18,17 @@
 from baserunner import BaseRunner
 
 class ThreadedRunner(BaseRunner):
-    """Run tests using a threadpool.
-    Uses TwistedPython's thread pool"""
-    def __init__(self, max_threads=None):
+    "Run tests using a threadpool"
+
+    def __init__(self, num_threads):
         BaseRunner.__init__(self)
-
-        from twisted.python.threadpool import ThreadPool
-
-        min_threads = min(ThreadPool.min, max_threads)
-        self.pool = ThreadPool(minthreads = min_threads, maxthreads=max_threads)
+        from threadpool import ThreadPool
+        self.pool = ThreadPool(num_threads)
         self.pool.start()
 
     def run(self, fixture):
         BaseRunner.run(self, fixture)
-        self.pool.dispatch(None, fixture, self.reporter)
+        self.pool.dispatch(fixture, self.reporter)
 
     def done(self):
         self.pool.stop()
