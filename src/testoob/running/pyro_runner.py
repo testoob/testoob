@@ -1,5 +1,5 @@
-# TestOOB, Python Testing Out Of (The) Box
-# Copyright (C) 2005 The TestOOB Team
+# Testoob, Python Testing Out Of (The) Box
+# Copyright (C) 2005 The Testoob Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class PyroRunner(BaseRunner):
         self.num_fixtures = 0
 
     def _pyro_name(self, basename):
-        "Return the name mangled for use in TestOOB's RPC"
+        "Return the name mangled for use in Testoob's RPC"
         return ":testoob:%s:%s" % (basename, self._parent_pid)
     def _pyroloc_uri(self, basename):
         "Return the PYROLOC URI for the object, with proper mangling"
@@ -162,7 +162,7 @@ class PyroRunner(BaseRunner):
 
         except Pyro.errors.ConnectionClosedError:
             # report the error gracefully
-            print >>sys.stderr, "[TestOOB+Pyro pid=%d] " \
+            print >>sys.stderr, "[Testoob+Pyro pid=%d] " \
                   "child lost connection to parent, exiting" % os.getpid()
             sys.exit(1)
 

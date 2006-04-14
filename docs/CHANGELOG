@@ -4,9 +4,9 @@
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
-== testoob 0.9, 17 March, 2006
+== Testoob 0.9, 17 March, 2006
 
-'TestOOB' has been renamed to 'testoob', to encourage the correct
+'TestOOB' has been renamed to 'Testoob', to encourage the correct
 pronunciation, "tess-toob", like "test tube".
 Too many people were calling it "Test Oh-Oh-Bee"...
 
@@ -48,8 +48,8 @@ Many updates are introduced in this release.
 Release focus: stability, new features, and a mailing list
 
 Mailing list:
-   The TestOOB mailing list is the preferred way to ask questions, offer
-   assistance, and discuss TestOOB in general.
+   The Testoob mailing list is the preferred way to ask questions, offer
+   assistance, and discuss Testoob in general.
 
    For more information, visit:
 
@@ -74,7 +74,7 @@ Bugfixes:
  * Various other fixes
 
 Internal:
- * TestOOB tests extended and improved
+ * Testoob tests extended and improved
  * Extensive refactoring
 
 == TestOOB 0.7, 17 October, 2005
@@ -100,7 +100,7 @@ Internal:
 Release Focus: License Change, Bugfixes
 
 News:
- * TestOOB is now licensed under the Apache License version 2.0
+ * Testoob is now licensed under the Apache License version 2.0
  * ElementTree is no longer necessary for generating XML and HTML, the
    necessary ElementTree sources have been included in the distribution
 
@@ -147,7 +147,7 @@ Bugfixes:
    directory, ticket #85
 
 Internal:
- * TestOOB's own tests converted to unittest/TestOOB, ticket #72
+ * Testoob's own tests converted to unittest/Testoob, ticket #72
  * More self-testing scenarios, ticket #45
  * New website based on webgen (http://webgen.rubyforge.org)
 
@@ -219,4 +219,4 @@ API Changes:
    (ticket:40, changeset:30)
 
 Internal:
- * Self-validating tests for TestOOB itself [orip]
+ * Self-validating tests for Testoob itself [orip]

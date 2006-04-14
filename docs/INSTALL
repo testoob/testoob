@@ -1,6 +1,6 @@
 
              ----=========================----
-        == Installation instructions for TestOOB ==
+        == Installation instructions for Testoob ==
              ----=========================----
 
 ===========================================================
@@ -14,13 +14,13 @@ Run the following from the command line:
 This may require root privileges.
 
 If you upgrade or reinstall Python, don't forget to
-reinstall TestOOB.
+reinstall Testoob.
 
 ===========================================================
 = General:
 ===========================================================
 
-TestOOB is distributed using distutils.
+Testoob is distributed using distutils.
 
 For help, run:
 

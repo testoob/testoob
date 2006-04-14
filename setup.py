@@ -12,14 +12,14 @@ kwargs = {
     'download_url'     : 'http://sourceforge.net/project/showfiles.php?group_id=138557',
     'license'          : 'Apache License, Version 2.0',
     'platforms'        : ['any'],
-    'description'      : 'TestOOB - An advanced unit testing framework',
+    'description'      : 'Testoob - An advanced unit testing framework',
 }
 
 
 kwargs['long_description'] = """
-TestOOB - Python Testing Out Of (The) Box
+Testoob - Python Testing Out Of (The) Box
 
-TestOOB is an advanced unit testing framework for Python. It integrates
+Testoob is an advanced unit testing framework for Python. It integrates
 effortlessly with existing PyUnit (module "unittest") test suites.
 """.strip()
 

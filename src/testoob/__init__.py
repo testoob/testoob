@@ -1,5 +1,5 @@
-# TestOOB, Python Testing Out Of (The) Box
-# Copyright (C) 2005 The TestOOB Team
+# Testoob, Python Testing Out Of (The) Box
+# Copyright (C) 2005 The Testoob Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 "An unittest-compatible Python testing framework"
 
-__author__ = 'The TestOOB Team'
+__author__ = 'The Testoob Team'
 __version__ = '__TESTOOB_VERSION__'
 
 from main import main

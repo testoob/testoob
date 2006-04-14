@@ -1,5 +1,5 @@
-# TestOOB, Python Testing Out Of (The) Box
-# Copyright (C) 2005 The TestOOB Team
+# Testoob, Python Testing Out Of (The) Box
+# Copyright (C) 2005 The Testoob Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ def add_fields_pickling(klass, disable_unpickleable_fields=False):
 
     Useful for 'fields' classes that contain unpickleable members.
 
-    Used in TestOOB, http://testoob.sourceforge.net
+    Used in Testoob, http://testoob.sourceforge.net
 
     A contrived example for a 'fields' class:
 

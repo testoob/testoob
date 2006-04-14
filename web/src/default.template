@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang:}">
   <head>
-    <title>TestOOB - Python Testing Out Of The Box - {title: }</title>
+    <title>Testoob - Python Testing Out Of The Box - {title: }</title>
     <link href="{relocatable: default.css}" rel="stylesheet" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   </head>
@@ -10,7 +10,7 @@
     <div id="header">
         <table width="100%"><tr>
             <td id="logo">
-                <img src="images/testoob_logo.gif" alt="TestOOB Logo" title="TestOOB Logo" />
+                <img src="images/testoob_logo.gif" alt="Testoob Logo" title="Testoob Logo" />
             </td>
             <td id="title">
                 <h1 class="title">{title: }</h1>

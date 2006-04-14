@@ -1,5 +1,5 @@
-# TestOOB, Python Testing Out Of (The) Box
-# Copyright (C) 2005 The TestOOB Team
+# Testoob, Python Testing Out Of (The) Box
+# Copyright (C) 2005 The Testoob Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ except NameError:
 class Coverage:
     """
     Python code coverage module built specifically for checking code coverage
-    in tests performed by TestOOB.
+    in tests performed by Testoob.
 
     NOTE: This class depends on the 'trace' module.
     """

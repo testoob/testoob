@@ -1,13 +1,13 @@
 
               ----========================----
-         -== TestOOB - Testing Out Of (The) Box ==-
+         -== Testoob - Testing Out Of (The) Box ==-
               ----========================----
 
 ===========================================================
 = Description:
 ===========================================================
 
-TestOOB is an advanced Python unit testing framework that
+Testoob is an advanced Python unit testing framework that
 integrates effortlessly with Python's standard 'unittest'
 module.
 
@@ -17,7 +17,7 @@ It's designed and built to be easy to use and extend.
 = Documentation:
 ===========================================================
 
-See TestOOB's homepage:
+See Testoob's homepage:
 
   http://testoob.sourceforge.net
 
@@ -57,7 +57,7 @@ Use GNU make (usually 'make' or 'gmake') from the project root:
 = License:
 ===========================================================
 
-TestOOB is distributed under the terms of the Apache
+Testoob is distributed under the terms of the Apache
 License, Version 2.0.  See docs/COPYING for more
 information.
 
@@ -65,7 +65,7 @@ information.
 = Credits:
 ===========================================================
 
-TestOOB has been created with the help of:
+Testoob has been created with the help of:
 
 - Ori Peleg (orispammerpel at users.sourceforge.net)
 - Barak Schiller (bspamalotschiller at gmail.com)
@@ -75,5 +75,5 @@ TestOOB has been created with the help of:
 To mail us, remove spam-related words from the user names.
 
 Have fun testing!
-The TestOOB team.
+The Testoob team.
 

@@ -196,7 +196,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             htmlcontents = open(htmlfile).read()
 
             from testoob.testing import assert_matches
-            assert htmlcontents.find("<title>TestOOB report</title>") >= 0
+            assert htmlcontents.find("<title>Testoob report</title>") >= 0
             assert htmlcontents.find("def testError(self): raise RuntimeError") >= 0
             assert htmlcontents.find("def testFailure(self): self.fail()") >= 0
 

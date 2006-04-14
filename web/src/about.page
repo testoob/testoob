@@ -1,12 +1,12 @@
 ---
 title: About
 inMenu: true
-directoryName: TestOOB
+directoryName: Testoob
 ---
 
 h2. About
 
-TestOOB is an advanced unit testing framework for Python. It integrates
+Testoob is an advanced unit testing framework for Python. It integrates
 effortlessly with existing PyUnit (module 'unittest') test suites.
 
 h2. Requirements

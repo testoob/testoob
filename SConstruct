@@ -97,7 +97,7 @@ builddir=Command(Dir(BUILDDIR), None, Mkdir(BUILDDIR))
 APIDIR=os.path.join(BUILDDIR, "api")
 apidir = Command(
     Dir(APIDIR), PYTHON_SOURCES,
-    "epydoc -o $TARGET --url http://testoob.sourceforge.net -n TestOOB -q $SOURCES")
+    "epydoc -o $TARGET --url http://testoob.sourceforge.net -n Testoob -q $SOURCES")
 Depends(apidir, builddir)
 
 # $(WEBSITEDIR): $(APIDIR) $(WEBSITE_SOURCES)

@@ -2,7 +2,7 @@
   <xsl:param name="date" select="'unknown'"/>
   <xsl:template match="/">
     <html>
-      <head><title>TestOOB report</title></head>
+      <head><title>Testoob report</title></head>
       <body>
         <h2>Summarized results for tests performed on date <xsl:value-of select="$date"/></h2>
         <table border="1" >

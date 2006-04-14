@@ -1,10 +1,10 @@
 ---
 title: Home
 inMenu: true
-directoryName: TestOOB
+directoryName: Testoob
 ---
 
-h1. TestOOB: Advanced Testing in Python
+h1. Testoob: Advanced Testing in Python
 
 !images/screenshot02.png(Screenshot)!
 
@@ -19,11 +19,11 @@ h3. 17 March, 2006: testoob 0.9 released
 * "Full change list":http://sourceforge.net/project/shownotes.php?release_id=402463&group_id=138557
 * "Download now!":http://sourceforge.net/project/showfiles.php?group_id=138557
 
-h3. 1 December, 2005: TestOOB 0.8.1 Released
+h3. 1 December, 2005: Testoob 0.8.1 Released
 
 * Bugfix release (critical bug prevented importing). Reported by Oli and Ryan - Thanks!!!
 
-h3. 30 November, 2005: TestOOB 0.8 Released
+h3. 30 November, 2005: Testoob 0.8 Released
 
 * New '@--list@', '@--stop-on-fail@', and '@--timeout@' options!
 * Optimized multi-process running with better reporting

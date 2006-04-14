@@ -1,19 +1,19 @@
 ---
 title: More Info
 inMenu: true
-directoryName: TestOOB
+directoryName: Testoob
 ---
 
 h2. License
 
-TestOOB is released under the "Apache License, Version
+Testoob is released under the "Apache License, Version
 2.0":http://www.apache.org/licenses/LICENSE-2.0.
 
 !http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://www.opensource.org/docs/definition.php
 
 h2. Why are we doing this?
 
-We want TestOOB to provide simple and powerful testing facilities. We want
+We want Testoob to provide simple and powerful testing facilities. We want
 testing to be fun!
 
 h2. Repository URL
@@ -31,7 +31,7 @@ Feel free to:
 
 h2. Compatibility
 
-TestOOB is tested with the following Python versions:
+Testoob is tested with the following Python versions:
 * 2.2.3
 * 2.3.5
 * 2.4.1
@@ -44,14 +44,14 @@ and on the following platforms:
 
 h2. Credits
 
-TestOOB includes code from the following projects:
+Testoob includes code from the following projects:
 * <code>SimpleXMLWriter</code> from "ElementTree":http://effbot.org/zone/element-index.htm.
 * Implementations of newer standard-library modules from "PyPy":http://codespeak.net/pypy. This helps provide compatibility with older Python versions.
 
 We'd like to thank:
 * "Steve Purcell":http://www.pythonconsulting.com/, author of "PyUnit":http://pyunit.sourceforge.net, for email advice, and - of course - for PyUnit.
 * "The Pragmatic Bookshelf":http://www.pragmaticprogrammer.com/, for general insights on software construction.
-* The users of TestOOB, for making amazing suggestions.
+* The users of Testoob, for making amazing suggestions.
 
 We'd like to credit the following sources for ideas:
 * "JFunc":http://jfunc.sourceforge.net, for verbose assertions and repeating tests
