@@ -1,5 +1,7 @@
 "coverage tests"
 
+from os.path import abspath
+
 from testoob import coverage
 from unittest import TestCase
 
@@ -20,10 +22,10 @@ class unit_tests(CoverageTest):
     "Small-grain tests for Coverage"
 
     sample_coverage_dictionary = {
-        "one.py" : { "lines"   : range(100),
-                     "covered" : range(30,100) },
-        "two.py" : { "lines"   : range(66),
-                     "covered" : range(66) },
+        abspath("one.py") : { "lines"   : range(100),
+                              "covered" : range(30,100) },
+        abspath("two.py") : { "lines"   : range(66),
+                              "covered" : range(66) },
     }
 
     def test_total_lines(self):
@@ -39,7 +41,6 @@ class unit_tests(CoverageTest):
         self.assertEqual( 81, self.coverage.total_coverage_percentage() )
 
     def test_should_cover_frame_path_to_ignore(self):
-        from os.path import abspath
         self.coverage.ignorepaths = [abspath("/a/b/c")]
 
         mock_frame = SimpleStub()
@@ -51,7 +52,7 @@ class unit_tests(CoverageTest):
         self.coverage.coverage = self.sample_coverage_dictionary.copy()
 
         mock_frame = SimpleStub()
-        mock_frame.f_code.co_filename = "one.py"
+        mock_frame.f_code.co_filename = abspath("one.py")
         mock_frame.f_lineno = 1000 # out of the range of one.py's lines
 
         self.failIf( self.coverage._should_cover_frame(mock_frame) )
