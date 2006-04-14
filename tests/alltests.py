@@ -8,6 +8,7 @@ test_modules = [
     'systemtests',
     'unit.testing_unittest',
     'unit.test_threadpool',
+    'unit.test_coverage',
 ]
 
 def suite():
