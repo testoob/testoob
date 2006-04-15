@@ -3,12 +3,12 @@ Run all tests
 """
 
 test_modules = [
-    'medium.test_running',
-    'medium.test_extracting',
-    'large.test_commandline',
     'small.test_testing',
     'small.test_threadpool',
     'small.test_coverage',
+    'medium.test_running',
+    'medium.test_extracting',
+    'large.test_commandline',
 ]
 
 def suite():
