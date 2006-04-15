@@ -6,7 +6,7 @@ test_modules = [
     'other.runningtests',
     'other.extractingtests',
     'system.systemtests',
-    'unit.testing_unittest',
+    'unit.test_testing',
     'unit.test_threadpool',
     'unit.test_coverage',
 ]
