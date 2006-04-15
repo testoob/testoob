@@ -3,8 +3,8 @@ Run all tests
 """
 
 test_modules = [
-    'other.runningtests',
-    'other.extractingtests',
+    'other.test_running',
+    'other.test_extracting',
     'system.systemtests',
     'unit.test_testing',
     'unit.test_threadpool',
