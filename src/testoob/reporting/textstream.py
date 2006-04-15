@@ -24,7 +24,7 @@ class TextStreamReporter(BaseReporter):
     separator1 = '=' * 70
     separator2 = '-' * 70
 
-    def __init__(self, stream, descriptions, verbosity, immediate = False, coverage = (None, None)):
+    def __init__(self, stream, descriptions, verbosity, immediate = False):
         import re
         self.re = re
         BaseReporter.__init__(self)
@@ -34,7 +34,6 @@ class TextStreamReporter(BaseReporter):
         self.vassert = verbosity == 3
         self.immediate = immediate
         self.descriptions = descriptions
-        self.cover_amount, self.coverage = coverage
 
     def startTest(self, test_info):
         BaseReporter.startTest(self, test_info)

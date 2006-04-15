@@ -74,6 +74,8 @@ class IReporter:
         "Tells whether or not this result was a success"
         pass
 
+    def setCoverageInfo(self, cover_amount, coverage):
+        "Sets the coverage info for the reporter"
 
 import time as _time
 class BaseReporter(IReporter):
@@ -87,6 +89,8 @@ class BaseReporter(IReporter):
         self.failures = []
         self.errors = []
         self.asserts = {}
+        self.cover_amount = None
+        self.coverage = None
 
     def start(self):
         self.start_time = _time.time()
@@ -121,6 +125,10 @@ class BaseReporter(IReporter):
         if len(self.errors)     > 0: return False
         if len(self.successes) == 0: return False
         return True
+
+    def setCoverageInfo(self, cover_amount, coverage):
+        self.cover_amount = cover_amount
+        self.coverage = coverage
 
     def getTestsOutput(self, test_info):
         "Get the output (stdout and stderr) captured from the test"

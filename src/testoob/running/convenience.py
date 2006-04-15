@@ -141,4 +141,7 @@ def text_run(*args, **kwargs):
 
     kwargs["reporters"].append(reporter_instance)
 
+    for reporter in kwargs["reporters"]:
+        reporter.setCoverageInfo(*coverage)
+
     return run(*args, **kwargs)
