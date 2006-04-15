@@ -40,6 +40,10 @@ class XMLReporter(BaseReporter):
     def done(self):
         BaseReporter.done(self)
         self.writer.element("total_time", value="%.4f"%self.total_time)
+
+        if self.cover_amount is not None and self.cover_amount == "xml":
+            self._write_coverage(self.coverage)
+
         self.writer.end("testsuites")
 
         assert len(self.test_starts) == 0
@@ -79,6 +83,20 @@ class XMLReporter(BaseReporter):
         del self.test_starts[test_info]
         return "%.4f" % result
 
+    def _write_coverage(self, coverage):
+        self.writer.start("coverage")
+        for filename, stats in coverage.getstatistics().items():
+            # TODO: can probably extract loop body to a method
+            self.writer.start("sourcefile", name=filename,
+                              statements=str(stats["lines"]),
+                              executed=str(stats["covered"]),
+                              percent=str(stats["percent"]))
+            lines, covered =  coverage.coverage[filename].values()
+            missing = [line for line in covered if line not in lines]
+            self.writer.data(str(missing)[1:-1].replace(" ", ""))
+            self.writer.end("sourcefile")
+        self.writer.end("coverage")
+
 class XMLFileReporter(XMLReporter):
     def __init__(self, filename):
         XMLReporter.__init__(self)
@@ -90,5 +108,3 @@ class XMLFileReporter(XMLReporter):
         f = file(self.filename, "w")
         try: f.write(self.get_xml())
         finally: f.close()
-
-

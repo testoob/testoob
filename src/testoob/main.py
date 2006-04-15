@@ -50,7 +50,7 @@ def _arg_parser(usage):
     p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
     p.add_option("--randomize-order", action="store_true", help="Randomize the test order")
     p.add_option("--randomize-seed", metavar="SEED", type="int", help="Seed for randomizing the test order, implies --randomize-order")
-    coverage_choices = ["silent", "slim", "normal", "massive"]
+    coverage_choices = ["silent", "slim", "normal", "massive", "xml"]
     p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=coverage_choices, help="Test the coverage of the tested code, choices are: %s" % coverage_choices)
     p.add_option("--test-method-glob", metavar="PATTERN", help="Collect test methods based on a glob pattern")
     p.add_option("--test-method-regex", metavar="REGEX", help="Collect test methods based on a regular expression")
