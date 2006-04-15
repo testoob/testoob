@@ -421,9 +421,10 @@ FAILED \(failures=1, errors=1\)
         self.assertEqual(stderr_order, stderr_seed)
 
     def _coverageArgs(self, coverage_amount):
+        current_directory = os.path.dirname(__file__)
         return _testoob_args(
             options=["--coverage=%s" % coverage_amount],
-            suite_file=helpers.project_subpath("tests/system/dummyprojecttests.py"),
+            suite_file=os.path.join(current_directory, "dummyprojecttests.py"),
         )
 
     def _coverage_supported(self):
