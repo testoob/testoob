@@ -135,7 +135,6 @@ def text_run(*args, **kwargs):
     reporter_instance = reporter_class(
             verbosity=verbosity,
             immediate=immediate,
-            coverage=coverage,
             descriptions=1,
             stream=sys.stderr)
 
