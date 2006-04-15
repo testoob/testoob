@@ -33,9 +33,6 @@ class ColoredTextReporter(TextStreamReporter):
              "red":"\x1b[31;01m",
              "darkred":"\x1b[31;06m"}
 
-    def __init__(self, stream, descriptions, verbosity, immediate, coverage):
-        TextStreamReporter.__init__(self, stream, descriptions, verbosity, immediate, coverage)
-
     def _red(self, str):
         "Make it red!"
         return ColoredTextReporter.codes['red'] + str + ColoredTextReporter.codes['reset']
