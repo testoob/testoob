@@ -50,6 +50,6 @@ class ExtractingTestCase(helpers.TestoobBaseTestCase):
                 stderr    = "",
             )
 
-def suite(): return unittest.makeSuite(ExtractingTestCase)
-
-if __name__ == "__main__": unittest.main()
+if __name__ == "__main__":
+    import testoob
+    testoob.main()

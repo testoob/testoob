@@ -90,5 +90,6 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 stderr    = "",
             )
 
-def suite(): return unittest.makeSuite(RunningTestCase)
-if __name__ == "__main__": unittest.main()
+if __name__ == "__main__":
+    import testoob
+    testoob.main()

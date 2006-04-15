@@ -110,6 +110,6 @@ class TestingUnitTest(unittest.TestCase):
                 rc_predicate = lambda rc: rc != 0
             )
 
-suite = testoob.collector_from_globals(globals())
-
-if __name__ == "__main__": testoob.main()
+if __name__ == "__main__":
+    import testoob
+    testoob.main()

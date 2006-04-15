@@ -484,5 +484,5 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=0,
         )
 
-def suite(): return unittest.makeSuite(CommandLineTestCase)
-if __name__ == "__main__": unittest.main()
+if __name__ == "__main__":
+    testoob.main()

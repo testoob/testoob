@@ -76,4 +76,5 @@ class system_tests(CoverageTest):
         self.assertEqual( 100, self.coverage.total_coverage_percentage() )
 
 if __name__ == "__main__":
+    import testoob
     testoob.main()
