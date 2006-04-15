@@ -6,7 +6,6 @@ import unittest
 import testoob
 from testoob.running import threadpool
 
-
 class TestCase(unittest.TestCase):
 
     size = 10
@@ -25,7 +24,6 @@ class TestCase(unittest.TestCase):
             pass
         for i in range(self.workoutIterations):
             self.pool.dispatch(job)
-
 
 class creation(TestCase):
 
@@ -64,7 +62,6 @@ class start(TestCase):
     def test_employ_all_workers(self):
         self.assertEqual(self.pool.workers, self.pool.size)
 
-        
 class workout(TestCase):
 
     workoutIterations = 100
@@ -92,7 +89,6 @@ class workout(TestCase):
             if self.pool.queueEmpty():
                 break
         self.assertEqual(self.results, ['ok'] * self.workoutIterations)
-
         
 class stop(TestCase):
 
@@ -115,7 +111,6 @@ class stop(TestCase):
     def test_dismiss_all_workers(self):
         self.assertEqual(self.pool.workers, 0)
 
-
 class restart(TestCase):
 
     def setUp(self):
@@ -131,7 +126,6 @@ class restart(TestCase):
     def test_employ_all_workers(self):
         self.assertEqual(self.pool.workers, self.pool.size)
 
-        
 class resize(TestCase):
 
     def setUp(self):
@@ -157,9 +151,5 @@ class resize(TestCase):
         self.workout()
         self.check_resize(50)
 
-
 if __name__ == "__main__":
     testoob.main()
-        
-        
-
