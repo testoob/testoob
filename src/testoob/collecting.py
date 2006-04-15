@@ -73,3 +73,54 @@ def collector_from_modules(modules, globals_dict):
             )
         return result
     return suite
+
+def _first_external_frame():
+    import sys
+
+    current_file = sys._getframe().f_code.co_filename
+
+    # find the first frame with a filename different than this one
+    frame = sys._getframe()
+    while frame.f_code.co_filename == current_file:
+        frame = frame.f_back
+
+    return frame
+
+def _calling_module_name():
+    return _first_external_frame().f_globals["__name__"]
+
+def _calling_module_directory():
+    from os.path import dirname, normpath
+    return normpath(dirname(_first_external_frame().f_code.co_filename))
+
+def _module_names(glob_pattern, modulename, path):
+    import glob
+    from os.path import splitext, basename, join
+    return [
+        modulename + "." + splitext(basename(filename))[0]
+        for filename in glob.glob( join(path, glob_pattern) )
+    ]
+
+def _load_suite(module_name):
+    import unittest
+    result = unittest.TestLoader().loadTestsFromName( module_name )
+    if len(result._tests) == 0:
+        import warnings
+        warnings.warn("No tests loaded for module '%s'" % module_name)
+    return result
+
+def collect_from_files(glob_pattern, modulename=None, path=None):
+    if modulename is None:
+        modulename = _calling_module_name()
+
+    if path is None:
+        path = _calling_module_directory()
+
+    # mimicking unittest.TestLoader.loadTestsFromNames, but with more checks
+    suites = [
+        _load_suite(name)
+        for name in _module_names(glob_pattern, modulename, path)
+    ]
+
+    import unittest
+    return unittest.TestLoader().suiteClass(suites)
