@@ -7,7 +7,7 @@
         <h2>Summarized results for tests performed on date <xsl:value-of select="$date"/></h2>
         <table border="1" >
           <tr><td>Name</td><td>Time</td><td>Result</td><td>Info</td></tr>
-          <xsl:for-each select="testsuites/testcase">
+          <xsl:for-each select="results/testsuites/testcase">
             <tr>
               <td><xsl:value-of select="@name"/></td>
               <td><xsl:value-of select="@time"/></td>

@@ -35,16 +35,19 @@ class XMLReporter(BaseReporter):
 
     def start(self):
         BaseReporter.start(self)
+        self.writer.start("results")
         self.writer.start("testsuites")
 
     def done(self):
         BaseReporter.done(self)
+
         self.writer.element("total_time", value="%.4f"%self.total_time)
+        self.writer.end("testsuites")
 
         if self.cover_amount is not None and self.cover_amount == "xml":
             self._write_coverage(self.coverage)
 
-        self.writer.end("testsuites")
+        self.writer.end("results")
 
         assert len(self.test_starts) == 0
 

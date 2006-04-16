@@ -145,7 +145,11 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             root = parse(xmlfile).getroot()
 
             # testsuites tag
-            self.assertEqual("testsuites", root.tag)
+            self.assertEqual("results", root.tag)
+
+            # ensures only one testsuites element
+            [testsuites] = root.findall("testsuites")
+            
 
             def extract_info(testcase):
                 class Struct: pass
@@ -159,7 +163,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
                 result.error = error is not None and error.attrib["type"] or None
                 return result
 
-            testcase_reports = [extract_info(testcase) for testcase in root.findall("testcase")]
+            testcase_reports = [extract_info(testcase) for testcase in testsuites.findall("testcase")]
 
             # ensure one testcase of each type
             [success] = [x for x in testcase_reports if x.result == "success"]
