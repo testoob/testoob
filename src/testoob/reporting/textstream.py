@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"A text-stream reporter, the most commonly-used kind"
+"A text-stream reporter, the most commonly used kind"
 
 from base import BaseReporter
 class TextStreamReporter(BaseReporter):
@@ -234,6 +234,3 @@ class TextStreamReporter(BaseReporter):
             return test_info.short_description() or default_description
         else:
             return default_description
-
-
-
