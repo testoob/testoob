@@ -59,7 +59,7 @@ class TextStreamReporter(BaseReporter):
             self._writeln(self._decorateWarning("SKIPPED"))
         elif self.dots:
             # TODO: is _decorateWarning the right thing to use?
-            self._write(self._decorateWarning(','))
+            self._write(self._decorateWarning('*'))
 
     def addError(self, test_info, err_info):
         BaseReporter.addError(self, test_info, err_info)
