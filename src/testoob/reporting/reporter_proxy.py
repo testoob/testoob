@@ -49,7 +49,7 @@ class ReporterProxy:
     def _apply_method(self, name, *args):
         for reporter in self.observing_reporters:
             getattr(reporter, name)(*args)
-    
+
     def start(self):
         self._apply_method("start")
 
@@ -63,6 +63,14 @@ class ReporterProxy:
         self._apply_method("stopTest", TestInfo(test))
 
     def addError(self, test, err):
+        def should_skip(err):
+            import testoob
+            return issubclass(err[0], testoob.SkipTestException)
+
+        if should_skip(err):
+            self._apply_method("addSkip", TestInfo(test))
+            return
+
         self._apply_method("addError", TestInfo(test), ErrInfo(test, err))
 
     def addFailure(self, test, err):

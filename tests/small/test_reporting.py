@@ -37,7 +37,7 @@ class reporter_proxy_proxies(TestCase):
     def test_stopTest(self):
         self._check_method_proxy("stopTest", None)
     def test_addError(self):
-        self._check_method_proxy("addError", None, None)
+        self._check_method_proxy("addError", None, (Exception, None, None))
     def test_addFailure(self):
         self._check_method_proxy("addFailure", None, None)
     def test_addSuccess(self):

@@ -126,6 +126,15 @@ class CaseDocstring(unittest.TestCase):
         "this test always passes"
         pass
 
+class skipping(unittest.TestCase):
+    def test_one(self): pass
+    def test_two(self):
+        import testoob.testing
+        testoob.testing.skip()
+    def test_three(self):
+        import testoob
+        raise testoob.SkipTestException()
+
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 all_asserts = {}

@@ -487,6 +487,18 @@ FAILED \(failures=1, errors=1\)
                 expected_error_regex='Ran 10 tests.*OK',
                 expected_rc=0,
         )
+    def testSkippingTests(self):
+        testoob.testing.command_line(
+                _testoob_args(tests=["skipping"]),
+                expected_error_regex='Ran 3 tests.*Skipped 2 tests.*OK',
+                expected_rc=0,
+        )
+    def testSkippingTestsVerbose(self):
+        testoob.testing.command_line(
+                _testoob_args(options=["-v"], tests=["skipping"]),
+                expected_error_regex='SKIPPED.*SKIPPED',
+                expected_rc=0,
+        )
 
 if __name__ == "__main__":
     testoob.main()

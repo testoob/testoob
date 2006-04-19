@@ -136,3 +136,8 @@ def command_line(
             annotated_err_string("stderr", error),
         ])
         raise
+
+def skip():
+    "Skip this test"
+    from testoob import SkipTestException
+    raise SkipTestException()

@@ -50,6 +50,17 @@ class TextStreamReporter(BaseReporter):
         elif self.dots:
             self._write(self._decorateSuccess('.'))
 
+    def addSkip(self, test_info):
+        BaseReporter.addSkip(self, test_info)
+        # TODO: lots of common code between add{Success,Skip,Error,Failure},
+        # TODO: apply DRY here
+        if self.showAll:
+            self._write("\n" * self.multiLineOutput)
+            self._writeln(self._decorateWarning("SKIPPED"))
+        elif self.dots:
+            # TODO: is _decorateWarning the right thing to use?
+            self._write(self._decorateWarning(','))
+
     def addError(self, test_info, err_info):
         BaseReporter.addError(self, test_info, err_info)
         if self.showAll:
@@ -122,6 +133,9 @@ class TextStreamReporter(BaseReporter):
         if self.cover_amount is not None:
             self._write(" (covered %s%% of the code)" % self.coverage.total_coverage_percentage())
         self._write("\n")
+
+        if len(self.skips) > 0:
+            self._writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
 
         if self.isSuccessful():
             self._writeln(self._decorateSuccess("OK"))
