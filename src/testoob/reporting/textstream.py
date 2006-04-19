@@ -42,43 +42,36 @@ class TextStreamReporter(BaseReporter):
             self._write(self.getDescription(test_info))
             self._write(" ... ")
 
-    def addSuccess(self, test_info):
-        BaseReporter.addSuccess(self, test_info)
+    def _report_result(self, long_string, short_string, text_decorator):
         if self.showAll:
             self._write("\n" * self.multiLineOutput)
-            self._writeln(self._decorateSuccess("OK"))
+            self._writeln(text_decorator(long_string))
         elif self.dots:
-            self._write(self._decorateSuccess('.'))
+            self._write(text_decorator(short_string))
+
+    def addSuccess(self, test_info):
+        BaseReporter.addSuccess(self, test_info)
+        self._report_result("OK", ".", self._decorateSuccess)
 
     def addSkip(self, test_info):
         BaseReporter.addSkip(self, test_info)
-        # TODO: lots of common code between add{Success,Skip,Error,Failure},
-        # TODO: apply DRY here
-        if self.showAll:
-            self._write("\n" * self.multiLineOutput)
-            self._writeln(self._decorateWarning("SKIPPED"))
-        elif self.dots:
-            self._write(self._decorateWarning('*'))
+        self._report_result("SKIPPED", "*", self._decorateWarning)
+
+    def _report_failure(self, long_string, short_string, text_decorator, test_info, err_info):
+        self._report_result(long_string, short_string, text_decorator)
+
+        if self.immediate:
+            self._immediatePrint(test_info, err_info, long_string)
 
     def addError(self, test_info, err_info):
         BaseReporter.addError(self, test_info, err_info)
-        if self.showAll:
-            self._write("\n" * self.multiLineOutput)
-            self._writeln(self._decorateFailure("ERROR"))
-        elif self.dots:
-            self._write(self._decorateFailure('E'))
-        if self.immediate:
-            self._immediatePrint(test_info, err_info, "ERROR")
+        self._report_failure(
+            "ERROR", "E", self._decorateFailure, test_info, err_info)
 
     def addFailure(self, test_info, err_info):
         BaseReporter.addFailure(self, test_info, err_info)
-        if self.showAll:
-            self._write("\n" * self.multiLineOutput)
-            self._writeln(self._decorateFailure("FAIL"))
-        elif self.dots:
-            self._write(self._decorateFailure('F'))
-        if self.immediate:
-            self._immediatePrint(test_info, err_info, "FAIL")
+        self._report_failure(
+            "FAIL", "F", self._decorateFailure, test_info, err_info)
 
     def stopTest(self, test_info):
         BaseReporter.stopTest(self, test_info)
