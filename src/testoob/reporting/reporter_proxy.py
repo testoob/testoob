@@ -23,11 +23,25 @@
 from test_info import TestInfo
 from err_info import ErrInfo
 
+def thread_safety_wrapper(func):
+    import threading
+    lock = threading.RLock()
+
+    def wrapper(*args, **kwargs):
+        lock.acquire()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            lock.release()
+
+    return wrapper
+
 class ReporterProxy:
-    def __init__(self):
+    def __init__(self, threads=False):
         self.observing_reporters = []
-        import threading
-        self.lock = threading.RLock()
+
+        if threads:
+            self._apply_method = thread_safety_wrapper(self._apply_method)
 
     def add_observer(self, reporter):
         self.observing_reporters.append(reporter)

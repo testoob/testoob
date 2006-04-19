@@ -82,19 +82,19 @@ def _apply_debug(reporter, runDebug):
 
     return reporter
 
-def _create_reporter_proxy(reporters, runDebug):
+def _create_reporter_proxy(reporters, runDebug, threads):
     from testoob.reporting import ReporterProxy
-    result = ReporterProxy()
+    result = ReporterProxy(threads)
     for reporter in reporters:
         result.add_observer(_apply_debug(reporter, runDebug))
     return result
 
-def run_suites(suites, reporters, runner=None, runDebug=None, **kwargs):
+def run_suites(suites, reporters, runner=None, runDebug=None, threads=None, **kwargs):
     "Run the test suites"
     if runner is None:
         from simplerunner import SimpleRunner
         runner = SimpleRunner()
-    runner.reporter = _create_reporter_proxy(reporters, runDebug)
+    runner.reporter = _create_reporter_proxy(reporters, runDebug, threads=threads)
     
     return apply_runner(suites=suites,
                         runner=runner,

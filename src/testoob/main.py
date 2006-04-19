@@ -293,6 +293,7 @@ def _main(suite, defaultTest, options, test_names, parser):
     if options.threads is not None:
         from running import ThreadedRunner
         kwargs["runner"] = ThreadedRunner(num_threads = options.threads)
+        kwargs["threads"] = True
 
     def enable_processes_pyro(nprocesses):
         require_posix("--processes_pyro")
