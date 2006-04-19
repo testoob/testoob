@@ -35,15 +35,15 @@ class ColoredTextReporter(TextStreamReporter):
 
     def _red(self, str):
         "Make it red!"
-        return ColoredTextReporter.codes['red'] + str + ColoredTextReporter.codes['reset']
+        return self.codes['red'] + str + self.codes['reset']
 
     def _green(self, str):
         "make it green!"
-        return ColoredTextReporter.codes['green'] + str + ColoredTextReporter.codes['reset']
+        return self.codes['green'] + str + self.codes['reset']
     
     def _yellow(self, str):
         "make it yellow!"
-        return ColoredTextReporter.codes['yellow'] + str + ColoredTextReporter.codes['reset']
+        return self.codes['yellow'] + str + self.codes['reset']
 
     def _decorateFailure(self, errString):
         return self._red(errString)
