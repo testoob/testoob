@@ -2,6 +2,7 @@ import helpers
 helpers.fix_include_path()
 
 import unittest, testoob, os, sys
+import testoob.testing # for skip()
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
@@ -135,7 +136,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
         try:
             from elementtree.ElementTree import parse
         except ImportError:
-            return # TODO: raise Skip
+            testoob.testing.skip()
         import tempfile
         xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
         args = _testoob_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
@@ -195,7 +196,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             stdout, stderr, rc = testoob.testing._run_command(args)
             if stderr.find("option '--html' requires missing modules") >= 0:
                 # HTML reporting isn't expected to work
-                return
+                testoob.testing.skip()
 
             htmlcontents = open(htmlfile).read()
 
@@ -276,7 +277,7 @@ ERROR: testError \(suites\.CaseMixed\.testError\)
 
     def testTimeOut(self):
         if sys.platform.startswith("win"):
-            return # XXX disabled on windows, no SIGALRM
+            testoob.testing.skip()
         args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
         regex=r"""FF
 ======================================================================
@@ -318,7 +319,7 @@ FAILED \(failures=1, errors=1\)
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testProcessesImmediate(self):
-        return # XXX TODO remove this
+        testoob.testing.skip() # XXX TODO remove this
         args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
                             options=["-v", "--immediate", "--processes=2"])
         # Check that the fail message appears before testSuccess is run
@@ -436,26 +437,26 @@ FAILED \(failures=1, errors=1\)
         return sys.version_info >= (2, 3)
 
     def testSilentCoverage(self):
-        if not self._coverage_supported(): return # SKIP
+        if not self._coverage_supported(): testoob.testing.skip()
         testoob.testing.command_line(
             self._coverageArgs("silent"),
             expected_rc=0,
         )
     def testSlimCoverage(self):
-        if not self._coverage_supported(): return # SKIP
+        if not self._coverage_supported(): testoob.testing.skip()
         testoob.testing.command_line(
             self._coverageArgs("slim"),
             expected_error_regex="covered [0-9]+% of the code",
         )
     def testNormalCoverage(self):
-        if not self._coverage_supported(): return # SKIP
+        if not self._coverage_supported(): testoob.testing.skip()
         testoob.testing.command_line(
             self._coverageArgs("normal"),
             expected_error_regex="covered [0-9]+% of the code",
             expected_output_regex="lines.*cov_n.*module.*path.*TOTAL",
         )
     def testMassiveCoverage(self):
-        if not self._coverage_supported(): return # SKIP
+        if not self._coverage_supported(): testoob.testing.skip()
         testoob.testing.command_line(
             self._coverageArgs("massive"),
             expected_error_regex="covered [0-9]+% of the code",

@@ -7,6 +7,8 @@ from os.path import abspath
 
 from unittest import TestCase
 
+import testoob.testing # for skip()
+
 try:
     from testoob import coverage
 except ImportError:
@@ -45,22 +47,22 @@ class unit_tests(CoverageTest):
     }
 
     def test_total_lines(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         self.coverage.coverage = self.sample_coverage_dictionary.copy()
         self.assertEqual( 166, self.coverage.total_lines() )
 
     def test_total_lines_covered(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         self.coverage.coverage = self.sample_coverage_dictionary.copy()
         self.assertEqual( 136, self.coverage.total_lines_covered() )
 
     def test_total_coverage_percentage(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         self.coverage.coverage = self.sample_coverage_dictionary.copy()
         self.assertEqual( 81, self.coverage.total_coverage_percentage() )
 
     def test_should_cover_frame_path_to_ignore(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         self.coverage.ignorepaths = [abspath("/a/b/c")]
 
         mock_frame = SimpleStub()
@@ -69,7 +71,7 @@ class unit_tests(CoverageTest):
         self.failIf( self.coverage._should_cover_frame(mock_frame) )
 
     def test_should_cover_frame_nonexecutable_line(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         self.coverage.coverage = self.sample_coverage_dictionary.copy()
 
         mock_frame = SimpleStub()
@@ -79,7 +81,7 @@ class unit_tests(CoverageTest):
         self.failIf( self.coverage._should_cover_frame(mock_frame) )
 
     def test_single_file_statistics(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         coverage_dict = {
             "lines"   : range(10),
             "covered" : range(5)
@@ -94,7 +96,7 @@ class system_tests(CoverageTest):
     "Large-grain tests for Coverage"
 
     def test_percentage_full(self):
-        if not _coverage_supported(): return
+        if not _coverage_supported(): testoob.testing.skip()
         self.coverage.runfunc(sample.foo, 5)
         self.assertEqual( 100, self.coverage.total_coverage_percentage() )
 
