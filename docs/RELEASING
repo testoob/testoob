@@ -2,13 +2,13 @@ Lets assume we're releasing version 6.2
 
 * Update docs/CHANGELOG
 
-    ./logistics/generate_release.py --for-keeps --update-changelog --root-dir=.
+    ./other/logistics/generate_release.py --for-keeps --update-changelog --root-dir=.
 
   edit the changes and commit.
 
 * Generate the release (branches, creates distfile, uploads to sourceforge)
 
-    ./logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.
+    ./other/logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.
 
 * Create a SourceForge release
   (Admin -> File Releases -> Add Release)
