@@ -58,7 +58,6 @@ class TextStreamReporter(BaseReporter):
             self._write("\n" * self.multiLineOutput)
             self._writeln(self._decorateWarning("SKIPPED"))
         elif self.dots:
-            # TODO: is _decorateWarning the right thing to use?
             self._write(self._decorateWarning('*'))
 
     def addError(self, test_info, err_info):
