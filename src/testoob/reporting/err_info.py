@@ -1,5 +1,5 @@
 # Testoob, Python Testing Out Of (The) Box
-# Copyright (C) 2005 The Testoob Team
+# Copyright (C) 2005-2006 The Testoob Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
