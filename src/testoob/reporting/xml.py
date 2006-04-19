@@ -66,18 +66,18 @@ class XMLReporter(BaseReporter):
         BaseReporter.addFailure(self, test_info, err_info)
         self._add_unsuccessful_testcase("failure", test_info, err_info)
 
-    def _add_testcase_element(self, result):
+    def _add_testcase_element(self, test_info, result):
         self._start_testcase_tag(test_info)
         self.writer.element("result", result)
         self.writer.end("testcase")
 
     def addSuccess(self, test_info):
         BaseReporter.addSuccess(self, test_info)
-        self._add_testcase_element("success")
+        self._add_testcase_element(test_info, "success")
 
     def addSkip(self, test_info):
         BaseReporter.addSkip(self, test_info)
-        self._add_testcase_element("skip")
+        self._add_testcase_element(test_info, "skip")
 
     def _add_unsuccessful_testcase(self, failure_type, test_info, err_info):
         self._start_testcase_tag(test_info)
