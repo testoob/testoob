@@ -128,6 +128,9 @@ class TextStreamReporter(BaseReporter):
 
         if len(self.skips) > 0:
             self._writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
+            self._writeln( self._decorateWarning(
+                "\n".join([" - %s" % test for test in self.skips])
+            ))
 
         if self.isSuccessful():
             self._writeln(self._decorateSuccess("OK"))
