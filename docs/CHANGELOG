@@ -1,8 +1,42 @@
-                           -== testoob Changelog ==-
+                           -== Testoob Changelog ==-
 
 'testoob' is an advanced testing framework for Python. It is designed to
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
+
+== Testoob 1.0, 20 April, 2006
+
+Many thanks to Nir Soffer and Bryce Hendrix, who both submitted an amazing
+amount of bug reports and patches!!!
+
+Enhancements:
+ * Automatic color detection
+ * Support for skipping tests
+ * Improved reporting when testing command-line applications
+ * Can pass options through main() (thanks Ryan!)
+ * Print current iteration when repeating tests
+ * Test-loading glob and regex patterns with --test-method-{glob,regex}
+ * Helper functions for loading tests from the local directory,
+   (testoob.collecting.collect_from_files)
+ * Coverage results reported in xml (thanks Bryce!)
+
+Changes:
+ * Twisted is not necessary for running in threads anymore (thanks nirs!)
+ * XML file format changed to more closely match that of Ant's JUnitReport
+
+Bugfixes:
+ * Zero tests are now correctly reported as an error
+ * Coverage now works with Python 2.3
+ * Running a nonexistant test gives an error message instead of a traceback
+ * Fixed a bug with pickling
+ * ReporterProxy now thread safe when threads are used
+
+Internal:
+ * Many more unit tests
+ * Improved tests structure
+ * Much refactoring
+
+Full tracking at https://opensvn.csie.org/traccgi/testoob/trac.cgi/milestone/version1.0
 
 == Testoob 0.9, 17 March, 2006
 
