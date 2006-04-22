@@ -132,101 +132,98 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
                                      expected_error_regex=error_regex,
                                      expected_rc=1)
 
+    def _get_file_report(self, option_name):
+        """
+        Run Testoob with CaseMixed, creating a file report.
+
+        Cleans up after itself and returns the file's contents.
+        """
+
+        def safe_read(filename):
+            """
+            Read a file while always closing it.
+
+            Works on non-reference-counting platforms such as Jython, where
+            open(filename).read() can leak the file object.
+            """
+            f = open(filename)
+            try: return f.read()
+            finally: f.close()
+
+        import tempfile
+        output_file = tempfile.mktemp(".testoob-testing-%s-reporting" % option_name)
+        args = _testoob_args(options=["--%s=%s" % (option_name, output_file)], tests=["CaseMixed"])
+
+        try:
+            stdout, stderr, rc = testoob.testing._run_command(args)
+            if stderr.find("option '--%s' requires missing modules" % option_name) >= 0:
+                # Apparently this type of reporting isn't expected to work
+                testoob.testing.skip()
+
+            return safe_read(output_file)
+
+        finally:
+            if os.path.exists(output_file):
+                os.unlink(output_file)
+
     def testXMLReporting(self):
         try:
-            from elementtree.ElementTree import parse
+            from elementtree import ElementTree
         except ImportError:
             testoob.testing.skip()
-        import tempfile
-        xmlfile = tempfile.mktemp(".testoob-testXMLReporting")
-        args = _testoob_args(options=["--xml=" + xmlfile], tests=["CaseMixed"])
 
-        try:
-            testoob.testing.command_line(args=args, expected_error_regex="FAILED", expected_rc=None)
-            root = parse(xmlfile).getroot()
+        root = ElementTree.XML( self._get_file_report("xml") )
 
-            # testsuites tag
-            self.assertEqual("results", root.tag)
+        # testsuites tag
+        self.assertEqual("results", root.tag)
 
-            # ensures only one testsuites element
-            [testsuites] = root.findall("testsuites")
-            
+        # ensures only one testsuites element
+        [testsuites] = root.findall("testsuites")
 
-            def extract_info(testcase):
-                class Struct: pass
-                result = Struct()
-                result.tag = testcase.tag
-                result.name = testcase.attrib["name"]
-                result.result = testcase.find("result").text
-                failure = testcase.find("failure")
-                result.failure = failure is not None and failure.attrib["type"] or None
-                error = testcase.find("error")
-                result.error = error is not None and error.attrib["type"] or None
-                return result
+        def extract_info(testcase):
+            class Struct: pass
+            result = Struct()
+            result.tag = testcase.tag
+            result.name = testcase.attrib["name"]
+            result.result = testcase.find("result").text
+            failure = testcase.find("failure")
+            result.failure = failure is not None and failure.attrib["type"] or None
+            error = testcase.find("error")
+            result.error = error is not None and error.attrib["type"] or None
+            return result
 
-            testcase_reports = [extract_info(testcase) for testcase in testsuites.findall("testcase")]
+        testcase_reports = [extract_info(testcase) for testcase in testsuites.findall("testcase")]
 
-            # ensure one testcase of each type
-            [success] = [x for x in testcase_reports if x.result == "success"]
-            [failure] = [x for x in testcase_reports if x.result == "failure"]
-            [error]   = [x for x in testcase_reports if x.result == "error"]
+        # ensure one testcase of each type
+        [success] = [x for x in testcase_reports if x.result == "success"]
+        [failure] = [x for x in testcase_reports if x.result == "failure"]
+        [error]   = [x for x in testcase_reports if x.result == "error"]
 
-            def check_result(testcase, name=None, failure=None, error=None):
-                self.assertEqual("testcase", testcase.tag)
-                self.assertEqual(name, testcase.name)
-                self.assertEqual(failure, testcase.failure)
-                self.assertEqual(error, testcase.error)
+        def check_result(testcase, name=None, failure=None, error=None):
+            self.assertEqual("testcase", testcase.tag)
+            self.assertEqual(name, testcase.name)
+            self.assertEqual(failure, testcase.failure)
+            self.assertEqual(error, testcase.error)
 
-            check_result(success, name="testSuccess (suites.CaseMixed)")
-            check_result(failure, name="testFailure (suites.CaseMixed)",
-                                  failure="exceptions.AssertionError")
-            check_result(error,   name="testError (suites.CaseMixed)",
-                                  error="exceptions.RuntimeError")
-
-        finally:
-            if os.path.exists(xmlfile):
-                os.unlink(xmlfile)
+        check_result(success, name="testSuccess (suites.CaseMixed)")
+        check_result(failure, name="testFailure (suites.CaseMixed)",
+                              failure="exceptions.AssertionError")
+        check_result(error,   name="testError (suites.CaseMixed)",
+                              error="exceptions.RuntimeError")
 
     def testHTMLReporting(self):
-        try:
-            import tempfile
-            htmlfile = tempfile.mktemp(".testoob-testHTMLReporting")
-            args = _testoob_args(options=["--html=" + htmlfile], tests=["CaseMixed"])
+        htmlcontents = self._get_file_report("html")
 
-            stdout, stderr, rc = testoob.testing._run_command(args)
-            if stderr.find("option '--html' requires missing modules") >= 0:
-                # HTML reporting isn't expected to work
-                testoob.testing.skip()
+        from testoob.testing import assert_matches
+        assert htmlcontents.find("<title>Testoob report</title>") >= 0
+        assert htmlcontents.find("def testError(self): raise RuntimeError") >= 0
+        assert htmlcontents.find("def testFailure(self): self.fail()") >= 0
 
-            htmlcontents = open(htmlfile).read()
-
-            from testoob.testing import assert_matches
-            assert htmlcontents.find("<title>Testoob report</title>") >= 0
-            assert htmlcontents.find("def testError(self): raise RuntimeError") >= 0
-            assert htmlcontents.find("def testFailure(self): self.fail()") >= 0
-
-            assert_matches(r"testSuccess.*>Success<", htmlcontents)
-        finally:
-            if os.path.exists(htmlfile):
-                os.unlink(htmlfile)
+        assert_matches(r"testSuccess.*>Success<", htmlcontents)
 
     def testPDFReporting(self):
-        # TODO: merge common code from test{PDF,HTML,XML}Reporting
-        import tempfile
-        pdf_file = tempfile.mktemp(".testoob-testPDFReporting")
-
-        try:
-            args = _testoob_args(options=["--pdf=" + pdf_file], tests=["CaseMixed"])
-
-            stdout, stderr, rc = testoob.testing._run_command(args)
-            if stderr.find("option '--pdf' requires missing modules") >= 0:
-                # PDF reporting isn't expected to work
-                testoob.testing.skip()
-
-            self.assertEquals( '%PDF-1.3', open(pdf_file).readline().strip() )
-        finally:
-            if os.path.exists(pdf_file):
-                os.unlink(pdf_file)
+        pdfcontents = self._get_file_report("pdf")
+        self.assertEquals( '%PDF-1.3', pdfcontents.splitlines()[0] )
 
     def testGlob(self):
         args = _testoob_args(options=["-v", "--glob=*Database*"], tests=["CaseNames"])
