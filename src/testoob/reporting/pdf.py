@@ -16,16 +16,15 @@
 "PDF reported which uses reportlib's opensource pdf library"
 
 from base import BaseReporter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,XPreformatted,Spacer
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
 
 class PdfReporter(BaseReporter):
+    from reportlab.lib.styles import getSampleStyleSheet
     stylesheet=getSampleStyleSheet()
     normalStyle = stylesheet['Normal']
     
     def __init__(self, filename):
         BaseReporter.__init__(self)
+        from reportlab.platypus import XPreformatted, Spacer
         self.filename = filename
         self.lst = []
         self.lst.append(XPreformatted("<b><i><font size=20>Summary of test results</font></i></b>",PdfReporter.normalStyle))
@@ -51,6 +50,8 @@ class PdfReporter(BaseReporter):
     def done(self):
         BaseReporter.done(self)
         #create result table
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
         table = Table(self.test_data)
         table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
             ('BOX', (0,0), (-1,-1), 0.25, colors.black),
@@ -69,6 +70,8 @@ class PdfReporter(BaseReporter):
         SimpleDocTemplate(self.filename).build(self.lst)
         
     def _print_coverage(self, amount, coverage):
+        from reportlab.lib import colors
+        from reportlab.platypus import Table, TableStyle, XPreformatted, Spacer
         self.lst.append(Spacer(0,20))
         self.lst.append(XPreformatted("<b><i><font size=20>Coverage information</font></i></b>\n\nCovered %3.2f%% of the code."%coverage.total_coverage_percentage(), PdfReporter.normalStyle))
         if (amount != "slim"):
