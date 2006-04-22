@@ -84,3 +84,8 @@ class TestoobBaseTestCase(unittest.TestCase):
         self.runner.check_reporter(**kwargs)
     def _run(self, **kwargs):
         self.runner.run(**kwargs)
+
+def ensure_coverage_support():
+    from testoob import coverage, testing
+    if not coverage.supported():
+        testing.skip(reason="No coverage support")

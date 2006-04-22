@@ -158,7 +158,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             stdout, stderr, rc = testoob.testing._run_command(args)
             if stderr.find("option '--%s' requires missing modules" % option_name) >= 0:
                 # Apparently this type of reporting isn't expected to work
-                testoob.testing.skip()
+                testoob.testing.skip(reason="Modules missing")
 
             return safe_read(output_file)
 
@@ -170,7 +170,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
         try:
             from elementtree import ElementTree
         except ImportError:
-            testoob.testing.skip()
+            testoob.testing.skip(reason="Needs ElementTree")
 
         root = ElementTree.XML( self._get_file_report("xml") )
 
@@ -292,7 +292,7 @@ ERROR: testError \(suites\.CaseMixed\.testError\)
 
     def testTimeOut(self):
         if sys.platform.startswith("win"):
-            testoob.testing.skip()
+            testoob.testing.skip(reason="Unsuported on Windows")
         args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
         regex=r"""FF
 ======================================================================
@@ -447,31 +447,27 @@ FAILED \(failures=1, errors=1\)
             suite_file=os.path.join(current_directory, "dummyprojecttests.py"),
         )
 
-    def _coverage_supported(self):
-        # Coverage requires 'trace' module, Python 2.3 and higher
-        return sys.version_info >= (2, 3)
-
     def testSilentCoverage(self):
-        if not self._coverage_supported(): testoob.testing.skip()
+        helpers.ensure_coverage_support()
         testoob.testing.command_line(
             self._coverageArgs("silent"),
             expected_rc=0,
         )
     def testSlimCoverage(self):
-        if not self._coverage_supported(): testoob.testing.skip()
+        helpers.ensure_coverage_support()
         testoob.testing.command_line(
             self._coverageArgs("slim"),
             expected_error_regex="covered [0-9]+% of the code",
         )
     def testNormalCoverage(self):
-        if not self._coverage_supported(): testoob.testing.skip()
+        helpers.ensure_coverage_support()
         testoob.testing.command_line(
             self._coverageArgs("normal"),
             expected_error_regex="covered [0-9]+% of the code",
             expected_output_regex="lines.*cov_n.*module.*path.*TOTAL",
         )
     def testMassiveCoverage(self):
-        if not self._coverage_supported(): testoob.testing.skip()
+        helpers.ensure_coverage_support()
         testoob.testing.command_line(
             self._coverageArgs("massive"),
             expected_error_regex="covered [0-9]+% of the code",
