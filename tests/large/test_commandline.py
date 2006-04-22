@@ -210,6 +210,24 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             if os.path.exists(htmlfile):
                 os.unlink(htmlfile)
 
+    def testPDFReporting(self):
+        # TODO: merge common code from test{PDF,HTML,XML}Reporting
+        import tempfile
+        pdf_file = tempfile.mktemp(".testoob-testPDFReporting")
+
+        try:
+            args = _testoob_args(options=["--pdf=" + pdf_file], tests=["CaseMixed"])
+
+            stdout, stderr, rc = testoob.testing._run_command(args)
+            if stderr.find("option '--pdf' requires missing modules") >= 0:
+                # PDF reporting isn't expected to work
+                testoob.testing.skip()
+
+            self.assertEquals( '%PDF-1.3', open(pdf_file).readline().strip() )
+        finally:
+            if os.path.exists(pdf_file):
+                os.unlink(pdf_file)
+
     def testGlob(self):
         args = _testoob_args(options=["-v", "--glob=*Database*"], tests=["CaseNames"])
         regex=r"""
