@@ -1,5 +1,5 @@
 # Testoob, Python Testing Out Of (The) Box
-# Copyright (C) 2005 The Testoob Team
+# Copyright (C) 2005-2006 The Testoob Team
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"PDF reported which uses reportlib's opensource pdf library"
+"PDF reporting using ReportLab's PDF library"
 
 from base import BaseReporter
 
