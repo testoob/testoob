@@ -34,7 +34,7 @@ def _arg_parser(usage):
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
-    p.add_option("--pdf", metavar="FILE", help="output results in PDF")
+    p.add_option("--pdf", metavar="FILE", help="output results in PDF (requires ReportLab)")
     p.add_option("--color", action="store_true", help="Color output (deprecated)")
     color_choices = ["never", "always", "auto"]
     p.add_option("--color-mode", metavar="WHEN", type="choice", choices=color_choices, default="auto", help="When should output be in color? Choices are " + str(color_choices) + ", default is '%default'")
