@@ -48,10 +48,10 @@ def suite_iter(suite):
         return True
 
     try:
-        return _ifilter(add_extra_description_field, suite)
+        return _ifilter(add_extra_description_field, iter(suite))
     except TypeError:
         # Before 2.4, test suites weren't iterable
-        return _ifilter(add_extra_description_field, suite._tests)
+        return _ifilter(add_extra_description_field, iter(suite._tests))
 
 def full_extractor(suite, recursive_iterator=_breadth_first):
     """Extract the text fixtures from a suite.
