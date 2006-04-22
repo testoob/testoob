@@ -18,20 +18,20 @@
 from base import BaseReporter
 
 class PdfReporter(BaseReporter):
-    from reportlab.lib.styles import getSampleStyleSheet
-    stylesheet=getSampleStyleSheet()
-    normalStyle = stylesheet['Normal']
-    
     def __init__(self, filename):
         BaseReporter.__init__(self)
         from reportlab.platypus import XPreformatted, Spacer
         self.filename = filename
         self.lst = []
-        self.lst.append(XPreformatted("<b><i><font size=20>Summary of test results</font></i></b>",PdfReporter.normalStyle))
+        self.lst.append(XPreformatted("<b><i><font size=20>Summary of test results</font></i></b>",self._normal_style()))
         self.lst.append(Spacer(0, 20))
         
         self.test_data = [("Name", "Result","Info")]
         
+    def _normal_style(self):
+        from reportlab.lib.styles import getSampleStyleSheet
+        return getSampleStyleSheet()['Normal']
+    
     def addSuccess(self, test_info):
         BaseReporter.addSuccess(self, test_info)
         self.test_data.append((str(test_info), "Success", ""))
@@ -73,7 +73,7 @@ class PdfReporter(BaseReporter):
         from reportlab.lib import colors
         from reportlab.platypus import Table, TableStyle, XPreformatted, Spacer
         self.lst.append(Spacer(0,20))
-        self.lst.append(XPreformatted("<b><i><font size=20>Coverage information</font></i></b>\n\nCovered %3.2f%% of the code."%coverage.total_coverage_percentage(), PdfReporter.normalStyle))
+        self.lst.append(XPreformatted("<b><i><font size=20>Coverage information</font></i></b>\n\nCovered %3.2f%% of the code."%coverage.total_coverage_percentage(), self._normal_style()))
         if (amount != "slim"):
             self.lst.append(Spacer(0,20))
             data = [("Lines", "Covered lines", "Percentage", "Module", "Path")]
