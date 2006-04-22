@@ -15,7 +15,16 @@
 
 "Code coverage module"
 
-import os, sys, trace
+import os, sys
+
+def supported():
+    "Is coverage supported?"
+    try:
+        # Coverage requires module 'trace'
+        import trace
+        return True
+    except ImportError:
+        return False
 
 try:
     sum
@@ -52,6 +61,7 @@ class Coverage:
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
         self.ignorepaths = map(os.path.abspath, ignorepaths)
+        import trace
         self.modname = trace.modname
 
     def runfunc(self, func, *args, **kwargs):
@@ -120,6 +130,7 @@ class Coverage:
                 return False
         
         if not self.coverage.has_key(filename):
+            import trace
             self.coverage[filename] = {
                 "lines": set(trace.find_executable_linenos(filename)),
                 "covered": set()
