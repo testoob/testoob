@@ -55,7 +55,7 @@ class TextStreamReporter(BaseReporter):
 
     def addSkip(self, test_info):
         BaseReporter.addSkip(self, test_info)
-        self._report_result("SKIPPED", "*", self._decorateWarning)
+        self._report_result("SKIPPED", "S", self._decorateWarning)
 
     def _report_failure(self, long_string, short_string, text_decorator, test_info, err_info):
         self._report_result(long_string, short_string, text_decorator)
