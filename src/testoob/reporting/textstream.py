@@ -53,8 +53,8 @@ class TextStreamReporter(BaseReporter):
         BaseReporter.addSuccess(self, test_info)
         self._report_result("OK", ".", self._decorateSuccess)
 
-    def addSkip(self, test_info):
-        BaseReporter.addSkip(self, test_info)
+    def addSkip(self, test_info, err_info):
+        BaseReporter.addSkip(self, test_info, err_info)
         self._report_result("SKIPPED", "S", self._decorateWarning)
 
     def _report_failure(self, long_string, short_string, text_decorator, test_info, err_info):
@@ -129,7 +129,10 @@ class TextStreamReporter(BaseReporter):
         if len(self.skips) > 0:
             self._writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
             self._writeln( self._decorateWarning(
-                "\n".join([" - %s" % test for test in self.skips])
+                "\n".join([
+                    " - %s (%s)" % (test, err.exception_value())
+                    for (test, err) in self.skips
+                ])
             ))
 
         if self.isSuccessful():

@@ -137,7 +137,7 @@ def command_line(
         ])
         raise
 
-def skip():
+def skip(reason="No reason given"):
     "Skip this test"
     from testoob import SkipTestException
-    raise SkipTestException()
+    raise SkipTestException(reason)

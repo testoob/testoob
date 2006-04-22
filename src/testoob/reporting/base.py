@@ -77,7 +77,7 @@ class IReporter:
     def setCoverageInfo(self, cover_amount, coverage):
         "Sets the coverage info for the reporter"
 
-    def addSkip(self, test):
+    def addSkip(self, test_info, err_info):
         "Called when the test was skipped"
 
 import time as _time
@@ -119,8 +119,8 @@ class BaseReporter(IReporter):
     def addSuccess(self, test_info):
         self.successes.append(test_info)
 
-    def addSkip(self, test_info):
-        self.skips.append(test_info)
+    def addSkip(self, test_info, err_info):
+        self.skips.append((test_info, err_info))
 
     def addAssert(self, test_info, assertName, varList, exception):
         # TODO: append?

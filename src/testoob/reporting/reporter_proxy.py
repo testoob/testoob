@@ -68,7 +68,7 @@ class ReporterProxy:
             return issubclass(err[0], testoob.SkipTestException)
 
         if should_skip(err):
-            self._apply_method("addSkip", TestInfo(test))
+            self._apply_method("addSkip", TestInfo(test), ErrInfo(test, err))
             return
 
         self._apply_method("addError", TestInfo(test), ErrInfo(test, err))

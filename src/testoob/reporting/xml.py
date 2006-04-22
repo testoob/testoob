@@ -76,8 +76,10 @@ class XMLReporter(BaseReporter):
         BaseReporter.addSuccess(self, test_info)
         self._add_testcase_element(test_info, "success")
 
-    def addSkip(self, test_info):
-        BaseReporter.addSkip(self, test_info)
+    def addSkip(self, test_info, err_info):
+        BaseReporter.addSkip(self, test_info, err_info)
+        def add_elements():
+            self.writer.element( "reason", err_info.exception_value() )
         self._add_testcase_element(test_info, "skip")
 
     def _add_unsuccessful_testcase(self, failure_type, test_info, err_info):
