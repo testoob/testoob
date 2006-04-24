@@ -23,9 +23,10 @@
 from test_info import TestInfo
 from err_info import ErrInfo
 
-def thread_safety_wrapper(func):
-    import threading
-    lock = threading.RLock()
+def synchronize(func, lock=None):
+    if lock is None:
+        import threading
+        lock = threading.RLock()
 
     def wrapper(*args, **kwargs):
         lock.acquire()
@@ -41,7 +42,7 @@ class ReporterProxy:
         self.observing_reporters = []
 
         if threads:
-            self._apply_method = thread_safety_wrapper(self._apply_method)
+            self._apply_method = synchronize(self._apply_method)
 
     def add_observer(self, reporter):
         self.observing_reporters.append(reporter)
