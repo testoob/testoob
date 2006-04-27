@@ -12,22 +12,15 @@ h1. Testoob: Advanced Testing in Python
 
 h2. News
 
+h3. 28 April, 2006: Testoob 1.0 released
+
+* New features: Skipping support, automatic color detection, PDF reports, even better command-line application testing, and more, plus bugfixes.
+* "Full change list":http://sourceforge.net/project/shownotes.php?release_id=413330&group_id=138557
+* "Download now!":http://sourceforge.net/project/showfiles.php?group_id=138557
+
 h3. 17 March, 2006: testoob 0.9 released
 
 * New features: code coverage, timed-repeat, improved command-line application testing, and more!
 * Several important bugfixes
 * "Full change list":http://sourceforge.net/project/shownotes.php?release_id=402463&group_id=138557
 * "Download now!":http://sourceforge.net/project/showfiles.php?group_id=138557
-
-h3. 1 December, 2005: Testoob 0.8.1 Released
-
-* Bugfix release (critical bug prevented importing). Reported by Oli and Ryan - Thanks!!!
-
-h3. 30 November, 2005: Testoob 0.8 Released
-
-* New '@--list@', '@--stop-on-fail@', and '@--timeout@' options!
-* Optimized multi-process running with better reporting
-* Convenience functions for gather tests from modules
-* Verbose asserts enhancements and fixes
-* Many other bug fixes
-* "Changelog":http://sourceforge.net/project/shownotes.php?release_id=374720&group_id=138557
