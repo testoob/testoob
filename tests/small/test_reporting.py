@@ -80,6 +80,18 @@ class reporter_proxy_isSuccessful(TestCase):
             reporter.success = False
         self.failIf( self.proxy.isSuccessful() )
 
+class reporter_proxy_misc(TestCase):
+    def _get_exc_info(self, item_to_throw):
+        try:
+            raise item_to_throw
+        except:
+            import sys
+            return sys.exc_info()
+
+    def test_should_skip_string_exception(self):
+        from testoob.reporting.reporter_proxy import _should_skip
+        self.failIf( _should_skip(self._get_exc_info("abc")) )
+
 if __name__ == "__main__":
     import testoob
     testoob.main()

@@ -37,6 +37,14 @@ def synchronize(func, lock=None):
 
     return wrapper
 
+def _should_skip(err):
+    import testoob
+    try:
+        return issubclass(err[0], testoob.SkipTestException)
+    except TypeError:
+        # subclass check failed, assume not a subclass
+        return False
+
 class ReporterProxy:
     def __init__(self, threads=False):
         self.observing_reporters = []
@@ -64,11 +72,7 @@ class ReporterProxy:
         self._apply_method("stopTest", TestInfo(test))
 
     def addError(self, test, err):
-        def should_skip(err):
-            import testoob
-            return issubclass(err[0], testoob.SkipTestException)
-
-        if should_skip(err):
+        if _should_skip(err):
             self._apply_method("addSkip", TestInfo(test), ErrInfo(test, err))
             return
 
