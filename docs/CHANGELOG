@@ -9,9 +9,12 @@ suites.
 Many thanks to Nir Soffer and Bryce Hendrix, who both submitted an amazing
 amount of bug reports and patches!!!
 
+We also welcome back Barak Schiller, who has returned after an absence.
+
 Enhancements:
  * Automatic color detection
  * Support for skipping tests
+ * PDF reports (needs ReportLab's PDF library: http://www.reportlab.org)
  * Improved reporting when testing command-line applications
  * Can pass options through main() (thanks Ryan!)
  * Print current iteration when repeating tests
