@@ -145,6 +145,18 @@ class CaseDifferentTestNameSignatures(unittest.TestCase):
     def checkSomething(self): pass
     def numericalTest(self): pass
 
+class InterruptingTests(unittest.TestCase):
+    def test_a(self): pass
+    def test_b(self): pass
+    def test_c(self): pass
+    def test_d_interrupting(self):
+        # simulate Ctrl-C being pressed
+        import os, signal
+        os.kill(os.getpid(), signal.SIGINT)
+    def test_e(self): pass
+    def test_f(self): pass
+    def test_g(self): pass
+
 def suite():
     result = unittest.TestSuite()
     result.addTest( unittest.makeSuite(CaseLetters) )

@@ -562,5 +562,12 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=rc,
         )
 
+    def testSkipOnInterrupt(Self):
+        testoob.testing.command_line(
+                _testoob_args(tests=["InterruptingTests"]),
+                expected_error_regex='Ran 4 tests.*Skipped 4 tests.*Test was interrupted',
+                expected_rc=0,
+        )
+
 if __name__ == "__main__":
     testoob.main()
