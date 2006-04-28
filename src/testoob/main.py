@@ -15,6 +15,17 @@
 
 "main() implementation"
 
+try:
+    set
+except NameError:
+    try:
+        # Python 2.3 compatibility
+        from sets import Set as set
+    except ImportError:
+        # Python 2.2 compatibility
+        from compatibility.sets import Set as set
+
+
 def _arg_parser(usage):
     try:
         import optparse
@@ -88,10 +99,8 @@ def _get_suites(suite, defaultTest, test_names, test_loader=None):
     if len(test_names) == 0:
         test_names = [defaultTest]
 
-    try:
-        test_names = set(test_names)
-    except NameError, e:
-        test_names = {}.fromkeys(test_names).keys()
+    # Don't repeat tests
+    test_names = set(test_names)
 
     try:
         return test_loader.loadTestsFromNames(test_names, __main__)
