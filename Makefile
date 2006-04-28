@@ -24,6 +24,10 @@ testall:
 	$(call test_with,python2.3)
 	$(call test_with,python2.2)
 
+.PHONY: commit_stats
+commit_stats:
+	svn log `svn info|grep '^Repository Root'|awk '{print $$3}'` | grep '^r[0-9].*lines\?'|cut -d'|' -f2|sort|uniq -c|sort -n
+
 .PHONY: clean
 clean:
 	zsh --nullglob -c 'rm -f **/{*{~,.pyc},svn-commit*.tmp*}'
