@@ -89,6 +89,11 @@ def _get_suites(suite, defaultTest, test_names, test_loader=None):
         test_names = [defaultTest]
 
     try:
+        test_names = set(test_names)
+    except NameError, e:
+        test_names = {}.fromkeys(test_names).keys()
+
+    try:
         return test_loader.loadTestsFromNames(test_names, __main__)
     except AttributeError, e:
         def testName(exception):

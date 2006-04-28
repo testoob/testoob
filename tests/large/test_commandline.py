@@ -513,5 +513,18 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=0,
         )
 
+    def testMultipleSameSuite(self):
+        tests = ["CaseDigits", "CaseLetters"]
+        stdout, stderr, rc = testoob.testing._run_command(_testoob_args(tests=tests))
+        import re
+        stderr = re.escape(stderr)
+        stderr = re.sub("\d\\\.\d\d\ds", r"\d.\d\d\ds", stderr)
+        testoob.testing.command_line(
+                _testoob_args(tests=tests*2),
+                expected_error_regex=stderr,
+                expected_output=stdout,
+                expected_rc=rc,
+        )
+
 if __name__ == "__main__":
     testoob.main()
