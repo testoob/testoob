@@ -44,6 +44,8 @@ class reporter_proxy_proxies(TestCase):
         self._check_method_proxy("addSuccess", None)
     def test_addAssert(self):
         self._check_method_proxy("addAssert", None, None, None, None)
+    def test_addSkip(self):
+        self._check_method_proxy("addSkip", None, None)
     def test_isSuccessful(self):
         self._check_method_proxy("isSuccessful")
 
