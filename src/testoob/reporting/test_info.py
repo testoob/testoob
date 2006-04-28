@@ -38,8 +38,13 @@ class TestInfo:
 
     def funcname(self):
         # parsing id() because the function name is a private fixture field
-        return "%s%s" % \
-            (self.fixture.id().split(".")[-1], self.fixture._testoob_extra_description)
+        return self.fixture.id().split(".")[-1]
+
+    def extrainfo(self):
+        return self.fixture._testoob_extra_description
+
+    def extrafuncname(self):
+        return "%s%s" % (self.funcname(), self.extrainfo())
 
     def docstring(self):
         if getattr(self.fixture, self.funcname()).__doc__:
@@ -47,7 +52,7 @@ class TestInfo:
         return ""
 
     def funcinfo(self):
-        return (self.funcname(), self.docstring())
+        return (self.funcname(), self.docstring(), self.extrainfo())
 
     def failure_exception_type(self): # TODO: do we need this?
         return self.fixture.failureException

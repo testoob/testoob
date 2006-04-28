@@ -235,7 +235,7 @@ class TextStreamReporter(BaseReporter):
         self.stream.write("\n")
 
     def getDescription(self, test_info):
-        default_description = test_info.funcname() + " (" + self.re.sub("^__main__.", "", test_info.id()) + ")"
+        default_description = test_info.extrafuncname() + " (" + self.re.sub("^__main__.", "", test_info.id()) + ")"
         if self.descriptions:
             return test_info.short_description() or default_description
         else:

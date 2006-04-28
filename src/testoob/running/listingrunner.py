@@ -56,8 +56,8 @@ class _TestHistory:
                 result.append("\tClass: %s (%d test functions)" %\
                       (class_name, len(functions)))
                 for func in functions:
-                    result.append("\t\t%s()%s" % \
-                            (func[0], func[1] and " - "+func[1] or ""))
+                    result.append("\t\t%s()%s%s" % \
+                            (func[0], func[2], func[1] and " - "+func[1] or ""))
         return "\n".join(result)
 
     def get_csv(self):
