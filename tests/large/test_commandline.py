@@ -157,8 +157,9 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
         try:
             stdout, stderr, rc = testoob.testing._run_command(args)
             if stderr.find("option '--%s' requires missing modules" % option_name) >= 0:
+                import re
                 # Apparently this type of reporting isn't expected to work
-                testoob.testing.skip(reason="Modules missing")
+                testoob.testing.skip(reason="Modules missing: %s" % re.search("\[.*\]", stderr).group())
 
             return safe_read(output_file)
 
