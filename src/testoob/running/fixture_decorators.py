@@ -89,6 +89,12 @@ def get_timed_fixture(time_limit):
             self.updateMethod(timedTest)
     return TimedFixture
 
+class InterruptedFixture(ManipulativeFixture):
+    def __call__(self, reporter, *args):
+        from testoob import SkipTestException
+        exception = SkipTestException("Test was interrupted")
+        reporter.addSkip(self.get_fixture(), (SkipTestException, exception, None))
+
 def get_capture_fixture():
     class CaptureFixture(ManipulativeFixture):
         def __init__(self, fixture):

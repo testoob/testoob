@@ -31,24 +31,31 @@ def apply_decorators(callable, decorators):
 def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                  extraction_decorators=None, fixture_decorators=None):
     """Runs the suite."""
-    from fixture_decorators import BaseFixture
+    from fixture_decorators import BaseFixture, InterruptedFixture
     if not fixture_decorators: fixture_decorators = [BaseFixture]
     if extraction_decorators is None: extraction_decorators = []
     test_extractor = apply_decorators(_full_extractor, extraction_decorators)
 
-    def running_loop():
+    def running_loop(fixture_decorators):
         import time
         first = True
         for suite in _suite_iter(suites):
             for fixture in test_extractor(suite):
-                decorated_fixture = apply_decorators(fixture, fixture_decorators)
-                if not first and interval is not None:
-                    time.sleep(interval)
-                first = False
-                if not runner.run(decorated_fixture) and stop_on_fail:
-                    return
+                try:
+                    decorated_fixture = apply_decorators(fixture, fixture_decorators)
+                    if not first and interval is not None:
+                        time.sleep(interval)
+                    first = False
+                    if not runner.run(decorated_fixture) and stop_on_fail:
+                        return
+                except KeyboardInterrupt, e:
+                    fixture_decorators = [InterruptedFixture]
+                    # Run the current test again with InterrupFixture decorator
+                    # So it'll be added to the skipped tests' list too.
+                    decorated_fixture = apply_decorators(fixture, fixture_decorators)
+                    runner.run(decorated_fixture)
 
-    running_loop()
+    running_loop(fixture_decorators)
     runner.done()
     return runner.isSuccessful()
 
