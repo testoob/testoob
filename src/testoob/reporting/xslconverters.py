@@ -23,4 +23,5 @@ def _read_file(filename):
     try: return f.read()
     finally: f.close()
 
-BASIC_CONVERTER = _read_file("html_report.xsl")
+import html_xsl
+BASIC_CONVERTER = html_xsl.XSL

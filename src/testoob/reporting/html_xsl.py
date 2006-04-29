@@ -1,3 +1,4 @@
+XSL = """
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:param name="date" select="'unknown'"/>
   <xsl:template match="/">
@@ -32,3 +33,4 @@
     </html>
   </xsl:template>
 </xsl:stylesheet>
+""".strip()
