@@ -43,6 +43,29 @@ except NameError:
         # Python 2.2 compatibility
         from compatibility.sets import Set as set
 
+def _find_executable_linenos(filename):
+    """
+    A re-implementation of trace.find_executable_linenos working around
+    compile's problems with missing EOLS
+    """
+    try:
+        prog = open(filename, "rU").read()
+    except IOError, err:
+        print >> sys.stderr, ("Not printing coverage data for %r: %s"
+                              % (filename, err))
+        return {}
+
+    # Adding trailing EOL if missing
+    if not prog.endswith("\n"):
+        prog += "\n"
+
+    from trace import find_strings, find_lines
+    code = compile(prog, filename, "exec")
+    strs = find_strings(filename)
+    return find_lines(code, strs)
+
+
+
 class Coverage:
     """
     Python code coverage module built specifically for checking code coverage
@@ -132,7 +155,7 @@ class Coverage:
         if not self.coverage.has_key(filename):
             import trace
             self.coverage[filename] = {
-                "lines": set(trace.find_executable_linenos(filename)),
+                "lines": set(_find_executable_linenos(filename)),
                 "covered": set()
             }
         return lineno in self.coverage[filename]["lines"]
