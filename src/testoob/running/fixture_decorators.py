@@ -34,6 +34,8 @@ class ManipulativeFixture(BaseFixture):
         self.coreFixture = self.get_fixture()
         self.testMethodName = self.coreFixture.id().split(".")[-1]
         self.testMethod = getattr(self.coreFixture, self.testMethodName)
+        self.testSetUp = self.coreFixture.setUp
+        self.testTearDown = self.coreFixture.tearDown
 
     def updateMethod(self, newMethod):
         setattr(self.coreFixture, self.testMethodName, newMethod)
@@ -84,7 +86,12 @@ def get_timed_fixture(time_limit):
             def timedTest():
                 from time import time
                 start = time()
+                # Run the test at least once anyway
+                self.testMethod()
                 while time() - start < time_limit:
+                    # TearDown the last test and setUp the next one.
+                    self.testTearDown()
+                    self.testSetUp()
                     self.testMethod()
             self.updateMethod(timedTest)
     return TimedFixture

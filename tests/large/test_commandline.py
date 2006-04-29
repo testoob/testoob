@@ -562,10 +562,31 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=rc,
         )
 
-    def testSkipOnInterrupt(Self):
+    def testSkipOnInterrupt(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["InterruptingTests"]),
                 expected_error_regex='Ran 4 tests.*Skipped 4 tests.*Test was interrupted',
+                expected_rc=0,
+        )
+
+    def testSetUpTearDown(self):
+        testoob.testing.command_line(
+                _testoob_args(tests=["CaseSetUpTearDown"]),
+                expected_error_regex='Ran 1 test.*\nOK',
+                expected_rc=0,
+        )
+
+    def testSetUpTearDowanRepeat(self):
+        testoob.testing.command_line(
+                _testoob_args(options=["--repeat=3"], tests=["CaseSetUpTearDown"]),
+                expected_error_regex='Ran 3 tests.*\nOK',
+                expected_rc=0,
+        )
+
+    def testSetUpTearDownTimedRepeat(self):
+        testoob.testing.command_line(
+                _testoob_args(options=["--timed-repeat=1"], tests=["CaseSetUpTearDown"]),
+                expected_error_regex='Ran 1 test.*\nOK',
                 expected_rc=0,
         )
 

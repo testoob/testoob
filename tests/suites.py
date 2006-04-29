@@ -135,6 +135,18 @@ class skipping(unittest.TestCase):
         import testoob
         raise testoob.SkipTestException()
 
+class CaseSetUpTearDown(unittest.TestCase):
+    def setUp(self):
+        self.a = 5
+
+    def testSetUp(self):
+        self.a += 1
+        self.assertEquals(self.a, 6)
+
+    def tearDown(self):
+        if self.a != 6:
+            raise RuntimeError("Something have gone wrong!")
+
 import string
 all_test_names = ["test%s" % x for x in string.uppercase + string.digits]
 all_asserts = {}
