@@ -19,12 +19,12 @@ import os, sys
 
 def supported():
     "Is coverage supported?"
-    try:
-        # Coverage requires module 'trace'
-        import trace
-        return True
-    except ImportError:
-        return False
+    return True
+
+try:
+    import trace
+except ImportError:
+    from compatibility import trace
 
 try:
     sum
@@ -59,10 +59,9 @@ def _find_executable_linenos(filename):
     if not prog.endswith("\n"):
         prog += "\n"
 
-    from trace import find_strings, find_lines
     code = compile(prog, filename, "exec")
-    strs = find_strings(filename)
-    return find_lines(code, strs)
+    strs = trace.find_strings(filename)
+    return trace.find_lines(code, strs)
 
 
 
@@ -84,7 +83,6 @@ class Coverage:
         #    covered - a set of numbers of executed lines in the file.
         self.coverage = {}
         self.ignorepaths = map(os.path.abspath, ignorepaths)
-        import trace
         self.modname = trace.modname
 
     def runfunc(self, func, *args, **kwargs):
@@ -153,7 +151,6 @@ class Coverage:
                 return False
         
         if not self.coverage.has_key(filename):
-            import trace
             self.coverage[filename] = {
                 "lines": set(_find_executable_linenos(filename)),
                 "covered": set()
