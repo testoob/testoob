@@ -595,6 +595,7 @@ FAILED \(failures=1, errors=1\)
         )
 
     def testCoverageMissingEOL(self):
+        helpers.ensure_coverage_support()
         suite_file = os.path.join(current_directory(), "missing_eol_tests.py")
         testoob.testing.command_line(
                 _testoob_args(options=["--coverage=slim"], suite_file=suite_file),
