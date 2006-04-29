@@ -369,7 +369,11 @@ def find_lines_from_code(code, strs):
     """Return dict where keys are lines in the line number table."""
     linenos = {}
 
-    line_increments = [ord(c) for c in code.co_lnotab[1::2]]
+    #line_increments = [ord(c) for c in code.co_lnotab[1::2]]
+    # XXX Replaced above line with Python 2.2-compatible line (orip)
+    def odd_indexed_items(seq): return [seq[i] for i in xrange(1, len(seq), 2)]
+    line_increments = [ord(c) for c in odd_indexed_items(code.co_lnotab)]
+
     table_length = len(line_increments)
     docstring = False
 

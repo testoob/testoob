@@ -31,7 +31,7 @@ try:
 except NameError:
     # Python 2.2 compatibility
     import operator
-    sum = lambda seq: reduce(operator.add, seq)
+    sum = lambda seq: reduce(operator.add, seq, 0)
 
 try:
     set
