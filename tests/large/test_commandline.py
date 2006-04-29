@@ -6,6 +6,10 @@ import testoob.testing # for skip()
 
 _suite_file = helpers.project_subpath("tests/suites.py")
 
+def current_directory():
+    from os.path import dirname, abspath, normpath
+    return normpath(abspath(dirname(__file__)))
+
 def _testoob_args(tests=None, options=None, suite_file = _suite_file):
     result = [sys.executable, helpers.executable_path(), suite_file]
     if options is not None: result += options
@@ -587,6 +591,14 @@ FAILED \(failures=1, errors=1\)
         testoob.testing.command_line(
                 _testoob_args(options=["--timed-repeat=1"], tests=["CaseSetUpTearDown"]),
                 expected_error_regex='Ran 1 test.*\nOK',
+                expected_rc=0,
+        )
+
+    def testCoverageMissingEOL(self):
+        suite_file = os.path.join(current_directory(), "missing_eol_tests.py")
+        testoob.testing.command_line(
+                _testoob_args(options=["--coverage=slim"], suite_file=suite_file),
+                expected_error_regex='Ran 2 tests',
                 expected_rc=0,
         )
 
