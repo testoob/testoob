@@ -1,9 +1,9 @@
 import helpers
 helpers.fix_include_path()
 
-import unittest, testoob
-
+import testoob
 import testoob.testing as testing
+from unittest import TestCase
 
 def _generate_command(output="", error="", rc=0):
     """
@@ -46,7 +46,7 @@ def _verify_command_line_failure(output="", error="", rc=0, **kwargs):
         **kwargs
     )
     
-class TestingUnitTest(unittest.TestCase):
+class TestingUnitTest(TestCase):
     def testRunCommandOutput(self):
         self.assertEqual(("abc\n", "", 0), _get_results(output="abc\n"))
 
