@@ -2,7 +2,7 @@ import helpers
 helpers.fix_include_path()
 
 import testoob
-import testoob.testing as testing
+import testoob.testing as tt
 from unittest import TestCase
 
 def _generate_command(output="", error="", rc=0):
@@ -29,19 +29,19 @@ def _get_results(**kwargs):
     Generate a command with the parameters, run it, and return the
     normalized results
     """
-    output, error, rc = testing._run_command(_generate_command(**kwargs))
-    return testing._normalize_newlines(output), testing._normalize_newlines(error), rc
+    output, error, rc = tt._run_command(_generate_command(**kwargs))
+    return tt._normalize_newlines(output), tt._normalize_newlines(error), rc
 
 def _verify_command_line_success(output="", error="", rc=0, **kwargs):
     "Convenience function"
     args = _generate_command(output=output, error=error, rc=rc)
-    testing.command_line(args, **kwargs)
+    tt.command_line(args, **kwargs)
 
 def _verify_command_line_failure(output="", error="", rc=0, **kwargs):
     args = _generate_command(output=output, error=error, rc=rc)
-    testing.assert_raises(
+    tt.assert_raises(
         AssertionError,
-        testing.command_line,
+        tt.command_line,
         args,
         **kwargs
     )
@@ -109,6 +109,40 @@ class command_line_tests(TestCase):
                 rc = 0,
                 rc_predicate = lambda rc: rc != 0
             )
+
+class assert_raises_tests(TestCase):
+    # Yes, we'll be testing assert_raises with TestCase.assertRaises. Isn't
+    # that a hoot?
+    def test_expected_exception(self):
+        def func(): raise ValueError()
+        tt.assert_raises(ValueError, func)
+
+    def test_missing_exception(self):
+        def func(): pass
+        self.assertRaises(
+            AssertionError, tt.assert_raises, Exception, func)
+
+    def test_args_expected_exception(self):
+        def func(x):
+            if x < 10: raise TypeError()
+        tt.assert_raises(TypeError, func, 5)
+
+    def test_args_missing_exception(self):
+        def func(x):
+            if x < 10: raise TypeError()
+        self.assertRaises(
+            AssertionError, tt.assert_raises, TypeError, func, 10)
+
+    def test_kwargs_expected_exception(self):
+        def func(**kwargs):
+            if kwargs["x"] < 10: raise EnvironmentError()
+        tt.assert_raises(EnvironmentError, func, x=5)
+
+    def test_kwargs_missing_exception(self):
+        def func(**kwargs):
+            if kwargs["x"] < 10: raise EnvironmentError()
+        self.assertRaises(
+            AssertionError, tt.assert_raises, EnvironmentError, func, x=10)
 
 if __name__ == "__main__":
     import testoob
