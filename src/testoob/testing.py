@@ -104,6 +104,8 @@ def assert_raises(exception_class, callable, *args, **kwargs):
 
     def callsig():
         return _call_signature(callable, *args, **kwargs)
+    def exc_name():
+        return getattr(exception_class, "__name__", str(exception_class))
 
     try:
         callable(*args, **kwargs)
@@ -118,10 +120,13 @@ def assert_raises(exception_class, callable, *args, **kwargs):
                 expected_regex, str(e),
                 msg="%s raised %s, but the regular expression '%s' doesn't match %r" % (callsig(), e.__class__, expected_regex, str(e))
             )
+    except:
+        import sys
+        message = "%s raised an unexpected exception type: expected=%s, actual=%s" % (callsig(), exc_name(), sys.exc_info()[0])
+        raise TestoobAssertionError(message, description="assert_raises failed")
     else:
-        excName = getattr(exception_class, "__name__", str(exception_class))
         raise TestoobAssertionError(
-            "%s not raised" % excName, description="assert_raises failed")
+            "%s not raised" % exc_name(), description="assert_raises failed")
 
 def command_line(
         args,

@@ -185,6 +185,15 @@ class assert_raises_tests(TestCase):
             expected = re.escape("func(1, b=2) raised exceptions.RuntimeError, but the regular expression 'xxx' doesn't match '1 - 2'")
             tt.assert_matches(expected, str(e))
 
+    def test_unexpected_exception_type(self):
+        def func(): raise IndexError()
+        try:
+            tt.assert_raises(ValueError, func)
+        except AssertionError, e:
+            import re
+            expected = re.escape("func() raised an unexpected exception type: expected=ValueError, actual=exceptions.IndexError")
+            tt.assert_matches(expected, str(e))
+
 if __name__ == "__main__":
     import testoob
     testoob.main()
