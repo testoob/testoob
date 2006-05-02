@@ -15,6 +15,18 @@
 
 "General utilities used internally"
 
+def _pop(d, key, default):
+    try:
+        return d.pop(key, default)
+    except AttributeError:
+        pass
+
+    # In Python 2.2 we'll implement pop ourselves
+    try:
+        return d.get(key, default)
+    finally:
+        if key in d: del d[key]
+
 try:
     import cPickle as _pickle
 except ImportError:

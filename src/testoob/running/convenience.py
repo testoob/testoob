@@ -110,24 +110,13 @@ def run_suites(suites, reporters, runner=None, runDebug=None, threads=None, **kw
 ###############################################################################
 # text_run
 ###############################################################################
-def _pop(d, key, default):
-    try:
-        return d.pop(key, default)
-    except AttributeError:
-        pass
-
-    # In Python 2.2 we'll implement pop ourselves
-    try:
-        return d.get(key, default)
-    finally:
-        if key in d: del d[key]
-
 def text_run(*args, **kwargs):
     """
     Run suites with a TextStreamReporter.
     Accepts keyword 'verbosity' (0, 1, 2 or 3, default is 1)
     and 'immediate' (True or False)
     """
+    from testoob.utils import _pop
 
     verbosity = _pop(kwargs, "verbosity", 1)
     immediate = _pop(kwargs, "immediate", False)
