@@ -100,6 +100,7 @@ def assert_raises(exception_class, callable, *args, **kwargs):
     """
     from testoob.utils import _pop
     expected_args = _pop(kwargs, "expected_args", None)
+    expected_regex = _pop(kwargs, "expected_regex", None)
 
     def callsig():
         return _call_signature(callable, *args, **kwargs)
@@ -111,6 +112,11 @@ def assert_raises(exception_class, callable, *args, **kwargs):
             assert_equals(
                 expected_args, e.args,
                 msg="%s raised %s with unexpected args: expected=%r, actual=%r" % (callsig(), e.__class__, expected_args, e.args)
+            )
+        if expected_regex is not None:
+            assert_matches(
+                expected_regex, str(e),
+                msg="%s raised %s, but the regular expression '%s' doesn't match %r" % (callsig(), e.__class__, expected_regex, str(e))
             )
     else:
         excName = getattr(exception_class, "__name__", str(exception_class))

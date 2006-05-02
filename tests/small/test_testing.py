@@ -164,6 +164,27 @@ class assert_raises_tests(TestCase):
             expected = re.escape("func() raised exceptions.RuntimeError with unexpected args: expected=('abc', 'def'), actual=(123, 456)")
             tt.assert_matches( expected, str(e) )
 
+    def test_expected_regex_success(self):
+        def func(): raise RuntimeError("shoo-bee-doo-bah")
+        tt.assert_raises(
+            RuntimeError, func, expected_regex="sh.*-.ee-[do]+-.*h$")
+
+    def test_expected_regex_failure(self):
+        def func(): raise RuntimeError("dum-dee-dum-dum")
+        self.assertRaises(
+            AssertionError, tt.assert_raises, RuntimeError, func,
+            expected_regex="xyz"
+        )
+
+    def test_expected_regex_failure_error_message(self):
+        def func(a, b): raise RuntimeError("%s - %s" %(a, b))
+        try:
+            tt.assert_raises(RuntimeError, func, 1, b=2, expected_regex="xxx")
+        except AssertionError, e:
+            import re
+            expected = re.escape("func(1, b=2) raised exceptions.RuntimeError, but the regular expression 'xxx' doesn't match '1 - 2'")
+            tt.assert_matches(expected, str(e))
+
 if __name__ == "__main__":
     import testoob
     testoob.main()
