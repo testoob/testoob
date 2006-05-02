@@ -144,6 +144,26 @@ class assert_raises_tests(TestCase):
         self.assertRaises(
             AssertionError, tt.assert_raises, EnvironmentError, func, x=10)
 
+    def test_expected_args_success(self):
+        def func(): raise RuntimeError(123, 456)
+        tt.assert_raises(RuntimeError, func, expected_args=(123,456))
+
+    def test_expected_args_failure(self):
+        def func(): raise RuntimeError(123, 456)
+        self.assertRaises(
+            AssertionError, tt.assert_raises, RuntimeError, func,
+            expected_args=("abc", "def")
+        )
+
+    def test_expected_args_failure_error_message(self):
+        def func(): raise RuntimeError(123, 456)
+        try:
+            tt.assert_raises(RuntimeError, func, expected_args=("abc", "def"))
+        except AssertionError, e:
+            import re
+            expected = re.escape("func() raised exceptions.RuntimeError with unexpected args: expected=('abc', 'def'), actual=(123, 456)")
+            tt.assert_matches( expected, str(e) )
+
 if __name__ == "__main__":
     import testoob
     testoob.main()

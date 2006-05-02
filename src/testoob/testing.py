@@ -81,12 +81,37 @@ def assert_matches(regex, actual, msg=None, filter=None):
         msg = "'%(actual)s' doesn't match regular expression '%(regex)s'" % vars()
     raise TestoobAssertionError(msg, description="assert_matches failed")
 
+def _call_signature(callable, *args, **kwargs):
+    """
+    Generate a human-friendly call signature
+
+    From recipe http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/307970
+    """
+    argv = [repr(arg) for arg in args] + ["%s=%r" % x for x in kwargs.items()]
+    return "%s(%s)" % (callable.__name__, ", ".join(argv))
+
 def assert_raises(exception_class, callable, *args, **kwargs):
-    "Code similar to unittest.py's assertRaises"
+    """
+    Assert that a callable raises an exception, similar to unittest.py's
+    assertRaises.
+
+    Takes more ideas and code from recipe
+    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/307970
+    """
+    from testoob.utils import _pop
+    expected_args = _pop(kwargs, "expected_args", None)
+
+    def callsig():
+        return _call_signature(callable, *args, **kwargs)
+
     try:
         callable(*args, **kwargs)
-    except exception_class:
-        pass
+    except exception_class, e:
+        if expected_args is not None:
+            assert_equals(
+                expected_args, e.args,
+                msg="%s raised %s with unexpected args: expected=%r, actual=%r" % (callsig(), e.__class__, expected_args, e.args)
+            )
     else:
         excName = getattr(exception_class, "__name__", str(exception_class))
         raise TestoobAssertionError(
