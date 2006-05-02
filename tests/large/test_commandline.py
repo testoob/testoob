@@ -603,5 +603,21 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=0,
         )
 
+    def testSilentSuccess(self):
+        testoob.testing.command_line(
+            _testoob_args(options=["--silent"], tests=["CaseDigits"]),
+            expected_error="",
+            expected_output="",
+            expected_rc=0,
+        )
+
+    def testSilentFailure(self):
+        testoob.testing.command_line(
+            _testoob_args(options=["--silent"], tests=["CaseError"]),
+            expected_error  = "",
+            expected_output = "",
+            rc_predicate    = lambda rc: rc != 0,
+        )
+
 if __name__ == "__main__":
     testoob.main()
