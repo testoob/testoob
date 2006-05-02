@@ -42,69 +42,69 @@ def _verify_command_line_failure(output="", error="", rc=0, **kwargs):
     testing.assert_raises(
         AssertionError,
         testing.command_line,
-        args, 
+        args,
         **kwargs
     )
-    
-class TestingUnitTest(TestCase):
-    def testRunCommandOutput(self):
+
+class command_line_tests(TestCase):
+    def test_run_command_output(self):
         self.assertEqual(("abc\n", "", 0), _get_results(output="abc\n"))
 
-    def testRunCommandError(self):
+    def test_run_command_error(self):
         self.assertEqual(("", "def\n", 0), _get_results(error="def\n"))
 
-    def testCommandLineDefaultIsIgnore(self):
+    def test_command_line_default_is_ignore(self):
         _verify_command_line_success(output="aaa", error="bbb", rc=77)
 
-    def testCommandLineExpectedOutputSuccess(self):
+    def test_command_line_expected_output_success(self):
         _verify_command_line_success(output="a\nb\n", expected_output="a\nb\n")
 
-    def testCommandLineExpectedOutputFailure(self):
+    def test_command_line_expected_output_failure(self):
         _verify_command_line_failure(output="c\nd\n", expected_output="e\nf\n")
 
-    def testCommandLineExpectedErrorSuccess(self):
+    def test_command_line_expected_error_success(self):
         _verify_command_line_success(error="g\nh\n", expected_error="g\nh\n")
 
-    def testCommandLineExpectedErrorFailure(self):
+    def test_command_line_expected_error_failure(self):
         _verify_command_line_failure(error="i\nj\n", expected_error="k\nl\n")
 
-    def testCommandLineOutputRegexSuccess(self):
+    def test_command_line_output_regex_success(self):
         _verify_command_line_success(
                 output="abc",
                 expected_output_regex="a.c",
             )
 
-    def testCommandLineOutputRegexFailure(self):
+    def test_command_line_output_regex_failure(self):
         _verify_command_line_failure(
                 output="def",
                 expected_output_regex="a.c",
             )
 
-    def testCommandLineRcSuccess(self):
+    def test_command_line_rc_success(self):
         _verify_command_line_success(rc=17, expected_rc=17)
 
-    def testCommandLineRcFailure(self):
+    def test_command_line_rc_failure(self):
         _verify_command_line_failure(rc=17, expected_rc=18)
 
-    def testCommandLineErrorRegexSuccess(self):
+    def test_command_line_error_regex_success(self):
         _verify_command_line_success(
                 error="ghijkl",
                 expected_error_regex="gh.*l",
             )
 
-    def testCommandLineErrorRegexFailure(self):
+    def test_command_line_error_regex_failure(self):
         _verify_command_line_failure(
                 error="123456",
                 expected_error_regex="2468",
             )
 
-    def testCommandLineRcPredicateSuccess(self):
+    def test_command_line_rc_predicate_success(self):
         _verify_command_line_success(
                 rc = 17,
                 rc_predicate = lambda rc: rc != 0
             )
 
-    def testCommandLineRcPredicateFailure(self):
+    def test_command_line_rc_predicate_failure(self):
         _verify_command_line_failure(
                 rc = 0,
                 rc_predicate = lambda rc: rc != 0
