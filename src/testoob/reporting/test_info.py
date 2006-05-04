@@ -71,7 +71,10 @@ class TestInfo:
         return "%s - %s" % (hash(self), str(self))
 
     def __cmp__(self, other):
-        return cmp(self.__unique_string_repr(), other.__unique_string_repr())
+        try:
+            return cmp(self.fixture, other.fixture)
+        except AttributeError:
+            return cmp(self.__unique_string_repr(), other.__unique_string_repr())
 
     def __hash__(self):
         return hash(self.fixture)
