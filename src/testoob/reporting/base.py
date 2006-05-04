@@ -123,8 +123,7 @@ class BaseReporter(IReporter):
         self.skips.append((test_info, err_info))
 
     def addAssert(self, test_info, assertName, varList, exception):
-        # TODO: append?
-        self.asserts[test_info] += [(assertName, varList, exception)]
+        self.asserts[test_info].append((assertName, varList, exception))
 
     def isSuccessful(self):
         "Tells whether or not this result was a success"
