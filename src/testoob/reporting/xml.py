@@ -28,7 +28,7 @@ class XMLReporter(BaseReporter):
         try:
             from elementtree.SimpleXMLWriter import XMLWriter
         except ImportError:
-            from compatibility.SimpleXMLWriter import XMLWriter
+            from testoob.compatibility.SimpleXMLWriter import XMLWriter
         self.writer = XMLWriter(self._sio, "utf-8")
 
         self.test_starts = {}
