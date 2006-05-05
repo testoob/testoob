@@ -382,6 +382,20 @@ FAILED \(failures=1, errors=1\)
         regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*OK"
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
+    def testSkipWithProcesses(self):
+        regex = r"""\.SS
+----------------------------------------------------------------------
+Ran 3 tests in \d\.\d\d\ds
+Skipped 2 tests
+( - test_three \(suites\.skipping\) \(\)\n| - test_two \(suites\.skipping\) \(No reason given\)\n){2}OK
+"""
+
+        testoob.testing.command_line(
+                _testoob_args(tests=["skipping"], options=["--processes=2"]),
+                expected_error_regex=regex,
+                expected_rc=0,
+        )
+
     def testCaptureOutput(self):
         args = _testoob_args(options=["--capture"], tests=["CaseVerbous"])
         regex=r"""EF\.

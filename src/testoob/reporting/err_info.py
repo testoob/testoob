@@ -38,5 +38,11 @@ class ErrInfo:
     def traceback(self):
         return self.exc_info[2]
 
+    # TODO: This is a patch, it shouldn't be here. Remove it after fixing
+    # ticket #236.
+    def __getitem__(self, i):
+        attrs = ["exception_type", "exception_value", "traceback"]
+        return getattr(self, attrs[i])()
+
 from testoob.utils import add_fields_pickling
 add_fields_pickling(ErrInfo)

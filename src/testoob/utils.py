@@ -91,7 +91,7 @@ def add_fields_pickling(klass, disable_unpickleable_fields=False):
                 raise TypeError("""not a "fields" class, problem with method '%s'""" % name)
 
         for attr_name in dir(self):
-            if attr_name in ("__init__", "__getstate__", "__setstate__"):
+            if attr_name in ("__init__", "__getstate__", "__setstate__", "__getitem__"):
                 continue # skip constructor and state magic methods
 
             attr = getattr(self, attr_name)
