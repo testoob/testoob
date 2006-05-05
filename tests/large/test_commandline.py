@@ -386,10 +386,10 @@ FAILED \(failures=1, errors=1\)
 
     def testSkipWithProcesses(self):
         regex = r"""\.SS
-----------------------------------------------------------------------
-Ran 3 tests in \d\.\d\d\ds
 Skipped 2 tests
-( - test_three \(suites\.skipping\) \(\)\n| - test_two \(suites\.skipping\) \(No reason given\)\n){2}OK
+( - test_three \(suites\.skipping\) \(\)\n| - test_two \(suites\.skipping\) \(No reason given\)\n){2}----------------------------------------------------------------------
+Ran 3 tests in \d\.\d\d\ds
+OK
 """
 
         testoob.testing.command_line(
@@ -559,7 +559,7 @@ FAILED \(failures=1, errors=1\)
     def testSkippingTests(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["skipping"]),
-                expected_error_regex='Ran 3 tests.*Skipped 2 tests.*OK',
+                expected_error_regex='Skipped 2 tests.*Ran 3 tests.*OK',
                 expected_rc=0,
         )
     def testSkippingTestsVerbose(self):
@@ -585,7 +585,7 @@ FAILED \(failures=1, errors=1\)
     def testSkipOnInterrupt(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["InterruptingTests"]),
-                expected_error_regex='Ran 4 tests.*Skipped 4 tests.*Test was interrupted',
+                expected_error_regex='Skipped 4 tests.*Test was interrupted.*Ran 4 tests',
                 expected_rc=0,
         )
 

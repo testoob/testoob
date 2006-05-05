@@ -98,10 +98,16 @@ class TextStreamReporter(BaseReporter):
 
     def done(self):
         BaseReporter.done(self)
+
+        if self.dots or self.showAll:
+            self._write("\n")
+
+        if len(self.skips) > 0:
+            self._printSkipped()
+
         if not self.immediate:
             self._printErrors()
-        else:
-            self._write("\n")
+
         self._writeln(self.separator2)
         self._printResults()
 
@@ -110,6 +116,15 @@ class TextStreamReporter(BaseReporter):
         if self.immediate and self.vassert:
             self._write("\n  " + self._vassertMessage(assertName, varList, exception is None))
             self.multiLineOutput = True
+    
+    def _printSkipped(self):
+        self._writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
+        self._writeln( self._decorateWarning(
+            "\n".join([
+                " - %s (%s)" % (test, err.exception_value())
+                for (test, err) in self.skips
+            ])
+        ))
 
     def _printResults(self):
         if self.cover_amount is not None and self.cover_amount != "slim":
@@ -125,15 +140,6 @@ class TextStreamReporter(BaseReporter):
         if self.cover_amount is not None:
             self._write(" (covered %s%% of the code)" % self.coverage.total_coverage_percentage())
         self._write("\n")
-
-        if len(self.skips) > 0:
-            self._writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
-            self._writeln( self._decorateWarning(
-                "\n".join([
-                    " - %s (%s)" % (test, err.exception_value())
-                    for (test, err) in self.skips
-                ])
-            ))
 
         if self.isSuccessful():
             self._writeln(self._decorateSuccess("OK"))
@@ -206,8 +212,6 @@ class TextStreamReporter(BaseReporter):
         return warString
 
     def _printErrors(self):
-        if self.dots or self.showAll:
-            self._write("\n")
         self._printErrorList('ERROR', self.errors)
         self._printErrorList('FAIL', self.failures)
 
