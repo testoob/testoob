@@ -63,8 +63,6 @@ def _find_executable_linenos(filename):
     strs = trace.find_strings(filename)
     return trace.find_lines(code, strs)
 
-
-
 class Coverage:
     """
     Python code coverage module built specifically for checking code coverage
@@ -128,7 +126,6 @@ class Coverage:
             "percent": percentage(),
         }
 
-
     def _sum_coverage(self, callable):
         "Helper method for _total_{lines,covered}"
         return sum([callable(coverage)
@@ -147,8 +144,11 @@ class Coverage:
         filename = os.path.abspath(frame.f_code.co_filename)
         lineno = frame.f_lineno
         for path in self.ignorepaths:
-            if (filename).startswith(path):
+            if filename.startswith(path):
                 return False
+
+        if not (filename.endswith(".py") or filename.endswith(".pyc")):
+            return False
         
         if not self.coverage.has_key(filename):
             self.coverage[filename] = {
