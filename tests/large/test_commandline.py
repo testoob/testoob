@@ -1,10 +1,14 @@
 import helpers
 helpers.fix_include_path()
 
-import unittest, testoob, os, sys
+import unittest, testoob, os, sys, tempfile
 import testoob.testing # for skip()
 
 _suite_file = helpers.project_subpath("tests/suites.py")
+
+def _safe_unlink(filename):
+    if os.path.exists(filename):
+        os.unlink(filename)
 
 def current_directory():
     from os.path import dirname, abspath, normpath
@@ -154,7 +158,6 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             try: return f.read()
             finally: f.close()
 
-        import tempfile
         output_file = tempfile.mktemp(".testoob-testing-%s-reporting" % option_name)
         args = _testoob_args(options=["--%s=%s" % (option_name, output_file)], tests=["CaseMixed"])
 
@@ -168,8 +171,7 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
             return safe_read(output_file)
 
         finally:
-            if os.path.exists(output_file):
-                os.unlink(output_file)
+            _safe_unlink(output_file)
 
     def testXMLReporting(self):
         try:
@@ -632,6 +634,19 @@ FAILED \(failures=1, errors=1\)
             expected_output = "",
             rc_predicate    = lambda rc: rc != 0,
         )
+
+    def testHotshot(self):
+        stats_filename = tempfile.mktemp(".testoob-testing-hotshot.stats")
+        try:
+            testoob.testing.command_line(
+                _testoob_args(
+                    options=["--profiler=hotshot", "--profdata=" + stats_filename],
+                    tests=["CaseDigits"]),
+                expected_rc=0,
+                expected_output_regex="[0-9]+ function calls.*in [0-9.]+ CPU seconds",
+            )
+        finally:
+            _safe_unlink(stats_filename)
 
 if __name__ == "__main__":
     testoob.main()
