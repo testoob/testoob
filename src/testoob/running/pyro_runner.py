@@ -168,26 +168,8 @@ class PyroRunner(BaseRunner):
 
         sys.exit(0) # everything was successful
 
-# TODO: merge with reporting.test_info.TestInfo
-class TestInfo:
-    """
-    Extract test info on construction, to enable pickling
-
-    Most methods aim to make reporting.TextStreamReporter.getDescription happy
-    """
-    def __init__(self, test):
-        self._id = test.id()
-        self._TestCase__testMethodName = test._TestCase__testMethodName
-        self.str = str(test)
-        self._shortDescription = test.shortDescription()
-    def id(self):
-        return self._id
-    def shortDescription(self):
-        return self._shortDescription
-    def __str__(self):
-        return self.str
-
 from testoob.reporting.err_info import ErrInfo
+from testoob.reporting.test_info import TestInfo
 
 class PickleFriendlyReporterProxy:
     """
