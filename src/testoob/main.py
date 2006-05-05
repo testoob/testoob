@@ -66,6 +66,9 @@ def _arg_parser(usage):
     p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=coverage_choices, help="Test the coverage of the tested code, choices are: %s" % coverage_choices)
     p.add_option("--test-method-glob", metavar="PATTERN", help="Collect test methods based on a glob pattern")
     p.add_option("--test-method-regex", metavar="REGEX", help="Collect test methods based on a regular expression")
+    profiler_choices = ["hotshot"] # TODO: add "profile"
+    p.add_option("--profiler", type="choice", choices=profiler_choices, help="Profile the tests with a profiler, choices are: %s" % profiler_choices)
+    p.add_option("--profdata", metavar="FILE", default="testoob.stats", help="Target file for profiling information, default is '%default'")
 
     options, parameters = p.parse_args()
     if options.version:
@@ -337,8 +340,29 @@ def _main(suite, defaultTest, options, test_names, parser):
         except ArgumentsError:
             enable_processes_old(options.processes)
 
+    def text_run_decorator():
+        if options.profiler == "hotshot":
+            return profiled_decorator(options.profdata)
+
+        return lambda x: x
+
+    # apply the decorator to running.text_run
     import running
-    return running.text_run(**kwargs)
+    return text_run_decorator()(running.text_run)(**kwargs)
+
+def profiled_decorator(filename):
+    def decorator(callable):
+        def wrapper(*args, **kwargs):
+            import hotshot
+            prof = hotshot.Profile(filename)
+            try:
+                return prof.runcall(callable, *args, **kwargs)
+            finally:
+                prof.close()
+                from hotshot import stats
+                stats.load(filename).sort_stats("time").print_stats()
+        return wrapper
+    return decorator
 
 def kwarg_to_option(arg, value):
     cmdarg = arg.replace("_", "-")
