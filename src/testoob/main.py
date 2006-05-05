@@ -194,6 +194,10 @@ def _main(suite, defaultTest, options, test_names, parser):
         from running import fixture_decorators
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_capture_fixture())
+
+    if options.vassert:
+        import asserter
+        asserter.register_asserter()
     
     if options.timed_repeat is not None:
         from running import fixture_decorators

@@ -10,7 +10,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = suites.all_test_names,
                 failures  = [],
                 errors    = [],
-                asserts   = suites.all_asserts,
+#                asserts   = suites.all_asserts,
                 stdout    = "",
                 stderr    = "",
             )
@@ -23,7 +23,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = ["testFailure"],
                 errors    = [],
-                asserts   = {"testFailure": ("fail", AssertionError)},
+#                asserts   = {"testFailure": ("fail", AssertionError)},
                 stdout    = "",
                 stderr    = "",
             )
@@ -36,7 +36,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = [],
                 errors    = ["testError"],
-                asserts   = {},
+#                asserts   = {},
                 stdout    = "",
                 stderr    = "",
             )
@@ -49,7 +49,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = ["testSuccess"],
                 failures  = ["testFailure"],
                 errors    = ["testError"],
-                asserts   = {"testFailure": ("fail", AssertionError)},
+#                asserts   = {"testFailure": ("fail", AssertionError)},
                 stdout    = "",
                 stderr    = "",
             )
@@ -62,7 +62,7 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                 successes = [],
                 failures  = [],
                 errors    = [],
-                asserts   = {},
+#                asserts   = {},
                 stdout    = "",
                 stderr    = "",
             )
@@ -81,11 +81,11 @@ class RunningTestCase(helpers.TestoobBaseTestCase):
                              "testAssertRaisesKwargs"],
                 failures  = [],
                 errors    = [],
-                asserts   = {
-                    "testAssertRaisesArgs"       : ("assertRaises", None.__class__),
-                    "testAssertRaisesArgsKwargs" : ("assertRaises", None.__class__),
-                    "testAssertRaisesKwargs"     : ("assertRaises", None.__class__),
-                    },
+#                asserts   = {
+#                    "testAssertRaisesArgs"       : ("assertRaises", None.__class__),
+#                    "testAssertRaisesArgsKwargs" : ("assertRaises", None.__class__),
+#                    "testAssertRaisesKwargs"     : ("assertRaises", None.__class__),
+#                    },
                 stdout    = "",
                 stderr    = "",
             )

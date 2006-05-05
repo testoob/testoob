@@ -69,3 +69,5 @@ class Asserter:
             if match(methods_pattern, method_name):
                 self._make_assert_report(Class, method_name)
 
+def register_asserter():
+    Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")

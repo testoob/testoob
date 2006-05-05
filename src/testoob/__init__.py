@@ -21,9 +21,5 @@ __version__ = '__TESTOOB_VERSION__'
 from main import main
 import testing
 
-# Make every assert call the "addAssert" method of a reporter.
-from asserter import Asserter
-Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")
-
 from collecting import *
 from exceptions import *
