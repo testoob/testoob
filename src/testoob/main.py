@@ -66,7 +66,7 @@ def _arg_parser(usage):
     p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=coverage_choices, help="Test the coverage of the tested code, choices are: %s" % coverage_choices)
     p.add_option("--test-method-glob", metavar="PATTERN", help="Collect test methods based on a glob pattern")
     p.add_option("--test-method-regex", metavar="REGEX", help="Collect test methods based on a regular expression")
-    profiler_choices = ["hotshot"] # TODO: add "profile"
+    profiler_choices = ["hotshot", "profile"]
     p.add_option("--profiler", type="choice", choices=profiler_choices, help="Profile the tests with a profiler, choices are: %s" % profiler_choices)
     p.add_option("--profdata", metavar="FILE", default="testoob.stats", help="Target file for profiling information, default is '%default'")
 
@@ -342,15 +342,17 @@ def _main(suite, defaultTest, options, test_names, parser):
 
     def text_run_decorator():
         if options.profiler == "hotshot":
-            return profiled_decorator(options.profdata)
-
-        return lambda x: x
+            return hotshot_decorator(options.profdata)
+        elif options.profiler == "profile":
+            return profile_decorator(options.profdata)
+        else:
+            return lambda x: x
 
     # apply the decorator to running.text_run
     import running
     return text_run_decorator()(running.text_run)(**kwargs)
 
-def profiled_decorator(filename):
+def hotshot_decorator(filename):
     def decorator(callable):
         def wrapper(*args, **kwargs):
             import hotshot
@@ -361,6 +363,35 @@ def profiled_decorator(filename):
                 prof.close()
                 from hotshot import stats
                 stats.load(filename).sort_stats("time").print_stats()
+        return wrapper
+    return decorator
+
+def profile_decorator(filename):
+    def decorator(callable):
+        def wrapper(*args, **kwargs):
+            result = []
+            def run_callable():
+                """
+                A local function we can refer to in a tring with profile.run.
+                Calls the callable, and saves the result in the 'result' list.
+                """
+                assert len(result) == 0
+                result.append( callable(*args, **kwargs) )
+
+            import profile
+
+            try: from cProfile import Profile
+            except ImportError: from profile import Profile
+            p = profile.Profile()
+
+            # passing the environment so the code is run in the current context
+            p = p.runctx("run_callable()", globals(), locals())
+
+            p.dump_stats(filename)
+            p.print_stats(sort="time")
+
+            assert len(result) == 1
+            return result[0]
         return wrapper
     return decorator
 

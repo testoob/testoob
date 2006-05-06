@@ -635,18 +635,36 @@ FAILED \(failures=1, errors=1\)
             rc_predicate    = lambda rc: rc != 0,
         )
 
-    def testHotshot(self):
-        stats_filename = tempfile.mktemp(".testoob-testing-hotshot.stats")
+    def _check_profiler(self, profiler_name, test_case, rc_predicate):
+        stats_filename = tempfile.mktemp(".testoob-testing-profiler-%s.stats" % profiler_name)
         try:
             testoob.testing.command_line(
                 _testoob_args(
-                    options=["--profiler=hotshot", "--profdata=" + stats_filename],
-                    tests=["CaseDigits"]),
-                expected_rc=0,
+                    options=["--profiler=" + profiler_name, "--profdata=" + stats_filename],
+                    tests=[test_case]),
+                rc_predicate=rc_predicate,
                 expected_output_regex="[0-9]+ function calls.*in [0-9.]+ CPU seconds",
             )
         finally:
             _safe_unlink(stats_filename)
+
+    def _check_profiler_success(self, profiler_name):
+        self._check_profiler(profiler_name, "CaseDigits", lambda rc: rc == 0)
+
+    def _check_profiler_failure(self, profiler_name):
+        self._check_profiler(profiler_name, "CaseMixed", lambda rc: rc != 0)
+
+    def testProfilingHotshotSuccess(self):
+        self._check_profiler_success("hotshot")
+
+    def testProfilingHotshotFailure(self):
+        self._check_profiler_failure("hotshot")
+
+    def testProfilingProfileSuccess(self):
+        self._check_profiler_success("profile")
+
+    def testProfilingProfileFailure(self):
+        self._check_profiler_failure("profile")
 
 if __name__ == "__main__":
     testoob.main()
