@@ -15,6 +15,15 @@
 
 "getting information about errors"
 
+def create_err_info(test, err):
+    """
+    Factory method for creating ErrInfo instances.
+    """
+    if isinstance(err, ErrInfo):
+        return err
+
+    return ErrInfo(test, err)
+
 class ErrInfo:
     """
     An interface for getting information about test errors.

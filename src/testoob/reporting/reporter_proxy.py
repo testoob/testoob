@@ -20,8 +20,8 @@
 #       Notice the '_apply_method' duplication in each method, this should
 #       be removed.
 
-from test_info import TestInfo
-from err_info import ErrInfo
+from test_info import create_test_info
+from err_info import create_err_info
 
 def synchronize(func, lock=None):
     if lock is None:
@@ -66,29 +66,29 @@ class ReporterProxy:
         self._apply_method("done")
 
     def startTest(self, test):
-        self._apply_method("startTest", TestInfo(test))
+        self._apply_method("startTest", create_test_info(test))
 
     def stopTest(self, test):
-        self._apply_method("stopTest", TestInfo(test))
+        self._apply_method("stopTest", create_test_info(test))
 
     def addError(self, test, err):
         if _should_skip(err):
-            self._apply_method("addSkip", TestInfo(test), ErrInfo(test, err))
+            self._apply_method("addSkip", create_test_info(test), create_err_info(test, err))
             return
 
-        self._apply_method("addError", TestInfo(test), ErrInfo(test, err))
+        self._apply_method("addError", create_test_info(test), create_err_info(test, err))
 
     def addFailure(self, test, err):
-        self._apply_method("addFailure", TestInfo(test), ErrInfo(test, err))
+        self._apply_method("addFailure", create_test_info(test), create_err_info(test, err))
 
     def addSuccess(self, test):
-        self._apply_method("addSuccess", TestInfo(test))
+        self._apply_method("addSuccess", create_test_info(test))
 
     def addAssert(self, test, assertName, varList, exception):
-        self._apply_method("addAssert", TestInfo(test), assertName, varList, exception)
+        self._apply_method("addAssert", create_test_info(test), assertName, varList, exception)
 
     def addSkip(self, test, err):
-        self._apply_method("addSkip", TestInfo(test), ErrInfo(test, err))
+        self._apply_method("addSkip", create_test_info(test), create_err_info(test, err))
 
     def isSuccessful(self):
         for reporter in self.observing_reporters:

@@ -15,6 +15,15 @@
 
 "getting information about tests"
 
+def create_test_info(arg):
+    """
+    Factory method for creating TestInfo instances.
+    """
+    if isinstance(arg, TestInfo):
+        return arg
+
+    return TestInfo(arg)
+
 class TestInfo:
     """
     An interface for getting information about tests.
