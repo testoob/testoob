@@ -383,7 +383,7 @@ examples:
     options, test_names = parser.parse_args()
 
     try:
-        return _main(suite, defaultTest, options, test_names, parser)
+        sys.exit(not _main(suite, defaultTest, options, test_names, parser))
     except ArgumentsError, e:
         parser.error(str(e))
 
