@@ -137,10 +137,22 @@ def command_line(
         expected_error_regex=None,
         expected_rc=None,
         rc_predicate=None,
+        skip_check=None,
     ):
+    """
+    @param skip_check: a callable that will be called with 3 parameters -
+        output, error, and rc - before any asserts are made. If it doesn't
+        return None, the test will skip and the callable's return value will be
+        used as the skip reason.
+    """
 
     # run command
     output, error, rc = _run_command(args, input)
+
+    if skip_check is not None:
+        skip_reason = skip_check(output, error, rc)
+        if skip_reason is not None:
+            skip(skip_reason)
 
     # test
     try:

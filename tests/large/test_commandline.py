@@ -666,5 +666,25 @@ FAILED \(failures=1, errors=1\)
     def testProfilingProfileFailure(self):
         self._check_profiler_failure("profile")
 
+    def testCommandLineSkipCheckSkipping(self):
+        def check(output, error, rc):
+            if output.find("glass onion"):
+                return "No onion support yet"
+
+        testoob.testing.assert_raises(
+            testoob.SkipTestException,
+
+            testoob.testing.command_line, ["echo", "look into a glass onion"],
+            skip_check=check,
+
+            expected_regex = 'No onion support yet',
+        )
+
+    def testCommandLineSkipCheckNotSkipping(self):
+        try:
+            testoob.testing.command_line( ["echo", "abc"], skip_check=lambda *args:None )
+        except testoob.SkipTestException:
+            self.fail("Got unexpected SkipTestException")
+
 if __name__ == "__main__":
     testoob.main()
