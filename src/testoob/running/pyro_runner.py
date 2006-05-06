@@ -143,7 +143,11 @@ class PyroRunner(BaseRunner):
     def _run_fixtures(self):
         queue = self._get_pyro_proxy("queue")
         remote_reporter = self._get_pyro_proxy("reporter")
-        local_reporter = PickleFriendlyReporterProxy(remote_reporter)
+
+        from testoob.reporting.reporter_proxy import ReporterProxy
+
+        local_reporter = ReporterProxy()
+        local_reporter.add_observer(remote_reporter)
 
         for id in iter_queue(queue, None, timeout=PyroRunner.GET_TIMEOUT):
             fixture = self.fixture_ids[id]
@@ -167,35 +171,3 @@ class PyroRunner(BaseRunner):
             sys.exit(1)
 
         sys.exit(0) # everything was successful
-
-from testoob.reporting.err_info import ErrInfo
-from testoob.reporting.test_info import TestInfo
-
-class PickleFriendlyReporterProxy:
-    """
-    Used for speaking with remote reporters, where the arguments passed
-    must be pickleable.
-    The tactic is to convert errors to strings locally and send the final
-    string to the remote reporter (tracebacks aren't pickleable).
-    """
-    def __init__(self, reporter):
-        self.reporter = reporter
-
-    # direct proxies
-    def addSuccess(self, test):
-        self.reporter.addSuccess(TestInfo(test))
-    def startTest(self, test):
-        self.reporter.startTest(TestInfo(test))
-    def stopTest(self, test):
-        self.reporter.stopTest(TestInfo(test))
-
-    # making tracebacks safe for pickling
-    def addError(self, test, err):
-        self.reporter.addError(TestInfo(test), ErrInfo(test, err))
-
-    def addFailure(self, test, err):
-        self.reporter.addFailure(TestInfo(test), ErrInfo(test, err))
-
-    def addAssert(self, test, assertName, varList, exception):
-        raise NotImplementedError # TODO: check when we need this
-
