@@ -62,4 +62,7 @@ __name__ = basename(file_name).split(".")[0]
 execfile(file_name)
 __name__ = name
 
-sys.exit(not testoob_main("_main")(None, None, options, test_names, parser))
+try:
+    sys.exit(not testoob_main("_main")(None, None, options, test_names, parser))
+except testoob_main("ArgumentsError"), e:
+    parser.error(str(e))
