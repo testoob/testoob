@@ -169,6 +169,15 @@ class InterruptingTests(unittest.TestCase):
     def test_f(self): pass
     def test_g(self): pass
 
+class FailInTheMiddle(unittest.TestCase):
+    def test_a(self): pass
+    def test_b(self): pass
+    def test_c(self): pass
+    def test_d_failing(self): self.fail()
+    def test_e(self): pass
+    def test_f(self): pass
+    def test_g(self): pass
+
 def suite():
     result = unittest.TestSuite()
     result.addTest( unittest.makeSuite(CaseLetters) )

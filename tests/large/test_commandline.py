@@ -381,13 +381,23 @@ FAILED \(failures=1, errors=1\)
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
-    def testProcessesImmediate(self):
-        testoob.testing.skip() # XXX TODO remove this
-        args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
-                            options=["-v", "--immediate", "--processes=2"])
-        # Check that the fail message appears before testSuccess is run
-        regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*OK"
-        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+    def _check_processes_immediate(self, processes_type):
+        # Check that the fail message appears in the middle
+        regex = "OK.*FAIL.*OK"
+        testoob.testing.command_line(
+            args = _testoob_args(
+                tests=["FailInTheMiddle"],
+                options=["-v", "--immediate", "--processes_%s=2" % processes_type]),
+            expected_error_regex = "OK.*FAIL.*OK",
+            rc_predicate=lambda rc: rc != 0,
+            skip_check = _missing_modules_skip_check,
+        )
+
+    def testProcessesOldImmediate(self):
+        self._check_processes_immediate("old")
+
+    def testProcessesPyroImmediate(self):
+        self._check_processes_immediate("pyro")
 
     def testSkipWithProcesses(self):
         regex = r"""\.SS
