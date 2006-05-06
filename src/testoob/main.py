@@ -349,7 +349,8 @@ def _main(suite, defaultTest, options, test_names, parser):
     def text_run_decorator():
         if options.profiler is not None:
             import profiling
-            return profiling.choose_decorator(options.profiler)(options.profdata)
+            return profiling.profiling_decorator(
+                options.profiler, options.profdata)
 
         # return a null decorator
         return lambda x: x

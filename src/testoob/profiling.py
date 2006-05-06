@@ -15,57 +15,73 @@
 
 "Profiling support code"
 
-def choose_decorator(profiler_name):
+def _helper_class(profiler_name):
     if profiler_name == "hotshot":
-        return hotshot_decorator
+        return HotshotHelper
     if profiler_name == "profile":
-        return profile_decorator
+        return ProfileHelper
     assert False # should never reach here
 
-def hotshot_decorator(filename):
+def profiling_decorator(profiler_name, filename):
     def decorator(callable):
         def wrapper(*args, **kwargs):
-            import hotshot
-            prof = hotshot.Profile(filename)
-            try:
-                return prof.runcall(callable, *args, **kwargs)
-            finally:
-                prof.close()
-                from hotshot import stats
-                try:
-                    stats.load(filename).sort_stats("time").print_stats()
-                except hotshot.ProfilerError:
-                    raise IOError("Error reading stats from '%s', file may be corrupt" % filename)
+            helper = _helper_class(profiler_name)(filename, callable, *args, **kwargs)
+            print "Profiling information saved to file '%s'" % helper.filename
+            helper.run()
+            helper.print_stats()
 
+            return helper.result
         return wrapper
     return decorator
 
-def profile_decorator(filename):
-    def decorator(callable):
-        def wrapper(*args, **kwargs):
-            result = []
-            def run_callable():
-                """
-                A local function we can refer to in a tring with profile.run.
-                Calls the callable, and saves the result in the 'result' list.
-                """
-                assert len(result) == 0
-                result.append( callable(*args, **kwargs) )
+class ProfilingHelper(object):
+    def __init__(self, filename, callable, *args, **kwargs):
+        self.filename = filename
+        self.callable = callable
+        self.args = args
+        self.kwargs = kwargs
 
-            import profile
+        self.result = None
 
-            try: from cProfile import Profile
-            except ImportError: from profile import Profile
-            p = profile.Profile()
+    def print_stats(self):
+        self.stats().sort_stats("time").print_stats()
 
-            # passing the environment so the code is run in the current context
-            p = p.runctx("run_callable()", globals(), locals())
+    def run(self):
+        raise NotImplementedError
 
-            p.dump_stats(filename)
-            p.print_stats(sort="time")
+    def stats(self):
+        raise NotImplementedError
 
-            assert len(result) == 1
-            return result[0]
-        return wrapper
-    return decorator
+class HotshotHelper(ProfilingHelper):
+    def run(self):
+        import hotshot
+        p = hotshot.Profile(self.filename)
+        try:
+            self.result = p.runcall(self.callable, *self.args, **self.kwargs)
+        finally:
+            p.close()
 
+    def stats(self):
+        from hotshot import stats
+        try:
+            return stats.load(self.filename)
+        except hotshot.ProfilerError:
+            raise IOError("Error reading stats from '%s', file may be corrupt" % filename)
+
+class ProfileHelper(ProfilingHelper):
+    def run(self):
+        def run_callable():
+            "A local function we can refer to in a string with profile.run"
+            self.result = self.callable(*self.args, **self.kwargs)
+
+        try:
+            from cProfile import Profile
+        except ImportError:
+            from profile import Profile
+
+        self.p = Profile().runctx("run_callable()", globals(), locals())
+        self.p.dump_stats(self.filename)
+
+    def stats(self):
+        import pstats
+        return pstats.Stats(self.p)
