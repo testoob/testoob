@@ -398,9 +398,10 @@ OK
 """
 
         testoob.testing.command_line(
-                _testoob_args(tests=["skipping"], options=["--processes=2"]),
+                _testoob_args(tests=["skipping"], options=["--processes_pyro=2"]),
                 expected_error_regex=regex,
                 expected_rc=0,
+                skip_check = _missing_modules_skip_check,
         )
 
     def testCaptureOutput(self):
