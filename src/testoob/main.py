@@ -122,6 +122,7 @@ class ArgumentsError(Exception): pass
 def _main(suite, defaultTest, options, test_names, parser):
 
     def require_modules(option, *modules):
+        assert len(modules) > 0
         missing_modules = []
         for modulename in modules:
             try:
@@ -339,6 +340,11 @@ def _main(suite, defaultTest, options, test_names, parser):
             enable_processes_pyro(options.processes)
         except ArgumentsError:
             enable_processes_old(options.processes)
+
+    if options.profiler is not None:
+        # this module is sometimes missing, apparently its license is a problem
+        # for some OS distributions
+        require_modules("--profiler", "profile")
 
     def text_run_decorator():
         if options.profiler is not None:

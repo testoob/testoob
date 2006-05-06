@@ -35,6 +35,12 @@ def _run_testoob(args, grep=None):
         return _grep(grep, stderr)
     return stderr
 
+def _missing_modules_skip_check(stdout, stderr, rc):
+    import re
+    match_object = re.search("requires missing modules (\[.*\])", stderr)
+    if match_object is not None:
+        return "Modules missing: " + match_object.group(1)
+
 class CommandLineTestCase(unittest.TestCase):
     def testSuccesfulRunNormal(self):
         args = _testoob_args(options=[], tests=["CaseDigits"])
@@ -163,10 +169,9 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
 
         try:
             stdout, stderr, rc = testoob.testing._run_command(args)
-            if stderr.find("option '--%s' requires missing modules" % option_name) >= 0:
-                import re
-                # Apparently this type of reporting isn't expected to work
-                testoob.testing.skip(reason="Modules missing: %s" % re.search("\[.*\]", stderr).group())
+            skip_reason = _missing_modules_skip_check(stdout, stderr, rc)
+            if skip_reason is not None:
+                testoob.testing.skip(reason = skip_reason)
 
             return safe_read(output_file)
 
@@ -644,6 +649,7 @@ FAILED \(failures=1, errors=1\)
                     tests=[test_case]),
                 rc_predicate=rc_predicate,
                 expected_output_regex="[0-9]+ function calls.*in [0-9.]+ CPU seconds",
+                skip_check = _missing_modules_skip_check,
             )
         finally:
             _safe_unlink(stats_filename)
