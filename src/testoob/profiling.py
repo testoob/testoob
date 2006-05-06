@@ -15,6 +15,8 @@
 
 "Profiling support code"
 
+MAX_PROFILING_LINES_TO_PRINT = 30
+
 def _helper_class(profiler_name):
     if profiler_name == "hotshot":
         return HotshotHelper
@@ -28,7 +30,7 @@ def profiling_decorator(profiler_name, filename):
             helper = _helper_class(profiler_name)(filename, callable, *args, **kwargs)
             print "Profiling information saved to file '%s'" % helper.filename
             helper.run()
-            helper.print_stats()
+            helper.print_stats(MAX_PROFILING_LINES_TO_PRINT)
 
             return helper.result
         return wrapper
@@ -43,8 +45,8 @@ class ProfilingHelper(object):
 
         self.result = None
 
-    def print_stats(self):
-        self.stats().sort_stats("time").print_stats()
+    def print_stats(self, *args):
+        self.stats().sort_stats("time").print_stats(*args)
 
     def run(self):
         raise NotImplementedError
