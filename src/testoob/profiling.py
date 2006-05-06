@@ -32,7 +32,11 @@ def hotshot_decorator(filename):
             finally:
                 prof.close()
                 from hotshot import stats
-                stats.load(filename).sort_stats("time").print_stats()
+                try:
+                    stats.load(filename).sort_stats("time").print_stats()
+                except hotshot.ProfilerError:
+                    raise IOError("Error reading stats from '%s', file may be corrupt" % filename)
+
         return wrapper
     return decorator
 
