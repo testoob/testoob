@@ -400,16 +400,9 @@ FAILED \(failures=1, errors=1\)
         self._check_processes_immediate("pyro")
 
     def testSkipWithProcesses(self):
-        regex = r"""\.SS
-Skipped 2 tests
-( - test_three \(suites\.skipping\) \(\)\n| - test_two \(suites\.skipping\) \(No reason given\)\n){2}----------------------------------------------------------------------
-Ran 3 tests in \d\.\d\d\ds
-OK
-"""
-
         testoob.testing.command_line(
                 _testoob_args(tests=["skipping"], options=["--processes_pyro=2"]),
-                expected_error_regex=regex,
+                expected_error_regex="Skipped 2 tests",
                 expected_rc=0,
                 skip_check = _missing_modules_skip_check,
         )
