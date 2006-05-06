@@ -364,7 +364,7 @@ def kwarg_to_option(arg, value):
     if value is True:
         return "--%s" % cmdarg
     else:
-        return "--%s=%s" % (arg, value)
+        return "--%s=%s" % (cmdarg, value)
 
 def main(suite=None, defaultTest=None, **kwargs):
     usage="""%prog [options] [test1 [test2 [...]]]
