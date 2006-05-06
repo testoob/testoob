@@ -341,59 +341,16 @@ def _main(suite, defaultTest, options, test_names, parser):
             enable_processes_old(options.processes)
 
     def text_run_decorator():
-        if options.profiler == "hotshot":
-            return hotshot_decorator(options.profdata)
-        elif options.profiler == "profile":
-            return profile_decorator(options.profdata)
-        else:
-            return lambda x: x
+        if options.profiler is not None:
+            import profiling
+            return profiling.choose_decorator(options.profiler)(options.profdata)
+
+        # return a null decorator
+        return lambda x: x
 
     # apply the decorator to running.text_run
     import running
     return text_run_decorator()(running.text_run)(**kwargs)
-
-def hotshot_decorator(filename):
-    def decorator(callable):
-        def wrapper(*args, **kwargs):
-            import hotshot
-            prof = hotshot.Profile(filename)
-            try:
-                return prof.runcall(callable, *args, **kwargs)
-            finally:
-                prof.close()
-                from hotshot import stats
-                stats.load(filename).sort_stats("time").print_stats()
-        return wrapper
-    return decorator
-
-def profile_decorator(filename):
-    def decorator(callable):
-        def wrapper(*args, **kwargs):
-            result = []
-            def run_callable():
-                """
-                A local function we can refer to in a tring with profile.run.
-                Calls the callable, and saves the result in the 'result' list.
-                """
-                assert len(result) == 0
-                result.append( callable(*args, **kwargs) )
-
-            import profile
-
-            try: from cProfile import Profile
-            except ImportError: from profile import Profile
-            p = profile.Profile()
-
-            # passing the environment so the code is run in the current context
-            p = p.runctx("run_callable()", globals(), locals())
-
-            p.dump_stats(filename)
-            p.print_stats(sort="time")
-
-            assert len(result) == 1
-            return result[0]
-        return wrapper
-    return decorator
 
 def kwarg_to_option(arg, value):
     cmdarg = arg.replace("_", "-")
