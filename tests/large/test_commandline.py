@@ -168,10 +168,10 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
         args = _testoob_args(options=["--%s=%s" % (option_name, output_file)], tests=["CaseMixed"])
 
         try:
-            stdout, stderr, rc = testoob.testing._run_command(args)
-            skip_reason = _missing_modules_skip_check(stdout, stderr, rc)
-            if skip_reason is not None:
-                testoob.testing.skip(reason = skip_reason)
+            testoob.testing.command_line(
+                args,
+                skip_check = _missing_modules_skip_check
+            )
 
             return safe_read(output_file)
 
