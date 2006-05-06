@@ -191,13 +191,6 @@ class PickleFriendlyReporterProxy:
 
     # making tracebacks safe for pickling
     def addError(self, test, err):
-        # TODO: This is a patch, it shouldn't be here. Remove it after fixing
-        # ticket #236.
-        from testoob.reporting.reporter_proxy import _should_skip
-        if _should_skip(err):
-            self.reporter.addSkip(TestInfo(test), ErrInfo(test, err))
-            return
-
         self.reporter.addError(TestInfo(test), ErrInfo(test, err))
 
     def addFailure(self, test, err):

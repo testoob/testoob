@@ -24,6 +24,14 @@ def create_err_info(test, err):
 
     return ErrInfo(test, err)
 
+def _should_skip(exception_type):
+    import testoob
+    try:
+        return issubclass(exception_type, testoob.SkipTestException)
+    except TypeError:
+        # subclass check failed, assume not a subclass of SkipTestException
+        return False
+
 class ErrInfo:
     """
     An interface for getting information about test errors.
@@ -38,6 +46,15 @@ class ErrInfo:
         from test_info import TestInfo
         return exc_info_to_string(self.exc_info, TestInfo(self.test))
 
+    def is_skip(self):
+        """
+        Does the error signify a skip?
+
+        Normally done by checking that exception_type derives from
+        SkipTestException, but that can't be done after fields pickling.
+        """
+        return _should_skip(self.exc_info[0])
+
     def exception_type(self):
         return str(self.exc_info[0])
 
@@ -46,12 +63,6 @@ class ErrInfo:
 
     def traceback(self):
         return self.exc_info[2]
-
-    # TODO: This is a patch, it shouldn't be here. Remove it after fixing
-    # ticket #236.
-    def __getitem__(self, i):
-        attrs = ["exception_type", "exception_value", "traceback"]
-        return getattr(self, attrs[i])()
 
 from testoob.utils import add_fields_pickling
 add_fields_pickling(ErrInfo)
