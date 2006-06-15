@@ -17,6 +17,10 @@
 
 class IReporter:
     "Interface for reporters"
+
+    def setParameters(self, **parameters):
+        "Set parameters for the reporter. Called before 'start' is called."
+
     def start(self):
         "Called when the testing is about to start"
         pass
@@ -95,6 +99,9 @@ class BaseReporter(IReporter):
         self.asserts = {}
         self.cover_amount = None
         self.coverage = None
+
+    def setParameters(self, **parameters):
+        self.parameters = parameters
 
     def start(self):
         self.start_time = _time.time()

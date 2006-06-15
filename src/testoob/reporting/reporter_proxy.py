@@ -47,9 +47,12 @@ class ReporterProxy:
     def add_observer(self, reporter):
         self.observing_reporters.append(reporter)
 
-    def _apply_method(self, name, *args):
+    def _apply_method(self, name, *args, **kwargs):
         for reporter in self.observing_reporters:
-            getattr(reporter, name)(*args)
+            getattr(reporter, name)(*args, **kwargs)
+
+    def setParameters(self, **parameters):
+        self._apply_method("setParameters", **parameters)
 
     def start(self):
         self._apply_method("start")

@@ -15,6 +15,7 @@ def fix_include_path():
 
 fix_include_path()
 
+# TODO: subclass testoob.reporting.BaseReporter, implements most of the methods here
 class ReporterWithMemory:
     "A reporter that remembers info on the test fixtures run"
     def __init__(self):
@@ -34,6 +35,8 @@ class ReporterWithMemory:
         # TODO: use test_info.methodname()
         l.append(str(test_info).split()[0])
 
+    def setParameters(self, **parameters):
+        pass # TODO: placeholder
     def start(self):
         self.has_started = True
     def done(self):

@@ -20,15 +20,11 @@ class BaseRunner(object):
     def __init__(self):
         from testoob.asserter import Asserter
         self._Asserter = Asserter
-
-    def _set_reporter(self, reporter):
-        self._reporter = reporter
-        self._reporter.start()
-    reporter = property(lambda self:self._reporter, _set_reporter)
+        self.reporter = None
 
     def run(self, fixture):
         # Let the assert functions know it's reporter.
-        self._Asserter().set_reporter(fixture.get_fixture(), self._reporter)
+        self._Asserter().set_reporter(fixture.get_fixture(), self.reporter)
 
     def done(self):
         self.reporter.done()
@@ -36,9 +32,10 @@ class BaseRunner(object):
     def isSuccessful(self):
         return self.reporter.isSuccessful()
 
+# TODO: Why do we have two SimpleRunner classes?
 class SimpleRunner(BaseRunner):
     def run(self, fixture):
         BaseRunner.run(self, fixture)
-        fixture(self._reporter)
-        return self._reporter.isSuccessful()
+        fixture(self.reporter)
+        return self.reporter.isSuccessful()
 

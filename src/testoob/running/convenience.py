@@ -36,6 +36,12 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
     if extraction_decorators is None: extraction_decorators = []
     test_extractor = apply_decorators(_full_extractor, extraction_decorators)
 
+    # TODO: find a nicer way of implementing this?
+    num_tests = 0
+    for suite in _suite_iter(suites):
+        num_tests += len(list(test_extractor(suite)))
+    runner.reporter.setParameters(num_tests = num_tests)
+
     def running_loop(fixture_decorators):
         import time
         first = True
@@ -55,6 +61,7 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                     decorated_fixture = apply_decorators(fixture, fixture_decorators)
                     runner.run(decorated_fixture)
 
+    runner.reporter.start()
     running_loop(fixture_decorators)
     runner.done()
     return runner.isSuccessful()

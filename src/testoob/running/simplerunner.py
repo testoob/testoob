@@ -15,11 +15,12 @@
 
 "Simple runner"
 
+# TODO: Why do we have two SimpleRunner classes?
 from baserunner import BaseRunner
 class SimpleRunner(BaseRunner):
     "Simple runner, simply runs each test (what more do you need? :-)"
     def run(self, fixture):
         BaseRunner.run(self, fixture)
-        fixture(self._reporter)
-        return self._reporter.isSuccessful()
+        fixture(self.reporter)
+        return self.reporter.isSuccessful()
 
