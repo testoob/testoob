@@ -37,7 +37,6 @@ def _arg_parser():
     p.add_option("--vassert", action="store_true", help="Make asserts verbose")
     p.add_option("-l", "--list", action="store_true", help="List the test classes and methods found")
     p.add_option("--list-formatted", metavar="FORMATTER", help="Like option '-l', just formatted (e.g. csv).")
-    p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("-s", "--silent", action="store_true", help="no output to terminal")
     color_choices = ["never", "always", "auto"]
@@ -197,10 +196,6 @@ def _main(suite, defaultTest, options, test_names, parser):
             raise AssertionError("Timeout")
         import signal
         signal.signal(signal.SIGALRM, alarm)
-
-    if options.regex is not None:
-        import extracting
-        kwargs["extraction_decorators"].append(extracting.regex(options.regex))
 
     if options.list_formatted:
         from running import ListingRunner
