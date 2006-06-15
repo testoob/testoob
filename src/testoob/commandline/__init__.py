@@ -5,3 +5,4 @@ import regex_option
 import list_option
 import processes_option
 import randomize_option
+import pbar_option
