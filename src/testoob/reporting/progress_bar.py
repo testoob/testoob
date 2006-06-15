@@ -34,9 +34,14 @@ class ProgressBarGuiThread(Thread):
     ratio = property(lambda self: float(self.count) / float(self.num_tests))
     percent = property(lambda self: "%%%d" % int(100 * self.ratio))
 
-    text_bar = property(lambda self: self.x)
+    done_bar_length = property( lambda self: int(self.ratio * self.bar_width) )
+    left_bar_length = property( lambda self: self.bar_width - self.done_bar_length )
 
-    status = property(lambda self: self.percent)
+    text_bar = property(
+        lambda self: self.done_bar_length * "#" + self.left_bar_length * "_"
+    )
+
+    status = property(lambda self: "%s %s" % (self.text_bar, self.percent))
     
     def advance(self):
         self.count += 1
