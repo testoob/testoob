@@ -35,8 +35,6 @@ def _arg_parser():
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
     p.add_option("--vassert", action="store_true", help="Make asserts verbose")
-    p.add_option("-l", "--list", action="store_true", help="List the test classes and methods found")
-    p.add_option("--list-formatted", metavar="FORMATTER", help="Like option '-l', just formatted (e.g. csv).")
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("-s", "--silent", action="store_true", help="no output to terminal")
     color_choices = ["never", "always", "auto"]
@@ -46,9 +44,6 @@ def _arg_parser():
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
-    p.add_option("--processes", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, use Pyro if available")
-    p.add_option("--processes_pyro", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, requires Pyro")
-    p.add_option("--processes_old", metavar="NUM_PROCESSES", type="int", help="Run in multiple processes, old implementation")
     p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
     p.add_option("--timed-repeat", metavar="SECONDS", type="float", help="Repeat each test, for a limited time")
     p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
@@ -197,13 +192,6 @@ def _main(suite, defaultTest, options, test_names, parser):
         import signal
         signal.signal(signal.SIGALRM, alarm)
 
-    if options.list_formatted:
-        from running import ListingRunner
-        kwargs["runner"] = ListingRunner(output_format=options.list_formatted)
-    elif options.list is not None:
-        from running import ListingRunner
-        kwargs["runner"] = ListingRunner()
-
     if options.glob is not None:
         import extracting
         kwargs["extraction_decorators"].append(extracting.glob(options.glob))
@@ -278,29 +266,6 @@ def _main(suite, defaultTest, options, test_names, parser):
         from running import ThreadedRunner
         kwargs["runner"] = ThreadedRunner(num_threads = options.threads)
         kwargs["threads"] = True
-
-    def enable_processes_pyro(nprocesses):
-        require_posix("--processes_pyro")
-        require_modules("--processes_pyro", "Pyro")
-        from running import PyroRunner
-        kwargs["runner"] = PyroRunner(max_processes = nprocesses)
-
-    def enable_processes_old(nprocesses):
-        require_posix("--processes_old")
-        from running import ProcessedRunner
-        kwargs["runner"] = ProcessedRunner(max_processes = nprocesses)
-
-    if options.processes_pyro is not None:
-        enable_processes_pyro(options.processes_pyro)
-        
-    if options.processes_old is not None:
-        enable_processes_old(options.processes_old)
-
-    if options.processes is not None:
-        try:
-            enable_processes_pyro(options.processes)
-        except ArgumentsError:
-            enable_processes_old(options.processes)
 
     if options.profiler is not None:
         # this module is sometimes missing, apparently its license is a problem
