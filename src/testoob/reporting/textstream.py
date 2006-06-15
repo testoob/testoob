@@ -102,11 +102,17 @@ class TextStreamReporter(BaseReporter):
         if self.dots or self.showAll:
             self._write("\n")
 
+        if not self.immediate:
+            self._printErrors()
+
         if len(self.skips) > 0:
             self._printSkipped()
 
-        if not self.immediate:
-            self._printErrors()
+        if len(self.errors) > 0:
+            self._printShortErrors("Erred", self.errors)
+
+        if len(self.failures) > 0:
+            self._printShortErrors("Failed", self.failures)
 
         self._writeln(self.separator2)
         self._printResults()
@@ -123,6 +129,15 @@ class TextStreamReporter(BaseReporter):
             "\n".join([
                 " - %s (%s)" % (test, err.exception_value())
                 for (test, err) in self.skips
+            ])
+        ))
+
+    def _printShortErrors(self, flavour, errors):
+        self._writeln( self._decorateFailure("%s %d tests" % (flavour, len(errors))) )
+        self._writeln( self._decorateFailure(
+            "\n".join([
+                " - %s" % test
+                for (test, err) in errors
             ])
         ))
 

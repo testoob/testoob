@@ -92,9 +92,11 @@ FAIL: testFailure \(.*suites\.CaseFailure\.testFailure\)
 ----------------------------------------------------------------------
 .*AssertionError
 
+Failed 1 tests
+ - testFailure \(suites\.CaseFailure\)
 ----------------------------------------------------------------------
 Ran 1 test in \d\.\d+s
-FAILED \(failures=1\)$
+FAILED \(failures=1\)
 """.strip()
 
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
@@ -355,6 +357,9 @@ FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
 .*
 AssertionError: Timeout
 
+Failed 2 tests
+ - testBuisy \(suites.CaseSlow\)
+ - testSleep \(suites.CaseSlow\)
 ----------------------------------------------------------------------
 Ran 2 tests in 2\.\d+s
 """
@@ -375,6 +380,10 @@ FAIL: testFailure \(suites\.CaseMixed\.testFailure\)
 .*
 AssertionError
 
+Erred 1 tests
+ - testError \(suites\.CaseMixed\)
+Failed 1 tests
+ - testFailure \(suites\.CaseMixed\)
 ----------------------------------------------------------------------
 Ran 5 tests in (5|6)\.\d+s
 FAILED \(failures=1, errors=1\)
@@ -432,6 +441,10 @@ Run's output
 Starting test
 Failing\.\.\.
 
+Erred 1 tests
+ - testError \(suites\.CaseVerbous\)
+Failed 1 tests
+ - testFailure \(suites\.CaseVerbous\)
 ----------------------------------------------------------------------
 Ran 3 tests in 0\.\d+s
 FAILED \(failures=1, errors=1\)
@@ -465,6 +478,10 @@ Starting test
 Failing\.\.\.
 ======================================================================
 \.
+Erred 1 tests
+ - testError \(suites\.CaseVerbous\)
+Failed 1 tests
+ - testFailure \(suites\.CaseVerbous\)
 ----------------------------------------------------------------------
 Ran 3 tests in 0\.\d+s
 FAILED \(failures=1, errors=1\)
