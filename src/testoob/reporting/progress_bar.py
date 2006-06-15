@@ -18,37 +18,51 @@
 from Tkinter import *
 from threading import Thread
 class ProgressBarGuiThread(Thread):
-    def __init__(self, num_tests):
+    def __init__(self, num_tests, bar_width):
         Thread.__init__(self)
-        self._num_tests = num_tests
+        self.num_tests = num_tests
+        self.bar_width = bar_width
 
     def run(self):
-        self._root = Tk()
-        self._count = 0
-        self._textVar = StringVar()
-        self._textVar.set(self.percent_string)
-        Label(self._root, textvariable=self._textVar).pack()
-        self._root.mainloop()
+        self.root = Tk()
+        self.count = 0
+        self.textVar = StringVar()
+        self.update()
+        Label(self.root, textvariable=self.textVar).pack()
+        self.root.mainloop()
 
-    percent = property(lambda self: 100 * self._count / self._num_tests)
-    percent_string = property( lambda self: "%%%3d" % self.percent )
+    ratio = property(lambda self: float(self.count) / float(self.num_tests))
+    percent = property(lambda self: "%%%d" % int(100 * self.ratio))
+
+    text_bar = property(lambda self: self.x)
+
+    status = property(lambda self: self.percent)
     
     def advance(self):
-        self._count += 1
-        self._textVar.set(self.percent_string)
+        self.count += 1
+        self.update()
 
     def die(self):
-        self._root.quit()
+        self.root.quit()
 
         # Tk complains when __del__ is called from different thread
-        del self._root, self._textVar
+        del self.root, self.textVar
+
+    def update(self):
+        self.textVar.set(self.status)
 
 from base import BaseReporter
 class ProgressBarReporter(BaseReporter):
     "Displays a progress bar"
+
+    BAR_WIDTH = 30
+
     def start(self):
         BaseReporter.start(self)
-        self._pbg = ProgressBarGuiThread(num_tests=self.parameters["num_tests"])
+        self._pbg = ProgressBarGuiThread(
+            num_tests=self.parameters["num_tests"],
+            bar_width = self.BAR_WIDTH,
+        )
         self._pbg.start()
 
     def done(self):
