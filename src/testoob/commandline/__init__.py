@@ -4,3 +4,4 @@ import html_option
 import regex_option
 import list_option
 import processes_option
+import randomize_option
