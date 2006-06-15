@@ -176,7 +176,10 @@ class FailInTheMiddle(unittest.TestCase):
     def test_d_failing(self): self.fail()
     def test_e(self): pass
     def test_f(self): pass
-    def test_g(self): pass
+    def test_g_failing(self): pass
+    def test_h(self): pass
+    def test_i(self): pass
+
 
 def suite():
     result = unittest.TestSuite()
