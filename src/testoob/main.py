@@ -40,7 +40,6 @@ def _arg_parser():
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("-s", "--silent", action="store_true", help="no output to terminal")
-    p.add_option("--html", metavar="FILE", help="output results in HTML")
     color_choices = ["never", "always", "auto"]
     p.add_option("--color-mode", metavar="WHEN", type="choice", choices=color_choices, default="auto", help="When should output be in color? Choices are " + str(color_choices) + ", default is '%default'")
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
@@ -241,11 +240,6 @@ def _main(suite, defaultTest, options, test_names, parser):
 
     if options.randomize_order is not None or options.randomize_seed is not None:
         randomize_order(options.randomize_seed)
-
-    if options.html is not None:
-        require_modules("--html", "Ft.Xml")
-        from reporting import HTMLReporter
-        kwargs["reporters"].append( HTMLReporter(filename=options.html) )
 
     def auto_color_support(stream):
         if not hasattr(stream, "isatty"):
