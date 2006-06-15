@@ -15,7 +15,6 @@
 
 "Simple runner"
 
-# TODO: Why do we have two SimpleRunner classes?
 from baserunner import BaseRunner
 class SimpleRunner(BaseRunner):
     "Simple runner, simply runs each test (what more do you need? :-)"

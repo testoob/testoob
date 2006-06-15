@@ -31,11 +31,3 @@ class BaseRunner(object):
 
     def isSuccessful(self):
         return self.reporter.isSuccessful()
-
-# TODO: Why do we have two SimpleRunner classes?
-class SimpleRunner(BaseRunner):
-    def run(self, fixture):
-        BaseRunner.run(self, fixture)
-        fixture(self.reporter)
-        return self.reporter.isSuccessful()
-
