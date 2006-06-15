@@ -2,18 +2,10 @@
 import sys
 
 def parseArgs(printUsage=False):
-    usage="""%prog [options] [test_file] [test1 [test2 [...]]]
-
-examples:
-  %prog myFile.py                          - run default set of tests
-  %prog myFile.py MyTestSuite              - run suite 'MyTestSuite'
-  %prog myFile.py MyTestCase.testSomething - run MyTestCase.testSomething
-  %prog myFile.py MyTestCase               - run all 'test*' test methods in MyTestCase"""
-
     if printUsage:
         sys.argv.append("-h")
 
-    parser = testoob_main("_arg_parser")(usage)
+    parser = testoob_main("_arg_parser")()
     options, free_args = parser.parse_args()
 
     if len(free_args) == 0:

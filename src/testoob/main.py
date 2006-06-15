@@ -25,15 +25,11 @@ except NameError:
         # Python 2.2 compatibility
         from compatibility.sets import Set as set
 
+import commandline
 
-def _arg_parser(usage):
-    try:
-        import optparse
-    except ImportError:
-        from compatibility import optparse
+def _arg_parser():
+    p = commandline.parsing.parser
 
-    formatter=optparse.TitledHelpFormatter(max_help_position=30)
-    p = optparse.OptionParser(usage=usage, formatter=formatter)
     p.add_option("--version", action="store_true", help="Print the version of testoob")
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
@@ -43,7 +39,6 @@ def _arg_parser(usage):
     p.add_option("--list-formatted", metavar="FORMATTER", help="Like option '-l', just formatted (e.g. csv).")
     p.add_option("--regex", help="Filtering regular expression")
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
-    p.add_option("--xml", metavar="FILE", help="output results in XML")
     p.add_option("-s", "--silent", action="store_true", help="no output to terminal")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
     p.add_option("--pdf", metavar="FILE", help="output results in PDF (requires ReportLab)")
@@ -159,7 +154,7 @@ def _main(suite, defaultTest, options, test_names, parser):
     conflicting_options("processes", "processes_old", "processes_pyro", "debug")
     conflicting_options("capture", "list")
 
-    kwargs = {
+    commandline.parsing.kwargs = {
         "verbosity" : _get_verbosity(options),
         "immediate" : options.immediate,
         "stop_on_fail" : options.stop_on_fail,
@@ -169,6 +164,10 @@ def _main(suite, defaultTest, options, test_names, parser):
         "interval" : options.interval,
         "silent": options.silent,
     }
+    kwargs = commandline.parsing.kwargs # TODO: convert to calls to commandline.parsing.kwargs
+
+    for processor in commandline.parsing.option_processors:
+        processor(options)
 
     def get_test_loader():
         if options.test_method_regex is not None:
@@ -260,10 +259,6 @@ def _main(suite, defaultTest, options, test_names, parser):
 
     if options.randomize_order is not None or options.randomize_seed is not None:
         randomize_order(options.randomize_seed)
-
-    if options.xml is not None:
-        from reporting import XMLFileReporter
-        kwargs["reporters"].append( XMLFileReporter(filename=options.xml) )
 
     if options.html is not None:
         require_modules("--html", "Ft.Xml")
@@ -367,19 +362,11 @@ def kwarg_to_option(arg, value):
         return "--%s=%s" % (cmdarg, value)
 
 def main(suite=None, defaultTest=None, **kwargs):
-    usage="""%prog [options] [test1 [test2 [...]]]
-
-examples:
-  %prog                          - run default set of tests
-  %prog MyTestSuite              - run suite 'MyTestSuite'
-  %prog MyTestCase.testSomething - run MyTestCase.testSomething
-  %prog MyTestCase               - run all 'test*' test methods in MyTestCase"""
-
     import sys
     for arg, value in kwargs.items():
         sys.argv.append(kwarg_to_option(arg, value))
     
-    parser = _arg_parser(usage)
+    parser = _arg_parser()
     options, test_names = parser.parse_args()
 
     try:
