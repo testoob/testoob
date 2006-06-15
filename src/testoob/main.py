@@ -41,7 +41,6 @@ def _arg_parser():
     p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
     p.add_option("-s", "--silent", action="store_true", help="no output to terminal")
     p.add_option("--html", metavar="FILE", help="output results in HTML")
-    p.add_option("--pdf", metavar="FILE", help="output results in PDF (requires ReportLab)")
     color_choices = ["never", "always", "auto"]
     p.add_option("--color-mode", metavar="WHEN", type="choice", choices=color_choices, default="auto", help="When should output be in color? Choices are " + str(color_choices) + ", default is '%default'")
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
@@ -112,28 +111,11 @@ def _get_suites(suite, defaultTest, test_names, test_loader=None):
         print >>sys.stderr, "ERROR: Can't find test case '%s'" % testName(e)
         sys.exit(1)
 
-class ArgumentsError(Exception): pass
+from commandline.parsing import ArgumentsError
 
 def _main(suite, defaultTest, options, test_names, parser):
 
-    def require_modules(option, *modules):
-        assert len(modules) > 0
-        missing_modules = []
-        for modulename in modules:
-            try:
-                __import__(modulename)
-            except ImportError:
-                missing_modules.append(modulename)
-        if missing_modules:
-            raise ArgumentsError(
-                    "option '%(option)s' requires missing modules "
-                    "%(missing_modules)s" % vars())
-
-    def require_posix(option):
-        try:
-            import posix
-        except ImportError:
-            raise ArgumentsError("option '%s' requires a POSIX environment" % option)
+    from commandline.parsing import require_posix, require_modules
 
     def conflicting_options(*option_names):
         given_options = [
@@ -264,11 +246,6 @@ def _main(suite, defaultTest, options, test_names, parser):
         require_modules("--html", "Ft.Xml")
         from reporting import HTMLReporter
         kwargs["reporters"].append( HTMLReporter(filename=options.html) )
-
-    if options.pdf is not None:
-        require_modules("--pdf", "reportlab")
-        from reporting import PdfReporter
-        kwargs["reporters"].append( PdfReporter(filename=options.pdf) )
 
     def auto_color_support(stream):
         if not hasattr(stream, "isatty"):
