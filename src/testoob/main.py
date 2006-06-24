@@ -266,13 +266,17 @@ def kwarg_to_option(arg, value):
     else:
         return "--%s=%s" % (cmdarg, value)
 
+def _parse_args():
+    parser = _arg_parser()
+    options, args = parser.parse_args()
+    return parser, options, args
+
 def main(suite=None, defaultTest=None, **kwargs):
     import sys
     for arg, value in kwargs.items():
         sys.argv.append(kwarg_to_option(arg, value))
     
-    parser = _arg_parser()
-    options, test_names = parser.parse_args()
+    parser, options, test_names = _parse_args()
 
     try:
         sys.exit(not _main(suite, defaultTest, options, test_names, parser))

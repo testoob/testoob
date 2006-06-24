@@ -5,8 +5,7 @@ def parseArgs(printUsage=False):
     if printUsage:
         sys.argv.append("-h")
 
-    parser = testoob_main("_arg_parser")()
-    options, free_args = parser.parse_args()
+    parser, options, free_args = testoob_main("_parse_args")()
 
     if len(free_args) == 0:
         parser.error("No filename specified")
