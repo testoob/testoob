@@ -1,5 +1,5 @@
 kwargs = {
-    'packages' : ['testoob', 'testoob.compatibility', 'testoob.reporting', 'testoob.running'],
+    'packages' : ['testoob', 'testoob.compatibility', 'testoob.reporting', 'testoob.running', 'testoob.commandline'],
     'package_dir' : {'': 'src'},
     'scripts'  : ['src/testoob/testoob'],
 

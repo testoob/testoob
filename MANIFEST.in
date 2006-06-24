@@ -5,6 +5,5 @@ include docs/CHANGELOG
 include docs/COPYING
 include docs/INSTALL
 include docs/LICENSE-2.0.txt
-include src/testoob/reporting/html_report.xsl
 
 recursive-include tests *.py

@@ -31,7 +31,7 @@ examples:
     try:
         import optparse
     except ImportError:
-        from compatibility import optparse
+        from testoob.compatibility import optparse
 
     formatter=optparse.TitledHelpFormatter(max_help_position=30)
     return optparse.OptionParser(usage=usage, formatter=formatter)
