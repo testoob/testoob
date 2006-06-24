@@ -9,7 +9,7 @@ def parseArgs(printUsage=False):
     options, free_args = parser.parse_args()
 
     if len(free_args) == 0:
-        parseArgs(printUsage=True)
+        parser.error("No filename specified")
     file_name = free_args[0]
     test_names = free_args[1:]
 
