@@ -4,6 +4,46 @@
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
+== Testoob 1.1, 24 June, 2006
+
+Enhancements:
+ * Optimizations have made Testoob over 4 times faster, #233
+ * A summary of failed tests is now printed after the run, #252
+ * Added a simple Tk GUI progress report with --pbar, #253
+ * A better assertRaises, #42
+ * Profiling support with --profile, #163 + #164
+ * Silent running with --silent, #225
+ * Graceful behavior on interrupt (Ctrl-C), #231
+ * Optionally skip a command-line test _after_ the command is run, #241
+
+Bugfixes:
+ * An installation bug cause HTML reports to not work, #219
+ * Coverage ignores C extensions, #205
+ * Coverage now works with Python2.2, #198
+ * --timed-repeat calls setUp/tearDown, #201
+ * Fixed coverage error due to a bug in std. module 'trace', #206
+ * Exit with error on failure also when using testoob.main, #226
+ * --repeat and --list now work together, #232
+ * Fixed XML import error, #234
+ * Skipping tests now works with --processes, #235
+ * Fixed html_standalone.py synax error, #247
+ * Ignore duplicate suites on the command line, #172
+ * Fixed passing arguments with values to testoob.main(), #173
+
+Internal:
+ * Added a plugin mechanism for command-line options, #175
+ * Cleaned up ErrInfo, TestInfo, and PyroRunner, #236
+ * Limit no. of profiling lines printed, #242
+ * Show where the profiling stats are saved, #240
+ * Check for 'profile' module, not included by default in Debian, #238
+ * Proper error message when hotshot stats file is corrupt, #237
+
+New contributors:
+ * Aya Horwitz
+ * Roi "Kipi" Degani
+ * Tomer Alon
+ * Yoram Bachrach
+
 == Testoob 1.0, 28 April, 2006
 
 Many thanks to Nir Soffer and Bryce Hendrix, who both submitted an amazing
