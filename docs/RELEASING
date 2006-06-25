@@ -22,6 +22,8 @@ Lets assume we're releasing version 6.2
 * Create a news announcement from the most recent changelog entry.
   A Sourceforge-style announcement works well for most news channels.
 
+* Update the news on the website + upload the website
+
 * Upload news announcement:
   - Sourceforge (http://sourceforge.net/news/submit.php?group_id=138557)
   - Freshmeat (http://freshmeat.net/projects/testoob)
@@ -36,8 +38,6 @@ Lets assume we're releasing version 6.2
   - Wikipedia
   - The Python Wiki
 
-* Update the news on the website
-
-* Upload the new website
+* Add a ticket on https://bugs.gentoo.org/ to package the release, and assign to to Lukasz Strzygowski <lucass_gentoo_org>
 
 * Celebrate
