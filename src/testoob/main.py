@@ -15,6 +15,8 @@
 
 "main() implementation"
 
+import os, sys
+
 try:
     set
 except NameError:
@@ -266,9 +268,36 @@ def kwarg_to_option(arg, value):
     else:
         return "--%s=%s" % (cmdarg, value)
 
+def _config_file_args():
+    filename = os.path.expanduser("~/.testoobrc")
+    if not os.path.exists(filename):
+        return [] # No config file
+
+    import ConfigParser
+    try:
+        config = ConfigParser.ConfigParser()
+        config.read(filename)
+
+        result = []
+        for option in config.options("default"):
+            value = config.get("default", option)
+            if value.lower() in ("true", "false"):
+                if value.lower() == "true":
+                    result.append("--%s" % option)
+            else:
+                result.append("--%s=%s" % (option, value))
+
+        return result
+    except ConfigParser.Error, e:
+        import warnings
+        warnings.warn("Error reading config file: %s" % e)
+        return []
+
 def _parse_args():
+    args = _config_file_args() + sys.argv[1:]
+
     parser = _arg_parser()
-    options, args = parser.parse_args()
+    options, args = parser.parse_args(args)
     return parser, options, args
 
 def main(suite=None, defaultTest=None, **kwargs):
