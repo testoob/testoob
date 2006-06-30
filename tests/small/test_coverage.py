@@ -1,7 +1,6 @@
 "coverage tests"
 
 import helpers
-helpers.fix_include_path()
 
 from os.path import abspath
 

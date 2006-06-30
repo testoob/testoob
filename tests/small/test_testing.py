@@ -1,6 +1,3 @@
-import helpers
-helpers.fix_include_path()
-
 import testoob
 import testoob.testing as tt
 from unittest import TestCase

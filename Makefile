@@ -13,7 +13,7 @@ WEBDISTFILE = $(DISTDIR)/testoob_website-$(VERSION).tar.bz2
 all:
 	@echo nothing to be done
 
-test_with = $(1) ./src/testoob/testoob $(SUITEFILE) suite $(ARGS)
+test_with = TESTOOB_DEVEL_TEST=1 $(1) ./src/testoob/testoob $(SUITEFILE) suite $(ARGS)
 .PHONY: test
 test:
 	$(call test_with,python)

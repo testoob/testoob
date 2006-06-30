@@ -1,3 +1,8 @@
+import os, sys
+def in_development_mode():
+    "True if we're in development mode, False if we're deployed"
+    return "TESTOOB_DEVEL_TEST" in os.environ
+
 def project_subpath(*components):
     from os.path import dirname, join, normpath
     return normpath(join(dirname(__file__), "..", *components))
@@ -5,15 +10,28 @@ def project_subpath(*components):
 def module_path():
     return project_subpath("src")
 
+def which(executable):
+    import procutils
+    results = procutils.which(executable)
+    if len(results) == 0:
+        raise RuntimeError("Executable %r not found in the path" % executable)
+    if len(results) > 1:
+        warnings.warn("Found more than one instance of %r in the path, using %r, options are %s" % (executable, results[0], results))
+    return results[0]
+
 def executable_path():
-    return project_subpath("src", "testoob", "testoob")
+    if in_development_mode():
+        return project_subpath("src", "testoob", "testoob")
+    else:
+        return which("testoob")
 
-def fix_include_path():
-    import sys
-    if module_path() not in sys.path:
-        sys.path.insert(0, module_path())
+def add_module_path(path):
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
-fix_include_path()
+if in_development_mode():
+    print "Development mode: adding %r to sys.path" % module_path()
+    add_module_path( module_path() )
 
 # TODO: subclass testoob.reporting.BaseReporter, implements most of the methods here
 class ReporterWithMemory:

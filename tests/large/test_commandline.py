@@ -1,7 +1,5 @@
-import helpers
-helpers.fix_include_path()
-
 import unittest, testoob, os, sys, tempfile
+import helpers
 import testoob.testing # for skip()
 
 _suite_file = os.path.abspath(helpers.project_subpath("tests/suites.py"))
