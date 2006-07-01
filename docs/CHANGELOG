@@ -4,6 +4,10 @@
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
+== Testoob 1.11, 1 July, 2006
+
+Bugfix release, some options wouldn't run (Thanks Jochen!)
+
 == Testoob 1.1, 24 June, 2006
 
 Enhancements:
