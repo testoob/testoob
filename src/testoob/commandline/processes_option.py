@@ -6,12 +6,12 @@ parsing.parser.add_option("--processes_old", metavar="NUM_PROCESSES", type="int"
 def enable_processes_pyro(nprocesses):
     parsing.require_posix("--processes_pyro")
     parsing.require_modules("--processes_pyro", "Pyro")
-    from running import PyroRunner
+    from testoob.running import PyroRunner
     parsing.kwargs["runner"] = PyroRunner(max_processes = nprocesses)
 
 def enable_processes_old(nprocesses):
     parsing.require_posix("--processes_old")
-    from running import ProcessedRunner
+    from testoob.running import ProcessedRunner
     parsing.kwargs["runner"] = ProcessedRunner(max_processes = nprocesses)
 
 def process_options(options):

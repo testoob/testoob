@@ -20,7 +20,7 @@ def randomize_order(seed):
         seed = non_negative_seed()
     import sys
     print >>sys.stderr, "seed=%s" % seed
-    import extracting
+    from testoob import extracting
     parsing.kwargs["extraction_decorators"].append(extracting.randomize(seed))
 
 def process_options(options):
