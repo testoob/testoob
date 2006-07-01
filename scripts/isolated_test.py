@@ -105,7 +105,7 @@ def main():
 
     if len(args) != 1:
         parser.error("bad arguments")
-    archive = args[0]
+    archive = os.path.normpath(os.path.abspath(args[0]))
 
     if options.python is None:
         parser.error("missing '--python' argument")
