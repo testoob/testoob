@@ -3,6 +3,12 @@
 
 import tempfile, os, sys, glob, optparse, warnings
 
+def absnorm(path):
+    return os.path.normpath(os.path.abspath(path))
+
+def absjoin(*args):
+    return absnorm(os.path.join(*args))
+
 def temp_dir(suffix=""):
     return tempfile.mkdtemp(prefix="testoob_isolated_test_", suffix=suffix)
 
@@ -14,9 +20,6 @@ def python_executable():
 
 def extract_archive(archive_file):
     os.system("tar jxf %s" % archive_file)
-
-def archive_dir():
-    return glob_one_entry("*")
 
 def install_package(install_dir):
     os.system("%s setup.py install --prefix=%s 1>/dev/null" % (python_executable(), install_dir))
@@ -58,43 +61,51 @@ class Environment:
         self.push_path_var("PYTHONPATH", newpath)
 
     def site_packages_dir(self, installdir):
-        return glob_one_entry(os.path.join(installdir, "lib", "python*", "site-packages"))
+        return glob_one_entry(absjoin(installdir, "lib", "python*", "site-packages"))
     
     def update_for_install_dir(self, installdir):
-        self.push_path(os.path.join(installdir, "bin"))
+        self.push_path(absjoin(installdir, "bin"))
         self.push_pythonpath(self.site_packages_dir(installdir))
 
     def restore(self):
         self.restore_variable("PATH")
         self.restore_variable("PYTHONPATH")
 
+def test_installation(install_dir, tests_dir):
+    environment = Environment()
+    try:
+        environment.update_for_install_dir(install_dir)
+        os.chdir(tests_dir)
+        os.system("%s alltests.py" % python_executable())
+    finally:
+        environment.restore()
+
+def test_source(source_dir):
+    install_dir = temp_dir("_install")
+    print "install_dir:", install_dir
+
+    try:
+        os.chdir(source_dir)
+        install_package(install_dir)
+        test_installation(install_dir, tests_dir=os.path.join(source_dir, "tests"))
+        
+    finally:
+        os.chdir("/")
+        remove_dir(install_dir)
+
 def test_archive(archive_file):
     extract_dir = temp_dir("_extract")
-    install_dir = temp_dir("_install")
-    environment = Environment()
-
     print "extract_dir:", extract_dir
-    print "install_dir:", install_dir
+
     try:
         os.chdir(extract_dir)
-
         extract_archive(archive_file)
-        
-        os.chdir( archive_dir() )
-
-        install_package(install_dir)
-
-        environment.update_for_install_dir(install_dir)
-
-        os.chdir("tests")
-
-        os.system("%s alltests.py" % python_executable())
+        archive_dir = absnorm(glob_one_entry("*"))
+        test_source( source_dir = archive_dir )
         
     finally:
         os.chdir("/")
         remove_dir(extract_dir)
-        remove_dir(install_dir)
-        environment.restore()
 
 
 def main():
@@ -105,7 +116,7 @@ def main():
 
     if len(args) != 1:
         parser.error("bad arguments")
-    archive = os.path.normpath(os.path.abspath(args[0]))
+    archive = absnorm(args[0])
 
     if options.python is None:
         parser.error("missing '--python' argument")
