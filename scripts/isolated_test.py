@@ -12,9 +12,6 @@ def absjoin(*args):
 def temp_dir(suffix=""):
     return tempfile.mkdtemp(prefix="testoob_isolated_test_", suffix=suffix)
 
-def remove_dir(d):
-    os.system("rm -fr %s" % d)
-
 def python_executable():
     return sys.executable
 
@@ -31,6 +28,24 @@ def glob_one_entry(pattern):
     if len(entries) == 0:
         raise RuntimeError("expected 1 entry, got none")
     return entries[0]
+
+class TempDirs:
+    def __init__(self, prefix="testoob_isolated_test_"):
+        self.dirs = []
+        self.prefix = prefix
+    def create(self, description):
+        result = tempfile.mkdtemp(prefix=self.prefix, suffix="_" + description)
+        self.dirs.append(result)
+        print "%s directory: %s" % (description, result)
+        return result
+    def cleanup(self):
+        os.chdir("/")
+        for dir in self.dirs:
+            self._remove_dir(dir)
+    def _remove_dir(self, dir):
+        os.system("rm -fr %s" % dir)
+
+temp_dirs = TempDirs()
 
 class Environment:
     def __init__(self):
@@ -81,32 +96,17 @@ def test_installation(install_dir, tests_dir):
         environment.restore()
 
 def test_source(source_dir):
-    install_dir = temp_dir("_install")
-    print "install_dir:", install_dir
-
-    try:
-        os.chdir(source_dir)
-        install_package(install_dir)
-        test_installation(install_dir, tests_dir=os.path.join(source_dir, "tests"))
+    install_dir = temp_dirs.create("install")
+    os.chdir(source_dir)
+    install_package(install_dir)
+    test_installation(install_dir, tests_dir=os.path.join(source_dir, "tests"))
         
-    finally:
-        os.chdir("/")
-        remove_dir(install_dir)
-
 def test_archive(archive_file):
-    extract_dir = temp_dir("_extract")
-    print "extract_dir:", extract_dir
-
-    try:
-        os.chdir(extract_dir)
-        extract_archive(archive_file)
-        archive_dir = absnorm(glob_one_entry("*"))
-        test_source( source_dir = archive_dir )
-        
-    finally:
-        os.chdir("/")
-        remove_dir(extract_dir)
-
+    extract_dir = temp_dirs.create("extract")
+    os.chdir(extract_dir)
+    extract_archive(archive_file)
+    archive_dir = absnorm(glob_one_entry("*"))
+    test_source( source_dir = archive_dir )
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options] [archive-file]")
@@ -114,16 +114,20 @@ def main():
     parser.add_option("--archive", help="The archive to extract and test (default: None)")
     parser.add_option("--source-dir", help="The source directory to install from (default: '%default')", default=".")
 
-    options, args = parser.parse_args()
+    try:
 
-    if len(args) != 0:
-        parser.error("bad arguments")
+        options, args = parser.parse_args()
 
-    if options.archive:
-        test_archive( absnorm(options.archive) )
-    
-    else:
-        test_source( absnorm(options.source_dir) )
+        if len(args) != 0:
+            parser.error("bad arguments")
+
+        if options.archive:
+            test_archive( absnorm(options.archive) )
+        
+        else:
+            test_source( absnorm(options.source_dir) )
+    finally:
+        temp_dirs.cleanup()
 
 if __name__ == "__main__":
     main()
