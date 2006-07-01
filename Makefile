@@ -24,6 +24,16 @@ testall:
 	$(call test_with,python2.3)
 	$(call test_with,python2.2)
 
+.PHONY: isolated_test
+isolated_test:
+	./scripts/isolated_test.py
+
+.PHONY: isolated_testall
+isolated_testall:
+	./scripts/isolated_test.py --python=python2.4
+	./scripts/isolated_test.py --python=python2.3
+	./scripts/isolated_test.py --python=python2.2 --install-python=python
+
 .PHONY: commit_stats
 commit_stats:
 	svn log `svn info|grep '^Repository Root'|awk '{print $$3}'` | grep '^r[0-9].*lines\?'|cut -d'|' -f2|sort|uniq -c|sort -n
