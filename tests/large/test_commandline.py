@@ -170,7 +170,8 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
         try:
             testoob.testing.command_line(
                 args,
-                skip_check = _missing_modules_skip_check
+                skip_check = _missing_modules_skip_check,
+                expected_error_regex = 'Ran [0-9]+ tests',
             )
 
             return safe_read(output_file)
