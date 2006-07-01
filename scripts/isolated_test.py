@@ -100,25 +100,31 @@ class Environment:
         self.restore_variable("PATH")
         self.restore_variable("PYTHONPATH")
 
-def test_installation(install_dir, tests_file, python):
+def test_installation(install_dir, tests_file, python, test_args):
     environment = Environment()
+    def cmdline():
+        result = "%s %s" % (python, tests_file)
+        if test_args:
+            result += " " + test_args
+        return result
     try:
         environment.update_for_install_dir(install_dir)
-        system("%s %s" % (python, tests_file))
+        system(cmdline())
     finally:
         environment.restore()
 
-def test_source(source_dir, python, install_python):
+def test_source(source_dir, python, install_python, test_args):
     install_dir = temp_dirs.create("install")
     chdir(source_dir)
     install_package(install_dir, python=install_python)
     test_installation(
         install_dir,
         tests_file=absjoin(source_dir, "tests", "alltests.py"),
-        python=python
+        python=python,
+        test_args=test_args,
     )
         
-def test_archive(archive_file, python, install_python):
+def test_archive(archive_file, python, install_python, test_args):
     extract_dir = temp_dirs.create("extract")
     chdir(extract_dir)
     extract_archive(archive_file)
@@ -126,7 +132,8 @@ def test_archive(archive_file, python, install_python):
     test_source(
             source_dir = archive_dir,
             python = python,
-            install_python = install_python
+            install_python = install_python,
+            test_args = test_args,
         )
 
 def main():
@@ -135,6 +142,7 @@ def main():
     parser.add_option("--source-dir", help="The source directory to install from (default: '%default')", default=".")
     parser.add_option("--python", help="The Python executable to use (default: '%default')", default="python")
     parser.add_option("--install-python", help="The Python executable to install with (default: what's specified with --python)")
+    parser.add_option("--test-args", help="Additional arguments to the test command line")
 
     options, args = parser.parse_args()
 
@@ -155,7 +163,8 @@ def main():
             test_source(
                     absnorm(options.source_dir),
                     options.python,
-                    options.install_python
+                    options.install_python,
+                    options.test_args
                 )
     finally:
         temp_dirs.cleanup()

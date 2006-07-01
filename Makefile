@@ -24,15 +24,18 @@ testall:
 	$(call test_with,python2.3)
 	$(call test_with,python2.2)
 
+
+ISOLATED_TEST_CMD = ./scripts/isolated_test.py --test-args="$(ARGS)"
+
 .PHONY: isolated_test
 isolated_test:
-	./scripts/isolated_test.py
+	$(ISOLATED_TEST_CMD)
 
 .PHONY: isolated_testall
 isolated_testall:
-	./scripts/isolated_test.py --python=python2.4
-	./scripts/isolated_test.py --python=python2.3
-	./scripts/isolated_test.py --python=python2.2 --install-python=python
+	$(ISOLATED_TEST_CMD) --python=python2.4
+	$(ISOLATED_TEST_CMD) --python=python2.3
+	$(ISOLATED_TEST_CMD) --python=python2.2 --install-python=python
 
 .PHONY: commit_stats
 commit_stats:
