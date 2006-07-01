@@ -23,12 +23,12 @@ def extract_archive(archive_file):
     }
     for suffix, rule in suffix_rules.items():
         if archive_file.endswith(suffix):
-            os.system(rule % archive_file)
+            system(rule % archive_file)
             return
     raise RuntimeError("Unknown file extenstion for %s" % os.path.basename(archive_file))
 
 def install_package(install_dir):
-    os.system("%s setup.py install --prefix=%s 1>/dev/null" % (python_executable(), install_dir))
+    system("%s setup.py install --prefix=%s 1>/dev/null" % (python_executable(), install_dir))
 
 def glob_one_entry(pattern):
     entries = glob.glob(pattern)
@@ -37,6 +37,14 @@ def glob_one_entry(pattern):
     if len(entries) == 0:
         raise RuntimeError("expected 1 entry, got none")
     return entries[0]
+
+def chdir(dir):
+    print "chdir(%r)" % dir
+    return os.chdir(dir)
+
+def system(cmd):
+    print "system(%r)" % cmd
+    return os.system(cmd)
 
 class TempDirs:
     def __init__(self, prefix="testoob_isolated_test_"):
@@ -48,11 +56,11 @@ class TempDirs:
         print "%s directory: %s" % (description, result)
         return result
     def cleanup(self):
-        os.chdir("/")
+        chdir("/")
         for dir in self.dirs:
             self._remove_dir(dir)
     def _remove_dir(self, dir):
-        os.system("rm -fr %s" % dir)
+        system("rm -fr %s" % dir)
 
 temp_dirs = TempDirs()
 
@@ -95,24 +103,23 @@ class Environment:
         self.restore_variable("PATH")
         self.restore_variable("PYTHONPATH")
 
-def test_installation(install_dir, tests_dir):
+def test_installation(install_dir, tests_file):
     environment = Environment()
     try:
         environment.update_for_install_dir(install_dir)
-        os.chdir(tests_dir)
-        os.system("%s alltests.py" % python_executable())
+        system("%s %s" % (python_executable(), tests_file))
     finally:
         environment.restore()
 
 def test_source(source_dir):
     install_dir = temp_dirs.create("install")
-    os.chdir(source_dir)
+    chdir(source_dir)
     install_package(install_dir)
-    test_installation(install_dir, tests_dir=os.path.join(source_dir, "tests"))
+    test_installation(install_dir, absjoin(source_dir, "tests", "alltests.py"))
         
 def test_archive(archive_file):
     extract_dir = temp_dirs.create("extract")
-    os.chdir(extract_dir)
+    chdir(extract_dir)
     extract_archive(archive_file)
     archive_dir = absnorm(glob_one_entry("*"))
     test_source( source_dir = archive_dir )
