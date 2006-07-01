@@ -92,8 +92,8 @@ def test_archive(archive_file):
         
     finally:
         os.chdir("/")
-        #remove_dir(extract_dir)
-        #remove_dir(install_dir)
+        remove_dir(extract_dir)
+        remove_dir(install_dir)
         environment.restore()
 
 
