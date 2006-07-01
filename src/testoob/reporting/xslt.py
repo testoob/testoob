@@ -70,14 +70,14 @@ class XSLTReporter(XMLReporter):
 
     def _create_xslt_applier(self):
         try:
-            import win32com.client
-            win32com.client.Dispatch('Microsoft.XMLDOM')
-            return XSLTReporter.WinCOMXSLTApplier
+            import Ft.Xml
+            return XSLTReporter.FourSuiteXSLTApplier
         except:
             pass
         try:
-            import Ft.Xml
-            return XSLTReporter.FourSuiteXSLTApplier
+            import win32com.client
+            win32com.client.Dispatch('Microsoft.XMLDOM')
+            return XSLTReporter.WinCOMXSLTApplier
         except:
             pass
         raise Exception,"Unable to find supported XSLT library (4Suite, MSXML)"
