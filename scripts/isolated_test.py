@@ -157,14 +157,15 @@ def main():
             test_archive(
                     absnorm(options.archive),
                     options.python,
-                    options.install_python
+                    options.install_python,
+                    options.test_args,
                 )
         else:
             test_source(
                     absnorm(options.source_dir),
                     options.python,
                     options.install_python,
-                    options.test_args
+                    options.test_args,
                 )
     finally:
         temp_dirs.cleanup()
