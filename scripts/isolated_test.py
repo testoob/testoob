@@ -74,7 +74,7 @@ class Environment:
     def push_path_var(self, varname, newpath):
         print "Adding '%s' to envvar '%s'" % (newpath, varname)
         if varname in os.environ:
-            os.environ[varname] = newpath + ":" + os.environ[varname]
+            os.environ[varname] = newpath + os.pathsep + os.environ[varname]
         else:
             os.environ[varname] = newpath
 
