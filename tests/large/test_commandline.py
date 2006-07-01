@@ -713,15 +713,10 @@ FAILED \(failures=1, errors=1\)
             self.fail("Got unexpected SkipTestException")
 
     def testTestoobMainExitWithError(self):
-        curdir = os.path.abspath(os.curdir)
-        os.chdir(helpers.project_subpath("src")) # so the tests can 'import testoob'
-        try:
-            testoob.testing.command_line(
-                args=[sys.executable, _suite_file, "CaseError"],
-                rc_predicate = lambda rc: rc != 0,
-            )
-        finally:
-            os.chdir(curdir)
+        testoob.testing.command_line(
+            args = _testoob_args(tests=["CaseError"]),
+            rc_predicate = lambda rc: rc != 0,
+        )
 
 if __name__ == "__main__":
     testoob.main()
