@@ -108,41 +108,55 @@ def test_installation(install_dir, tests_file, python):
     finally:
         environment.restore()
 
-def test_source(source_dir, python):
+def test_source(source_dir, python, install_python):
     install_dir = temp_dirs.create("install")
     chdir(source_dir)
-    install_package(install_dir, python=python)
+    install_package(install_dir, python=install_python)
     test_installation(
         install_dir,
         tests_file=absjoin(source_dir, "tests", "alltests.py"),
         python=python
     )
         
-def test_archive(archive_file, python):
+def test_archive(archive_file, python, install_python):
     extract_dir = temp_dirs.create("extract")
     chdir(extract_dir)
     extract_archive(archive_file)
     archive_dir = absnorm(glob_one_entry("*"))
-    test_source( source_dir = archive_dir, python = python )
+    test_source(
+            source_dir = archive_dir,
+            python = python,
+            install_python = install_python
+        )
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options] [archive-file]")
-    parser.add_option("--python", help="The Python executable to use (default: '%default')", default="python")
     parser.add_option("--archive", help="The archive to extract and test (default: None)")
     parser.add_option("--source-dir", help="The source directory to install from (default: '%default')", default=".")
+    parser.add_option("--python", help="The Python executable to use (default: '%default')", default="python")
+    parser.add_option("--install-python", help="The Python executable to install with (default: what's specified with --python)")
+
+    options, args = parser.parse_args()
+
+    if len(args) != 0:
+        parser.error("bad arguments")
+
+    if not options.install_python:
+        options.install_python = options.python
 
     try:
-
-        options, args = parser.parse_args()
-
-        if len(args) != 0:
-            parser.error("bad arguments")
-
         if options.archive:
-            test_archive( absnorm(options.archive), options.python )
-        
+            test_archive(
+                    absnorm(options.archive),
+                    options.python,
+                    options.install_python
+                )
         else:
-            test_source( absnorm(options.source_dir), options.python )
+            test_source(
+                    absnorm(options.source_dir),
+                    options.python,
+                    options.install_python
+                )
     finally:
         temp_dirs.cleanup()
 
