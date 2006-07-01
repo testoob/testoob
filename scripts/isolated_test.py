@@ -12,9 +12,6 @@ def absjoin(*args):
 def temp_dir(suffix=""):
     return tempfile.mkdtemp(prefix="testoob_isolated_test_", suffix=suffix)
 
-def python_executable():
-    return sys.executable
-
 def extract_archive(archive_file):
     suffix_rules = {
         ".tar.gz" : "tar -zxf %s",
@@ -27,8 +24,8 @@ def extract_archive(archive_file):
             return
     raise RuntimeError("Unknown file extenstion for %s" % os.path.basename(archive_file))
 
-def install_package(install_dir):
-    system("%s setup.py install --prefix=%s 1>/dev/null" % (python_executable(), install_dir))
+def install_package(install_dir, python):
+    system("%s setup.py install --prefix=%s 1>/dev/null" % (python, install_dir))
 
 def glob_one_entry(pattern):
     entries = glob.glob(pattern)
@@ -103,26 +100,30 @@ class Environment:
         self.restore_variable("PATH")
         self.restore_variable("PYTHONPATH")
 
-def test_installation(install_dir, tests_file):
+def test_installation(install_dir, tests_file, python):
     environment = Environment()
     try:
         environment.update_for_install_dir(install_dir)
-        system("%s %s" % (python_executable(), tests_file))
+        system("%s %s" % (python, tests_file))
     finally:
         environment.restore()
 
-def test_source(source_dir):
+def test_source(source_dir, python):
     install_dir = temp_dirs.create("install")
     chdir(source_dir)
-    install_package(install_dir)
-    test_installation(install_dir, absjoin(source_dir, "tests", "alltests.py"))
+    install_package(install_dir, python=python)
+    test_installation(
+        install_dir,
+        tests_file=absjoin(source_dir, "tests", "alltests.py"),
+        python=python
+    )
         
-def test_archive(archive_file):
+def test_archive(archive_file, python):
     extract_dir = temp_dirs.create("extract")
     chdir(extract_dir)
     extract_archive(archive_file)
     archive_dir = absnorm(glob_one_entry("*"))
-    test_source( source_dir = archive_dir )
+    test_source( source_dir = archive_dir, python = python )
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options] [archive-file]")
@@ -138,10 +139,10 @@ def main():
             parser.error("bad arguments")
 
         if options.archive:
-            test_archive( absnorm(options.archive) )
+            test_archive( absnorm(options.archive), options.python )
         
         else:
-            test_source( absnorm(options.source_dir) )
+            test_source( absnorm(options.source_dir), options.python )
     finally:
         temp_dirs.cleanup()
 
