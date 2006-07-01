@@ -110,18 +110,20 @@ def test_archive(archive_file):
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options] [archive-file]")
-    parser.add_option("--python", help="The Python executable to use (default: %default)", default="python")
+    parser.add_option("--python", help="The Python executable to use (default: '%default')", default="python")
+    parser.add_option("--archive", help="The archive to extract and test (default: None)")
+    parser.add_option("--source-dir", help="The source directory to install from (default: '%default')", default=".")
 
     options, args = parser.parse_args()
 
-    if len(args) != 1:
+    if len(args) != 0:
         parser.error("bad arguments")
-    archive = absnorm(args[0])
 
-    if options.python is None:
-        parser.error("missing '--python' argument")
+    if options.archive:
+        test_archive( absnorm(options.archive) )
     
-    test_archive(archive)
+    else:
+        test_source( absnorm(options.source_dir) )
 
 if __name__ == "__main__":
     main()
