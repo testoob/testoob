@@ -99,7 +99,7 @@ def test_archive(archive_file):
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options] [archive-file]")
-    parser.add_option("--python", help="The Python executable to use")
+    parser.add_option("--python", help="The Python executable to use (default: %default)", default="python")
 
     options, args = parser.parse_args()
 
