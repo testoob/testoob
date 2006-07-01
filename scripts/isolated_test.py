@@ -16,7 +16,16 @@ def python_executable():
     return sys.executable
 
 def extract_archive(archive_file):
-    os.system("tar jxf %s" % archive_file)
+    suffix_rules = {
+        ".tar.gz" : "tar -zxf %s",
+        ".tar.bz2" : "tar -jxf %s",
+        ".zip" : "unzip %s",
+    }
+    for suffix, rule in suffix_rules.items():
+        if archive_file.endswith(suffix):
+            os.system(rule % archive_file)
+            return
+    raise RuntimeError("Unknown file extenstion for %s" % os.path.basename(archive_file))
 
 def install_package(install_dir):
     os.system("%s setup.py install --prefix=%s 1>/dev/null" % (python_executable(), install_dir))
