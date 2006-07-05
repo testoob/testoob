@@ -16,7 +16,6 @@ def _testoob_args(tests=None, options=None, suite_file = _suite_file):
     result = [sys.executable, helpers.executable_path(), suite_file]
     if options is not None: result += options
     if tests is not None: result += tests
-    print result # XXX
     return result
 
 def _grep(pattern, string):
