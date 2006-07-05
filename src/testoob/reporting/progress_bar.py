@@ -16,12 +16,16 @@
 "Simple GUI progress bar"
 
 from Tkinter import *
-from threading import Thread
-class ProgressBarGuiThread(Thread):
+import threading
+class ProgressBarGuiThread(threading.Thread):
     def __init__(self, num_tests, bar_width):
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
         self.num_tests = num_tests
         self.bar_width = bar_width
+        self.ready_event = threading.Event()
+
+    def wait_until_ready(self):
+        self.ready_event.wait()
 
     def run(self):
         self.root = Tk()
@@ -29,6 +33,7 @@ class ProgressBarGuiThread(Thread):
         self.textVar = StringVar()
         self.update()
         Label(self.root, textvariable=self.textVar).pack()
+        self.ready_event.set()
         self.root.mainloop()
 
     ratio = property(lambda self: float(self.count) / float(self.num_tests))
@@ -69,6 +74,7 @@ class ProgressBarReporter(BaseReporter):
             bar_width = self.BAR_WIDTH,
         )
         self._pbg.start()
+        self._pbg.wait_until_ready()
 
     def done(self):
         BaseReporter.done(self)
