@@ -16,6 +16,7 @@ def _testoob_args(tests=None, options=None, suite_file = _suite_file):
     result = [sys.executable, helpers.executable_path(), suite_file]
     if options is not None: result += options
     if tests is not None: result += tests
+    print result # XXX
     return result
 
 def _grep(pattern, string):
@@ -716,6 +717,12 @@ FAILED \(failures=1, errors=1\)
         testoob.testing.command_line(
             args = _testoob_args(tests=["CaseError"]),
             rc_predicate = lambda rc: rc != 0,
+        )
+
+    def testPbarSanity(self):
+        testoob.testing.command_line(
+            args = _testoob_args(options=["--pbar"], tests=["CaseDigits"]),
+            expected_rc = 0,
         )
 
 if __name__ == "__main__":
