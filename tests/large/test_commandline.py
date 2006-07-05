@@ -719,9 +719,20 @@ FAILED \(failures=1, errors=1\)
         )
 
     def testPbarSanity(self):
+        def skip_check(output, error, rc):
+            import re
+            if rc == 0:
+                return
+
+            if re.search("X connection.*broken", error):
+                return "No X display"
+            if re.search(r"TclError: .*no \$DISPLAY", error):
+                return "No 'DISPLAY' variable"
+
         testoob.testing.command_line(
             args = _testoob_args(options=["--pbar"], tests=["CaseDigits"]),
             expected_rc = 0,
+            skip_check = skip_check,
         )
 
 if __name__ == "__main__":

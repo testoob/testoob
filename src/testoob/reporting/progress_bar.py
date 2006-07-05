@@ -16,25 +16,32 @@
 "Simple GUI progress bar"
 
 from Tkinter import *
-import threading
+import threading, sys
 class ProgressBarGuiThread(threading.Thread):
     def __init__(self, num_tests, bar_width):
         threading.Thread.__init__(self)
         self.num_tests = num_tests
         self.bar_width = bar_width
         self.ready_event = threading.Event()
+        self.error = None
 
     def wait_until_ready(self):
         self.ready_event.wait()
 
     def run(self):
-        self.root = Tk()
-        self.count = 0
-        self.textVar = StringVar()
-        self.update()
-        Label(self.root, textvariable=self.textVar).pack()
-        self.ready_event.set()
-        self.root.mainloop()
+        try:
+            try:
+                self.root = Tk()
+                self.count = 0
+                self.textVar = StringVar()
+                self.update()
+                Label(self.root, textvariable=self.textVar).pack()
+                self.ready_event.set()
+                self.root.mainloop()
+            except TclError:
+                self.error = sys.exc_info()
+        finally:
+            self.ready_event.set()
 
     ratio = property(lambda self: float(self.count) / float(self.num_tests))
     percent = property(lambda self: "%%%d" % int(100 * self.ratio))
@@ -75,6 +82,8 @@ class ProgressBarReporter(BaseReporter):
         )
         self._pbg.start()
         self._pbg.wait_until_ready()
+        if self._pbg.error:
+            raise self._pbg.error[1]
 
     def done(self):
         BaseReporter.done(self)
