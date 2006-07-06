@@ -250,8 +250,8 @@ class TextStreamReporter(BaseReporter):
     def _write(self, s):
         self.stream.write(s)
     def _writeln(self, s):
-        self.stream.write(s)
-        self.stream.write("\n")
+        self._write(s)
+        self._write("\n")
 
     def getDescription(self, test_info):
         default_description = test_info.extrafuncname() + " (" + self.re.sub("^__main__.", "", test_info.id()) + ")"

@@ -201,6 +201,10 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["extraction_decorators"].append(extracting.repeat(options.repeat))
 
     def auto_color_support(stream):
+        import sys
+        if sys.platform == "win32":
+            return True
+
         if not hasattr(stream, "isatty"):
             return False
         if not stream.isatty():

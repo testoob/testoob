@@ -16,7 +16,7 @@
 "Color text stream reporting"
 
 from textstream import TextStreamReporter
-class ColoredTextReporter(TextStreamReporter):
+class TermColoredTextReporter(TextStreamReporter):
     "Uses ANSI escape sequences to color the output of a text reporter"
     codes = {"reset":"\x1b[0m",
              "bold":"\x1b[01m",
@@ -54,3 +54,49 @@ class ColoredTextReporter(TextStreamReporter):
     def _decorateWarning(self, warString):
         return self._yellow(warString)
 
+class Win32ColoredTextReporter(TextStreamReporter):
+    from os.path import isfile
+    from os import sep
+    from sys import prefix
+
+    codes = {"reset":"d",
+             "red":"r",
+             "green":"g",
+             "yellow":"y"}
+
+    setcolor_path = r'%s%stestoob\setcolor.exe' % (prefix, sep)
+    setcolor_available = isfile(setcolor_path)
+
+    def _red(self, str):
+        "Make it red!"
+        return (self.codes['red'], str, self.codes['reset'])
+
+    def _green(self, str):
+        "make it green!"
+        return (self.codes['green'], str, self.codes['reset'])
+    
+    def _yellow(self, str):
+        "make it yellow!"
+        return (self.codes['yellow'], str, self.codes['reset'])
+
+    def _decorateFailure(self, errString):
+        return self._red(errString)
+
+    def _decorateSuccess(self, sccString):
+        return self._green(sccString)
+
+    def _decorateWarning(self, warString):
+        return self._yellow(warString)
+
+    def _call_setcolor(self, code):
+        if self.setcolor_available:
+            from os import system
+            system(r'"%s" %s' % (self.setcolor_path, code))
+
+    def _write(self, s):
+        if type(s) is tuple:
+            self._call_setcolor(s[0])
+            self._write(s[1])
+            self._call_setcolor(s[2])
+        else:
+            TextStreamReporter._write(self, s)
