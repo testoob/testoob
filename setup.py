@@ -2,7 +2,7 @@ kwargs = {
     'packages' : ['testoob', 'testoob.compatibility', 'testoob.reporting', 'testoob.running', 'testoob.commandline'],
     'package_dir' : {'': 'src'},
     'scripts'  : ['src/testoob/testoob'],
-    'data_files'  : [('testoob', ['setcolor.exe'])],
+    'data_files'  : [('testoob', ['other/setcolor.exe'])],
 
     # meta-data
     'name'             : 'testoob',

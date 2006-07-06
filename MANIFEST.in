@@ -5,5 +5,7 @@ include docs/CHANGELOG
 include docs/COPYING
 include docs/INSTALL
 include docs/LICENSE-2.0.txt
+include other/setcolor.exe
+include other/setcolor.c
 
 recursive-include tests *.py
