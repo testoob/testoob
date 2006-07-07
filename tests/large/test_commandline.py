@@ -545,15 +545,13 @@ FAILED \(failures=1, errors=1\)
         helpers.ensure_coverage_support()
         testoob.testing.command_line(
             self._coverageArgs("normal"),
-            expected_error_regex="covered [0-9]+% of the code",
-            expected_output_regex="lines.*cov_n.*module.*path.*TOTAL",
+            expected_error_regex="lines.*cov_n.*module.*path.*TOTAL.*covered [0-9]+% of the code",
         )
     def testMassiveCoverage(self):
         helpers.ensure_coverage_support()
         testoob.testing.command_line(
             self._coverageArgs("massive"),
-            expected_error_regex="covered [0-9]+% of the code",
-            expected_output_regex="missing.*\['[0-9]+'",
+            expected_error_regex="missing.*\['[0-9]+'.*covered [0-9]+% of the code",
         )
     def testTestMethodRegex(self):
         testoob.testing.command_line(

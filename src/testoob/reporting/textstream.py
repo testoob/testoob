@@ -15,6 +15,17 @@
 
 "A text-stream reporter, the most commonly used kind"
 
+class StreamWriter:
+    def __init__(self, stream):
+        self.stream = stream
+
+    def write(self, s):
+        self.stream.write(s)
+
+    def writeln(self, s):
+        self.write(s)
+        self.write("\n")
+
 from base import BaseReporter
 class TextStreamReporter(BaseReporter):
     "Reports to a text stream"
@@ -28,7 +39,7 @@ class TextStreamReporter(BaseReporter):
         import re
         self.re = re
         BaseReporter.__init__(self)
-        self.stream = stream
+        self.writer = StreamWriter(stream)
         self.showAll = verbosity > 1
         self.dots = verbosity == 1
         self.vassert = verbosity == 3
@@ -39,15 +50,15 @@ class TextStreamReporter(BaseReporter):
         BaseReporter.startTest(self, test_info)
         self.multiLineOutput = False
         if self.showAll:
-            self._write(self.getDescription(test_info))
-            self._write(" ... ")
+            self.writer.write(self.getDescription(test_info))
+            self.writer.write(" ... ")
 
     def _report_result(self, long_string, short_string, text_decorator):
         if self.showAll:
-            self._write("\n" * self.multiLineOutput)
-            self._writeln(text_decorator(long_string))
+            self.writer.write("\n" * self.multiLineOutput)
+            self.writer.writeln(text_decorator(long_string))
         elif self.dots:
-            self._write(text_decorator(short_string))
+            self.writer.write(text_decorator(short_string))
 
     def addSuccess(self, test_info):
         BaseReporter.addSuccess(self, test_info)
@@ -86,21 +97,21 @@ class TextStreamReporter(BaseReporter):
 
     def _printVasserts(self, test_info):
         for assertName, varList, exception in self.asserts[test_info]:
-            self._writeln("  " + self._vassertMessage(assertName, varList, exception is None))
+            self.writer.writeln("  " + self._vassertMessage(assertName, varList, exception is None))
 
     def _immediatePrint(self, test_info, err_info, flavour):
         if self.dots:
-            self._write("\n")
+            self.writer.write("\n")
         self._printOneError(flavour, test_info, err_info)
-        self._writeln(self.separator1)
+        self.writer.writeln(self.separator1)
         if self.showAll:
-            self._write("\n")
+            self.writer.write("\n")
 
     def done(self):
         BaseReporter.done(self)
 
         if self.dots or self.showAll:
-            self._write("\n")
+            self.writer.write("\n")
 
         if not self.immediate:
             self._printErrors()
@@ -114,18 +125,18 @@ class TextStreamReporter(BaseReporter):
         if len(self.failures) > 0:
             self._printShortErrors("Failed", self.failures)
 
-        self._writeln(self.separator2)
+        self.writer.writeln(self.separator2)
         self._printResults()
 
     def addAssert(self, test_info, assertName, varList, exception):
         BaseReporter.addAssert(self, test_info, assertName, varList, exception)
         if self.immediate and self.vassert:
-            self._write("\n  " + self._vassertMessage(assertName, varList, exception is None))
+            self.writer.write("\n  " + self._vassertMessage(assertName, varList, exception is None))
             self.multiLineOutput = True
     
     def _printSkipped(self):
-        self._writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
-        self._writeln( self._decorateWarning(
+        self.writer.writeln( self._decorateWarning("Skipped %d tests" % len(self.skips)) )
+        self.writer.writeln( self._decorateWarning(
             "\n".join([
                 " - %s (%s)" % (test, err.exception_value())
                 for (test, err) in self.skips
@@ -133,8 +144,8 @@ class TextStreamReporter(BaseReporter):
         ))
 
     def _printShortErrors(self, flavour, errors):
-        self._writeln( self._decorateFailure("%s %d tests" % (flavour, len(errors))) )
-        self._writeln( self._decorateFailure(
+        self.writer.writeln( self._decorateFailure("%s %d tests" % (flavour, len(errors))) )
+        self.writer.writeln( self._decorateFailure(
             "\n".join([
                 " - %s" % test
                 for (test, err) in errors
@@ -147,17 +158,17 @@ class TextStreamReporter(BaseReporter):
                 self._print_coverage_statistics(self.coverage)
             if self.cover_amount == "massive":
                 self._print_coverage(self.coverage)
-            self._writeln(self.separator2)
+            self.writer.writeln(self.separator2)
 
         testssuffix = self.testsRun > 1 and "s" or ""
-        self._write("Ran %d test%s in %.3fs" %
+        self.writer.write("Ran %d test%s in %.3fs" %
                 (self.testsRun, testssuffix, self.total_time))
         if self.cover_amount is not None:
-            self._write(" (covered %s%% of the code)" % self.coverage.total_coverage_percentage())
-        self._write("\n")
+            self.writer.write(" (covered %s%% of the code)" % self.coverage.total_coverage_percentage())
+        self.writer.write("\n")
 
         if self.isSuccessful():
-            self._writeln(self._decorateSuccess("OK"))
+            self.writer.writeln(self._decorateSuccess("OK"))
         else:
             strings = []
             if len(self.failures) > 0:
@@ -165,31 +176,31 @@ class TextStreamReporter(BaseReporter):
             if len(self.errors) > 0:
                 strings.append("errors=%d" % len(self.errors))
 
-            self._writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
+            self.writer.writeln(self._decorateFailure("FAILED (%s)" % ", ".join(strings)))
 
     def _print_coverage_statistics(self, coverage):
         modname = coverage.modname
-        print "lines   cov_n   cov%   module   (path)"
-        print "--------------------------------------"
+        print >>self.writer, "lines   cov_n   cov%   module   (path)"
+        print >>self.writer, "--------------------------------------"
         for filename, stats in coverage.getstatistics().items():
-            print "%5d   %5d   %3d%%   %s   (%s)" % (
+            print >>self.writer, "%5d   %5d   %3d%%   %s   (%s)" % (
                 stats["lines"], stats["covered"], stats["percent"], modname(filename), filename)
-        print "--------------------------------------"
-        print "%5d   %5d   %3d%%   TOTAL" % (
+        print >>self.writer, "--------------------------------------"
+        print >>self.writer, "%5d   %5d   %3d%%   TOTAL" % (
             coverage.total_lines(), coverage.total_lines_covered(), coverage.total_coverage_percentage())
 
     def _print_coverage(self, coverage):
         modname = coverage.modname
         maxmodule = max(map(lambda x: len(modname(x)), coverage.coverage.keys()))
         module_tmpl = "%%- %ds" % maxmodule
-        print module_tmpl % "module" + "   lines   cov_n   cov%   missing"
-        print "-" * maxmodule +        "---------------------------------"
+        print >>self.writer, module_tmpl % "module" + "   lines   cov_n   cov%   missing"
+        print >>self.writer, "-" * maxmodule +        "---------------------------------"
         for filename, stats in coverage.getstatistics().items():
-            print (module_tmpl + "   %5d   %5d   %3d%%   %s") % (
+            print >>self.writer, (module_tmpl + "   %5d   %5d   %3d%%   %s") % (
                 modname(filename), stats["lines"], stats["covered"], stats["percent"],
                 self._get_missing_lines_str(*coverage.coverage[filename].values()))
-        print "-" * maxmodule +        "---------------------------------"
-        print (module_tmpl + "   %5d   %5d   %3d%%") % ("TOTAL", coverage.total_lines(),
+        print >>self.writer, "-" * maxmodule +        "---------------------------------"
+        print >>self.writer, (module_tmpl + "   %5d   %5d   %3d%%") % ("TOTAL", coverage.total_lines(),
                 coverage.total_lines_covered(), coverage.total_coverage_percentage())
             
     def _get_missing_lines_str(self, lines, covered):
@@ -233,25 +244,25 @@ class TextStreamReporter(BaseReporter):
     def _printErrorList(self, flavour, errors):
         for test_info, err_info in errors:
             self._printOneError(flavour, test_info, err_info)
-            self._write("\n")
+            self.writer.write("\n")
 
     def _printOneError(self, flavour, test_info, err_info):
-        self._writeln(self.separator1)
-        self._writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test_info))))
-        self._writeln(self.separator2)
-        self._write(str(err_info))
+        self.writer.writeln(self.separator1)
+        self.writer.writeln(self._decorateFailure("%s: %s" % (flavour,self.getDescription(test_info))))
+        self.writer.writeln(self.separator2)
+        self.writer.write(str(err_info))
         output = self.getTestsOutput(test_info)
         if output != "":
-            self._writeln(self.separator1)
-            self._writeln(self._decorateWarning("Run's output"))
-            self._writeln(self.separator2)
-            self._write(output)
+            self.writer.writeln(self.separator1)
+            self.writer.writeln(self._decorateWarning("Run's output"))
+            self.writer.writeln(self.separator2)
+            self.writer.write(output)
 
+    # TODO: Remove these once colord.py also uses a writer
     def _write(self, s):
-        self.stream.write(s)
+        self.writer.write(s)
     def _writeln(self, s):
-        self._write(s)
-        self._write("\n")
+        self.writer.writeln(s)
 
     def getDescription(self, test_info):
         default_description = test_info.extrafuncname() + " (" + self.re.sub("^__main__.", "", test_info.id()) + ")"
