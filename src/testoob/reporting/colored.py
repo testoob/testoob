@@ -15,88 +15,80 @@
 
 "Color text stream reporting"
 
-from textstream import TextStreamReporter
+import os, sys
+
+ANSI_CODES = {
+    "reset"     : "\x1b[0m",
+    "bold"      : "\x1b[01m",
+    "teal"      : "\x1b[36;06m",
+    "turquoise" : "\x1b[36;01m",
+    "fuscia"    : "\x1b[35;01m",
+    "purple"    : "\x1b[35;06m",
+    "blue"      : "\x1b[34;01m",
+    "darkblue"  : "\x1b[34;06m",
+    "green"     : "\x1b[32;01m",
+    "darkgreen" : "\x1b[32;06m",
+    "yellow"    : "\x1b[33;01m",
+    "brown"     : "\x1b[33;06m",
+    "red"       : "\x1b[31;01m",
+}
+
+from textstream import TextStreamReporter, StreamWriter
+class TerminalColorWriter(StreamWriter):
+    def __init__(self, stream, color):
+        StreamWriter.__init__(self, stream)
+        self.code  = ANSI_CODES[color]
+        self.reset = ANSI_CODES["reset"]
+    def write(self, s):
+        StreamWriter.write(self, self.code)
+        StreamWriter.write(self, s)
+        StreamWriter.write(self, self.reset)
+
+class TerminalColorWriters:
+    def __init__(self, stream):
+        self.normal  = StreamWriter(stream)
+        self.success = TerminalColorWriter(stream, "green")
+        self.failure = TerminalColorWriter(stream, "red")
+        self.warning = TerminalColorWriter(stream, "yellow")
+
 class TermColoredTextReporter(TextStreamReporter):
-    "Uses ANSI escape sequences to color the output of a text reporter"
-    codes = {"reset":"\x1b[0m",
-             "bold":"\x1b[01m",
-             "teal":"\x1b[36;06m",
-             "turquoise":"\x1b[36;01m",
-             "fuscia":"\x1b[35;01m",
-             "purple":"\x1b[35;06m",
-             "blue":"\x1b[34;01m",
-             "darkblue":"\x1b[34;06m",
-             "green":"\x1b[32;01m",
-             "darkgreen":"\x1b[32;06m",
-             "yellow":"\x1b[33;01m",
-             "brown":"\x1b[33;06m",
-             "red":"\x1b[31;01m",
-             "darkred":"\x1b[31;06m"}
+    def __init__(self, *args, **kwargs):
+        kwargs["create_writers"] = TerminalColorWriters
+        TextStreamReporter.__init__(self, *args, **kwargs)
 
-    def _red(self, str):
-        "Make it red!"
-        return self.codes['red'] + str + self.codes['reset']
+WIN32_SETCOLOR_CODES = {
+    "reset"  : "d",
+    "red"    : "r",
+    "green"  : "g",
+    "yellow" : "y",
+}
 
-    def _green(self, str):
-        "make it green!"
-        return self.codes['green'] + str + self.codes['reset']
-    
-    def _yellow(self, str):
-        "make it yellow!"
-        return self.codes['yellow'] + str + self.codes['reset']
+class Win32ColorWriter(StreamWriter):
+    setcolor_path = os.path.join(sys.prefix, "testoob", "setcolor.exe")
+    setcolor_available = os.path.isfile(setcolor_path)
 
-    def _decorateFailure(self, errString):
-        return self._red(errString)
-
-    def _decorateSuccess(self, sccString):
-        return self._green(sccString)
-
-    def _decorateWarning(self, warString):
-        return self._yellow(warString)
-
-class Win32ColoredTextReporter(TextStreamReporter):
-    from os.path import isfile
-    from os import sep
-    from sys import prefix
-
-    codes = {"reset":"d",
-             "red":"r",
-             "green":"g",
-             "yellow":"y"}
-
-    setcolor_path = r'%s%stestoob\setcolor.exe' % (prefix, sep)
-    setcolor_available = isfile(setcolor_path)
-
-    def _red(self, str):
-        "Make it red!"
-        return (self.codes['red'], str, self.codes['reset'])
-
-    def _green(self, str):
-        "make it green!"
-        return (self.codes['green'], str, self.codes['reset'])
-    
-    def _yellow(self, str):
-        "make it yellow!"
-        return (self.codes['yellow'], str, self.codes['reset'])
-
-    def _decorateFailure(self, errString):
-        return self._red(errString)
-
-    def _decorateSuccess(self, sccString):
-        return self._green(sccString)
-
-    def _decorateWarning(self, warString):
-        return self._yellow(warString)
+    def __init__(self, stream, color):
+        StreamWriter.__init__(self, stream)
+        self.code  = WIN32_SETCOLOR_CODES[color]
+        self.reset = WIN32_SETCOLOR_CODES["reset"]
 
     def _call_setcolor(self, code):
         if self.setcolor_available:
-            from os import system
-            system(r'"%s" %s' % (self.setcolor_path, code))
+            os.system(r'"%s" %s' % (self.setcolor_path, code))
 
-    def _write(self, s):
-        if type(s) is tuple:
-            self._call_setcolor(s[0])
-            self._write(s[1])
-            self._call_setcolor(s[2])
-        else:
-            TextStreamReporter._write(self, s)
+    def write(self, s):
+        self._call_setcolor(self.code)
+        StreamWriter.write(self, s)
+        self._call_setcolor(self.reset)
+
+class Win32ColorWriters:
+    def __init__(self, stream):
+        self.normal  = StreamWriter(stream)
+        self.success = Win32ColorWriter(stream, "green")
+        self.failure = Win32ColorWriter(stream, "red")
+        self.warning = Win32ColorWriter(stream, "yellow")
+
+class Win32ColoredTextReporter(TextStreamReporter):
+    def __init__(self, *args, **kwargs):
+        kwargs["create_writers"] = Win32ColorWriters
+        TextStreamReporter.__init__(self, *args, **kwargs)
