@@ -44,18 +44,6 @@ class TerminalColorWriter(StreamWriter):
         StreamWriter.write(self, s)
         StreamWriter.write(self, self.reset)
 
-class TerminalColorWriters:
-    def __init__(self, stream):
-        self.normal  = StreamWriter(stream)
-        self.success = TerminalColorWriter(stream, "green")
-        self.failure = TerminalColorWriter(stream, "red")
-        self.warning = TerminalColorWriter(stream, "yellow")
-
-class TermColoredTextReporter(TextStreamReporter):
-    def __init__(self, *args, **kwargs):
-        kwargs["create_writers"] = TerminalColorWriters
-        TextStreamReporter.__init__(self, *args, **kwargs)
-
 WIN32_SETCOLOR_CODES = {
     "reset"  : "d",
     "red"    : "r",
@@ -81,14 +69,21 @@ class Win32ColorWriter(StreamWriter):
         StreamWriter.write(self, s)
         self._call_setcolor(self.reset)
 
-class Win32ColorWriters:
-    def __init__(self, stream):
-        self.normal  = StreamWriter(stream)
-        self.success = Win32ColorWriter(stream, "green")
-        self.failure = Win32ColorWriter(stream, "red")
-        self.warning = Win32ColorWriter(stream, "yellow")
+def color_writers_creator(writer_class):
+    class ColorWriters:
+        def __init__(self, stream):
+            self.normal  = StreamWriter(stream)
+            self.success = writer_class(stream, "green")
+            self.failure = writer_class(stream, "red")
+            self.warning = writer_class(stream, "yellow")
+    return ColorWriters
 
-class Win32ColoredTextReporter(TextStreamReporter):
-    def __init__(self, *args, **kwargs):
-        kwargs["create_writers"] = Win32ColorWriters
-        TextStreamReporter.__init__(self, *args, **kwargs)
+def create_colored_reporter(writer_class):
+    class ColoredReporter(TextStreamReporter):
+        def __init__(self, *args, **kwargs):
+            kwargs["create_writers"] = color_writers_creator(writer_class)
+            TextStreamReporter.__init__(self, *args, **kwargs)
+    return ColoredReporter
+
+TermColoredTextReporter  = create_colored_reporter(TerminalColorWriter)
+Win32ColoredTextReporter = create_colored_reporter(Win32ColorWriter)
