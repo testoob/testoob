@@ -51,7 +51,7 @@ WIN32_SETCOLOR_CODES = {
     "yellow" : "y",
 }
 
-class Win32ColorWriter(StreamWriter):
+class Win32ColorWriterWithExecutable(StreamWriter):
     setcolor_path = os.path.join(sys.prefix, "testoob", "setcolor.exe")
     setcolor_available = os.path.isfile(setcolor_path)
 
@@ -69,6 +69,32 @@ class Win32ColorWriter(StreamWriter):
         StreamWriter.write(self, s)
         self._call_setcolor(self.reset)
 
+class Win32ConsoleColorWriter(StreamWriter):
+    def _out_handle(self):
+        import win32console
+        return win32console.GetStdHandle(win32console.STD_OUTPUT_HANDLE)
+    out_handle = property(_out_handle)
+
+    def _codes(self):
+        from win32console import FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_INTENSITY
+        return {
+            "reset"  : self.out_handle.GetConsoleScreenBufferInfo()['Attributes'],
+            "red"    : FOREGROUND_RED | FOREGROUND_INTENSITY,
+            "green"  : FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+            "yellow" : FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY,
+        }
+    CODES = property(_codes)
+
+    def __init__(self, stream, color):
+        StreamWriter.__init__(self, stream)
+        self.code  = self.CODES[color]
+        self.reset = self.CODES["reset"]
+
+    def write(self, s):
+        self.out_handle.SetConsoleTextAttribute( self.code )
+        StreamWriter.write(self, s)
+        self.out_handle.SetConsoleTextAttribute( self.reset )
+
 def color_writers_creator(writer_class):
     class ColorWriters:
         def __init__(self, stream):
@@ -85,5 +111,16 @@ def create_colored_reporter(writer_class):
             TextStreamReporter.__init__(self, *args, **kwargs)
     return ColoredReporter
 
-TermColoredTextReporter  = create_colored_reporter(TerminalColorWriter)
-Win32ColoredTextReporter = create_colored_reporter(Win32ColorWriter)
+def choose_color_writer():
+    if sys.platform != "win32":
+        return TerminalColorWriter
+
+    try:
+        import win32console
+        return Win32ConsoleColorWriter
+    except ImportError:
+        pass
+
+    return Win32ColorWriterWithExecutable
+
+ColoredTextReporter = create_colored_reporter( choose_color_writer() )

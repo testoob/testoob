@@ -15,12 +15,7 @@
 
 "Reporting facilities subpackage"
 
-import sys
-if sys.platform != "win32":
-    from colored import TermColoredTextReporter as ColoredTextReporter
-else:
-    from colored import Win32ColoredTextReporter as ColoredTextReporter
-
+from colored import ColoredTextReporter
 from html_xslt import HTMLReporter
 from textstream import TextStreamReporter
 from xml import XMLFileReporter
