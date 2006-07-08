@@ -717,6 +717,7 @@ FAILED \(failures=1, errors=1\)
         )
 
     def testPbarSanity(self):
+        testoob.testing.skip("Leaves dangling processes")
         def skip_check(output, error, rc):
             import re
             if rc == 0:
