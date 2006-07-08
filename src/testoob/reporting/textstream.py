@@ -114,7 +114,7 @@ class TextStreamReporter(BaseReporter):
             self.writers.failure.write("FAILED")
 
     def _write_vassert_message(self, assertName, varList, isPassed):
-        self.writers.normal.write(" [ ")
+        self.writers.normal.write("  [ ")
         self._write_vassert_is_passed(isPassed)
         self.writers.normal.writeln(" %s ]" % self._vassertMessage(assertName, varList))
 
