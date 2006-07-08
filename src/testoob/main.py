@@ -35,19 +35,12 @@ def _arg_parser():
     p.add_option("--version", action="store_true", help="Print the version of testoob")
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
-    p.add_option("-i", "--immediate", action="store_true", help="Immediate feedback about exceptions")
     p.add_option("--vassert", action="store_true", help="Make asserts verbose")
-    p.add_option("--glob", metavar="PATTERN", help="Filtering glob pattern")
-    p.add_option("-s", "--silent", action="store_true", help="no output to terminal")
-    color_choices = ["never", "always", "auto"]
-    p.add_option("--color-mode", metavar="WHEN", type="choice", choices=color_choices, default="auto", help="When should output be in color? Choices are " + str(color_choices) + ", default is '%default'")
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
     p.add_option("--timeout", metavar="SECONDS", type="int", help="Fail test if passes timeout")
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
-    p.add_option("--repeat", metavar="NUM_TIMES", type="int", help="Repeat each test")
-    p.add_option("--timed-repeat", metavar="SECONDS", type="float", help="Repeat each test, for a limited time")
     p.add_option("--capture", action="store_true", help="Capture the output of the test, and show it only if test fails")
     coverage_choices = ["silent", "slim", "normal", "massive", "xml"]
     p.add_option("--coverage", metavar="AMOUNT", type="choice", choices=coverage_choices, help="Test the coverage of the tested code, choices are: %s" % coverage_choices)
@@ -131,13 +124,11 @@ def _main(suite, defaultTest, options, test_names, parser):
 
     commandline.parsing.kwargs = {
         "verbosity" : _get_verbosity(options),
-        "immediate" : options.immediate,
         "stop_on_fail" : options.stop_on_fail,
         "reporters" : [],
         "extraction_decorators" : [],
         "fixture_decorators" : [],
         "interval" : options.interval,
-        "silent": options.silent,
     }
     kwargs = commandline.parsing.kwargs # TODO: convert to calls to commandline.parsing.kwargs
 
@@ -177,11 +168,6 @@ def _main(suite, defaultTest, options, test_names, parser):
         import asserter
         asserter.register_asserter()
     
-    if options.timed_repeat is not None:
-        from running import fixture_decorators
-        kwargs["fixture_decorators"].append(
-                fixture_decorators.get_timed_fixture(options.timed_repeat))
-
     if options.timeout is not None:
         require_posix("--timeout")
         from running import fixture_decorators
@@ -191,43 +177,6 @@ def _main(suite, defaultTest, options, test_names, parser):
             raise AssertionError("Timeout")
         import signal
         signal.signal(signal.SIGALRM, alarm)
-
-    if options.glob is not None:
-        import extracting
-        kwargs["extraction_decorators"].append(extracting.glob(options.glob))
-
-    if options.repeat is not None:
-        import extracting
-        kwargs["extraction_decorators"].append(extracting.repeat(options.repeat))
-
-    def auto_color_support(stream):
-        import sys
-        if sys.platform == "win32":
-            return True
-
-        if not hasattr(stream, "isatty"):
-            return False
-        if not stream.isatty():
-            return False # auto color only on TTYs
-
-        try:
-            import curses
-            curses.setupterm()
-            return curses.tigetnum("colors") > 2
-        except:
-            # guess false in case of error
-            return False
-    def color_output():
-        if options.color_mode == "always":
-            return True
-        # TODO: currently hard-coded to sys.stderr, fix this
-        import sys
-        if options.color_mode == "auto" and auto_color_support(sys.stderr):
-            return True
-        return False
-    if color_output():
-        from reporting import ColoredTextReporter
-        kwargs["reporter_class"] = ColoredTextReporter
 
     if options.debug is not None:
         import pdb
