@@ -339,19 +339,24 @@ ERROR: testError \(suites\.CaseMixed\.testError\)
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
-    def testTimeOut(self):
-        if sys.platform.startswith("win"):
-            testoob.testing.skip(reason="Unsuported on Windows")
-        args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
-        regex=r"""
+    _timeout_regex_base = r"""
 FAIL: testBuisy \(suites\.CaseSlow\.testBuisy\)
 .*
 AssertionError: Timeout.*
 FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
 .*
 AssertionError: Timeout.*
-Ran 2 tests in 2\.\d+s
 """.strip()
+    def testTimeOut(self):
+        regex = self._timeout_regex_base + "Ran 2 tests in 2\.\d+s"
+        if sys.platform.startswith("win"):
+            testoob.testing.skip(reason="Unsuported on Windows")
+        args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
+    def testTimeOutWithThreads(self):
+        regex = self._timeout_regex_base + "Ran 2 tests in \d+\.\d+s"
+        args = _testoob_args(options=["--timeout-with-threads=1"], tests=["CaseSlow"])
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testTimedRepeat(self):

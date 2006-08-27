@@ -38,6 +38,7 @@ def _arg_parser():
     p.add_option("--vassert", action="store_true", help="Make asserts verbose")
     p.add_option("--interval", metavar="SECONDS", type="float", default=0, help="Add interval between tests")
     p.add_option("--timeout", metavar="SECONDS", type="int", help="Fail test if passes timeout")
+    p.add_option("--timeout-with-threads", metavar="SECONDS", type="float", help="Fail test if passes timeout, implemented with threads")
     p.add_option("--stop-on-fail", action="store_true", help="Stop tests on first failure")
     p.add_option("--debug", action="store_true", help="Run pdb on tests that fail")
     p.add_option("--threads", metavar="NUM_THREADS", type="int", help="Run in a threadpool")
@@ -117,6 +118,7 @@ def _main(suite, defaultTest, options, test_names, parser):
                     ", ".join(given_options))
 
     conflicting_options("threads", "timeout")
+    conflicting_options("timeout", "timeout_with_threads")
     conflicting_options("threads", "processes", "processes_old", "processes_pyro", "stop_on_fail")
     conflicting_options("threads", "processes", "processes_old", "processes_pyro", "list") # specify runners
     conflicting_options("processes", "processes_old", "processes_pyro", "debug")
@@ -172,11 +174,16 @@ def _main(suite, defaultTest, options, test_names, parser):
         require_posix("--timeout")
         from running import fixture_decorators
         kwargs["fixture_decorators"].append(
-                fixture_decorators.get_alarmed_fixture(options.timeout))
+            fixture_decorators.get_alarmed_fixture(options.timeout))
         def alarm(sig, stack_frame):
             raise AssertionError("Timeout")
         import signal
         signal.signal(signal.SIGALRM, alarm)
+
+    if options.timeout_with_threads is not None:
+        from running import fixture_decorators
+        kwargs["fixture_decorators"].append(
+            fixture_decorators.get_thread_timingout_fixture(options.timeout_with_threads))
 
     if options.debug is not None:
         import pdb

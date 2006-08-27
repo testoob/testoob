@@ -53,6 +53,54 @@ def get_alarmed_fixture(timeout):
             self.alarm(0) # Release the alarm that was set.
     return AlarmedFixture
 
+import thread, threading
+class TimeoutMain:
+    """
+    Will raise a KeyboardInterrupt exception in the main thread on
+    timeout.
+    If cancelled, the timing-out thread may persist for a bit.
+    """
+    def __init__(self, timeout):
+        self.timeout = timeout
+        self.timed_out = False
+        self.cancelled = threading.Event()
+    def start(self):
+        thread.start_new_thread(self._timeout_method, ())
+        return self
+    def cancel(self):
+        self.cancelled.set()
+    def verify_timeout(self):
+        """
+        Should be called when the main thread receives a KeyboardInterrupt
+        While waiting for a timeout. If no timeout occurred, re-raises
+        KeyboardInterrupt.
+        """
+        if not self.timed_out:
+            raise KeyboardInterrupt
+    def _timeout_method(self):
+        self.cancelled.wait(self.timeout)
+        if self.cancelled.isSet():
+            return
+        self.timed_out = True
+        thread.interrupt_main()
+
+def get_thread_timingout_fixture(timeout):
+    assert timeout is not None
+    timeout_main = TimeoutMain(timeout)
+    class TimingOutFixture(ManipulativeFixture):
+        def __init__(self, fixture):
+            ManipulativeFixture.__init__(self, fixture)
+            def testWithTimeout():
+                timeout_main.start()
+                try:
+                    self.testMethod()
+                    timeout_main.cancel()
+                except KeyboardInterrupt:
+                    timeout_main.verify_timeout()
+                    raise AssertionError("Timeout after %s seconds" % timeout)
+            self.updateMethod(testWithTimeout)
+    return TimingOutFixture
+
 def _fix_sourcefile_extension(filename):
     # from Python's logging module
     # TODO: support py2exe?
