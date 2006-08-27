@@ -28,6 +28,13 @@ def _sample_suite():
 def _test_basenames(tests):
     return set([test.id().split('.')[-1] for test in tests])
 
+def _tests_after_decorator(decorator):
+    extractor = decorator(extracting.full_extractor)
+    return extractor( _sample_suite() )
+
+def _test_basenames_after_decorator(decorator):
+    return _test_basenames(_tests_after_decorator(decorator))
+
 class unit_tests(unittest.TestCase):
     "Small-grain tests for testoob.extracting"
     def setUp(self):
@@ -36,7 +43,8 @@ class unit_tests(unittest.TestCase):
         del self.all_tests
 
     def testFullExtractor(self):
-        actual = _test_basenames(self.all_tests)
+        # The helper already uses extracting.full_extractor
+        actual = _test_basenames_after_decorator(lambda x:x)
         self.assertEqual(set(('testFoo', 'testBar', 'testBaz')), actual)
 
     def testPredicate(self):
@@ -46,10 +54,8 @@ class unit_tests(unittest.TestCase):
 
     def testRegex(self):
         decorator = extracting.regex(r"te.*(Bar$|F)")
-        extractor = decorator(extracting.full_extractor)
-        tests = extractor( _sample_suite() )
-        self.assertEqual(set(('testFoo', 'testBar')), _test_basenames(tests))
-        
+        actual = _test_basenames_after_decorator(decorator)
+        self.assertEqual(set(('testFoo', 'testBar')), actual)
 
 if __name__ == "__main__":
     import testoob
