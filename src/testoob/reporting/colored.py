@@ -103,6 +103,62 @@ class Win32ConsoleColorWriter(WindowsColorBaseWriter):
     def _set_color(self, code):
         self.out_handle.SetConsoleTextAttribute( code )
 
+class WindowsCtypesColorWriter(WindowsColorBaseWriter):
+    # Constants from the Windows API
+    STD_OUTPUT_HANDLE = -11
+
+    FOREGROUND_BLUE      = 0x0001 # text color contains blue.
+    FOREGROUND_GREEN     = 0x0002 # text color contains green.
+    FOREGROUND_RED       = 0x0004 # text color contains red.
+    FOREGROUND_INTENSITY = 0x0008 # text color is intensified.
+    
+    def _out_handle(self):
+        import ctypes
+        return ctypes.windll.kernel32.GetStdHandle(self.STD_OUTPUT_HANDLE)
+    out_handle = property(_out_handle)
+
+    def _console_screen_buffer_info(self):
+        # Based on IPython's winconsole.py, written by Alexander Belchenko
+        import ctypes
+        csbi = ctypes.create_string_buffer(22)
+        res = ctypes.windll.kernel32.GetConsoleScreenBufferInfo(self.out_handle, csbi)
+        assert res
+
+        (bufx, bufy, curx, cury, wattr,
+         left, top, right, bottom, maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
+
+        return {
+            "bufx" : bufx,
+            "bufy" : bufy,
+            "curx" : curx,
+            "cury" : cury,
+            "wattr" : wattr,
+            "left" : left,
+            "top" : top,
+            "right" : right,
+            "bottom" : bottom,
+            "maxx" : maxx,
+            "maxy" : maxy,
+        }
+    console_screen_buffer_info = property(_console_screen_buffer_info)
+
+    def _codes(self):
+        return {
+            "reset"  : self.console_screen_buffer_info["wattr"],
+            "red"    : FOREGROUND_RED | FOREGROUND_INTENSITY,
+            "green"  : FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+            "yellow" : FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY,
+        }
+    CODES = property(_codes)
+
+    def __init__(self, stream, color):
+        StreamWriter.__init__(self, stream)
+        self.code = self.CODES[color]
+        self.reset = self.CODES["reset"]
+
+    def _set_color(self, code):
+        ctypes.windll.kernel32.SetConsoleTextAttribute(self.out_handle, code)
+
 def color_writers_creator(writer_class):
     class ColorWriters:
         def __init__(self, stream):
