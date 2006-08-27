@@ -178,6 +178,10 @@ def create_colored_reporter(writer_class):
     return ColoredReporter
 
 def choose_color_writer():
+    if "TESTOOB_COLOR_WRITER" in os.environ:
+        print "DEBUG: using", os.environ["TESTOOB_COLOR_WRITER"]
+        return eval(os.environ["TESTOOB_COLOR_WRITER"])
+
     if sys.platform != "win32":
         return TerminalColorWriter
 
