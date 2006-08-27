@@ -25,6 +25,13 @@ def sample_suite():
     result.addTest(unittest.makeSuite(Test2))
     return result
 
+def apply_decorator(decorator, iterable):
+    "This isn't trivial, maybe should be made trivial?"
+    # The decorator decorates the extractor, in this case we use the 'trivial'
+    # extractor "iter"
+    extractor = iter
+    return decorator(extractor)(iterable)
+    
 class unit_tests(unittest.TestCase):
     "Small-grain tests for testoob.extracting"
     def testFullExtractor(self):
@@ -33,7 +40,8 @@ class unit_tests(unittest.TestCase):
         self.assertEqual(set(('testFoo', 'testBar', 'testBaz')), actual)
 
     def testPredicate(self):
-        iterator = extracting.predicate(lambda x:x>5)([7,2,5,6])
+        decorator = extracting.predicate(lambda x:x>5)
+        iterator = apply_decorator(decorator, [7,2,5,6])
         self.assertEqual([7,6], list(iterator))
 
 if __name__ == "__main__":
