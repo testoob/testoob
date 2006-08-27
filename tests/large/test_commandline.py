@@ -355,6 +355,9 @@ AssertionError: Timeout.*
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testTimeOutWithThreads(self):
+        import thread
+        if not hasattr(thread, "interrupt_main"):
+            testoob.testing.skip(reason="thread.interrupt_main not available")
         regex = self._timeout_regex_base + "Ran 2 tests in \d+\.\d+s"
         args = _testoob_args(options=["--timeout-with-threads=1"], tests=["CaseSlow"])
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)

@@ -181,6 +181,9 @@ def _main(suite, defaultTest, options, test_names, parser):
         signal.signal(signal.SIGALRM, alarm)
 
     if options.timeout_with_threads is not None:
+        import thread
+        if not hasattr(thread, "interrupt_main"):
+            raise ArgumentsError("Older versions of Python don't support thread.interrupt_main")
         from running import fixture_decorators
         kwargs["fixture_decorators"].append(
             fixture_decorators.get_thread_timingout_fixture(options.timeout_with_threads))
