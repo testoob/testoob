@@ -119,7 +119,7 @@ class WindowsCtypesColorWriter(WindowsColorBaseWriter):
 
     def _console_screen_buffer_info(self):
         # Based on IPython's winconsole.py, written by Alexander Belchenko
-        import ctypes
+        import ctypes, struct
         csbi = ctypes.create_string_buffer(22)
         res = ctypes.windll.kernel32.GetConsoleScreenBufferInfo(self.out_handle, csbi)
         assert res
@@ -145,9 +145,9 @@ class WindowsCtypesColorWriter(WindowsColorBaseWriter):
     def _codes(self):
         return {
             "reset"  : self.console_screen_buffer_info["wattr"],
-            "red"    : FOREGROUND_RED | FOREGROUND_INTENSITY,
-            "green"  : FOREGROUND_GREEN | FOREGROUND_INTENSITY,
-            "yellow" : FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY,
+            "red"    : self.FOREGROUND_RED | self.FOREGROUND_INTENSITY,
+            "green"  : self.FOREGROUND_GREEN | self.FOREGROUND_INTENSITY,
+            "yellow" : self.FOREGROUND_GREEN | self.FOREGROUND_RED | self.FOREGROUND_INTENSITY,
         }
     CODES = property(_codes)
 
@@ -157,6 +157,7 @@ class WindowsCtypesColorWriter(WindowsColorBaseWriter):
         self.reset = self.CODES["reset"]
 
     def _set_color(self, code):
+        import ctypes
         ctypes.windll.kernel32.SetConsoleTextAttribute(self.out_handle, code)
 
 def color_writers_creator(writer_class):
@@ -183,6 +184,12 @@ def choose_color_writer():
     try:
         import win32console
         return Win32ConsoleColorWriter
+    except ImportError:
+        pass
+
+    try:
+        import ctypes
+        return WindowsCtypesColorWriter
     except ImportError:
         pass
 
