@@ -67,6 +67,16 @@ class unit_tests(unittest.TestCase):
         iterator = decorator(iter)([9,4])
         self.assertEqual([9,9,9,4,4,4], list(iterator))
 
+    def testRandomize(self):
+        original = range(15)
+        decorator = extracting.randomize()
+        iterator = decorator(iter)(original)
+
+        # This may fail. If the randomization is perfect, the probability is 1
+        # in 15-factorial (about 2^(-40)), which is neglible. It isn't perfect,
+        # but should be close enough.
+        self.assertNotEqual(original, list(iterator))
+
 if __name__ == "__main__":
     import testoob
     testoob.main()
