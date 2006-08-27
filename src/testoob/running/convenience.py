@@ -55,10 +55,9 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                     if not runner.run(decorated_fixture) and stop_on_fail:
                         return
                 except KeyboardInterrupt, e:
-                    fixture_decorators = [InterruptedFixture]
                     # Run the current test again with InterrupFixture decorator
-                    # So it'll be added to the skipped tests' list too.
-                    decorated_fixture = apply_decorators(fixture, fixture_decorators)
+                    # So it'll be added to the skipped tests' list.
+                    decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
                     runner.run(decorated_fixture)
 
     runner.reporter.start()

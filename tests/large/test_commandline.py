@@ -606,7 +606,7 @@ FAILED \(failures=1, errors=1\)
     def testSkipOnInterrupt(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["InterruptingTests"]),
-                expected_error_regex='Skipped 4 tests.*Test was interrupted.*Ran 4 tests',
+                expected_error_regex='Skipped 1 tests.*Test was interrupted.*Ran 7 tests',
                 expected_rc=0,
         )
 
