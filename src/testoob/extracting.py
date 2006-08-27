@@ -96,7 +96,12 @@ number_suffixes = {1: "st",
 def _irepeat_items(num_times, iterable):
     for x in iterable:
         for i in xrange(num_times):
-            x._testoob_extra_description = " (%d%s iteration)" % (i + 1, number_suffixes.get(i + 1, "th"))
+            try:
+                x._testoob_extra_description = " (%d%s iteration)" % (i + 1, number_suffixes.get(i + 1, "th"))
+            except AttributeError:
+                # The unit tests may pass something that isn't an instance, so this
+                # may fail
+                pass
             yield x
 
 def repeat(num_times):

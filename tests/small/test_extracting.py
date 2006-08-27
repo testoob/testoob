@@ -57,6 +57,16 @@ class unit_tests(unittest.TestCase):
         actual = _test_basenames_after_decorator(decorator)
         self.assertEqual(set(('testFoo', 'testBar')), actual)
 
+    def testGlob(self):
+        decorator = extracting.glob("*F*")
+        actual = _test_basenames_after_decorator(decorator)
+        self.assertEqual(set(('testFoo',)), actual)
+
+    def testRepeat(self):
+        decorator = extracting.repeat(3)
+        iterator = decorator(iter)([9,4])
+        self.assertEqual([9,9,9,4,4,4], list(iterator))
+
 if __name__ == "__main__":
     import testoob
     testoob.main()
