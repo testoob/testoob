@@ -55,7 +55,17 @@ WIN32_SETCOLOR_CODES = {
     "yellow" : "y",
 }
 
-class Win32ColorWriterWithExecutable(StreamWriter):
+class WindowsColorBaseWriter(StreamWriter):
+    """
+    All Windows writers set the color without writing special control
+    characters, so this class is convenient.
+    """
+    def write(self, s):
+        self._set_color(self.code)
+        StreamWriter.write(self, s)
+        self._set_color(self.reset)
+
+class Win32ColorWriterWithExecutable(WindowsColorBaseWriter):
     setcolor_path = os.path.join(sys.prefix, "testoob", "setcolor.exe")
     setcolor_available = os.path.isfile(setcolor_path)
 
@@ -64,16 +74,12 @@ class Win32ColorWriterWithExecutable(StreamWriter):
         self.code  = WIN32_SETCOLOR_CODES[color]
         self.reset = WIN32_SETCOLOR_CODES["reset"]
 
-    def _call_setcolor(self, code):
+    def _set_color(self, code):
+        # TODO: fail in advance if setcolor.exe isn't availble?
         if self.setcolor_available:
             subprocess.Popen(r'"%s" %s' % (self.setcolor_path, code)).wait()
 
-    def write(self, s):
-        self._call_setcolor(self.code)
-        StreamWriter.write(self, s)
-        self._call_setcolor(self.reset)
-
-class Win32ConsoleColorWriter(StreamWriter):
+class Win32ConsoleColorWriter(WindowsColorBaseWriter):
     def _out_handle(self):
         import win32console
         return win32console.GetStdHandle(win32console.STD_OUTPUT_HANDLE)
@@ -94,10 +100,8 @@ class Win32ConsoleColorWriter(StreamWriter):
         self.code  = self.CODES[color]
         self.reset = self.CODES["reset"]
 
-    def write(self, s):
-        self.out_handle.SetConsoleTextAttribute( self.code )
-        StreamWriter.write(self, s)
-        self.out_handle.SetConsoleTextAttribute( self.reset )
+    def _set_color(self, code):
+        self.out_handle.SetConsoleTextAttribute( code )
 
 def color_writers_creator(writer_class):
     class ColorWriters:
