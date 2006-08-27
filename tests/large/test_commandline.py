@@ -343,25 +343,15 @@ ERROR: testError \(suites\.CaseMixed\.testError\)
         if sys.platform.startswith("win"):
             testoob.testing.skip(reason="Unsuported on Windows")
         args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
-        regex=r"""FF
-======================================================================
+        regex=r"""
 FAIL: testBuisy \(suites\.CaseSlow\.testBuisy\)
-----------------------------------------------------------------------
 .*
-AssertionError: Timeout
-
-======================================================================
+AssertionError: Timeout.*
 FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
-----------------------------------------------------------------------
 .*
-AssertionError: Timeout
-
-Failed 2 tests
- - testBuisy \(suites.CaseSlow\)
- - testSleep \(suites.CaseSlow\)
-----------------------------------------------------------------------
+AssertionError: Timeout.*
 Ran 2 tests in 2\.\d+s
-"""
+""".strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
     def testTimedRepeat(self):
