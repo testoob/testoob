@@ -44,7 +44,7 @@ class unit_tests(unittest.TestCase):
 
     def testFullExtractor(self):
         # The helper already uses extracting.full_extractor
-        actual = _test_basenames_after_decorator(lambda x:x)
+        actual = _test_basenames_after_decorator(decorator = lambda x:x)
         self.assertEqual(set(('testFoo', 'testBar', 'testBaz')), actual)
 
     def testPredicate(self):
@@ -53,13 +53,11 @@ class unit_tests(unittest.TestCase):
         self.assertEqual([7,6], list(iterator))
 
     def testRegex(self):
-        decorator = extracting.regex(r"te.*(Bar$|F)")
-        actual = _test_basenames_after_decorator(decorator)
+        actual = _test_basenames_after_decorator(decorator = extracting.regex(r"te.*(Bar$|F)"))
         self.assertEqual(set(('testFoo', 'testBar')), actual)
 
     def testGlob(self):
-        decorator = extracting.glob("*F*")
-        actual = _test_basenames_after_decorator(decorator)
+        actual = _test_basenames_after_decorator(decorator=extracting.glob("*F*"))
         self.assertEqual(set(('testFoo',)), actual)
 
     def testRepeat(self):
