@@ -72,7 +72,8 @@ class Environment:
 
     def restore_variable(self, varname):
         if self.originals[varname] is None:
-            del os.environ[varname]
+            if varname in os.environ:
+                del os.environ[varname]
         else:
             os.environ["varname"] = self.originals[varname]
 
