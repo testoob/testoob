@@ -29,6 +29,9 @@ class BaseFixture:
         return result
 
 class ManipulativeFixture(BaseFixture):
+    """
+    A fixture that allows changing the original test method itself.
+    """
     def __init__(self, fixture):
         BaseFixture.__init__(self, fixture)
         self.coreFixture = self.get_fixture()
@@ -42,6 +45,14 @@ class ManipulativeFixture(BaseFixture):
 
 def get_alarmed_fixture(timeout):
     class AlarmedFixture(BaseFixture):
+        """
+        A fixture that times out, implemented with SIGALRM.
+
+        Needs signals to work, so doesn't work on Windows.
+
+        Won't work properly some other code, like the test itself, sends
+        SIGALRM or changes the signal handler.
+        """
         def __init__(self, fixture):
             BaseFixture.__init__(self, fixture)
             from signal import alarm
@@ -88,6 +99,15 @@ def get_thread_timingout_fixture(timeout):
     assert timeout is not None
     timeout_main = TimeoutMain(timeout)
     class TimingOutFixture(ManipulativeFixture):
+        """
+        A fixture that times out, implemented with threads.
+
+        Also works on Windows.
+
+        Known problem: thread.interrupt_main() raises an exception in the main
+        thread only when the main thread has control, doesn't raise it while
+        its blocking.
+        """
         def __init__(self, fixture):
             ManipulativeFixture.__init__(self, fixture)
             def testWithTimeout():
@@ -129,6 +149,7 @@ def get_coverage_fixture(coverage):
 
 def get_timed_fixture(time_limit):
     class TimedFixture(ManipulativeFixture):
+        "Run the fixture repeatedly for a minimum time"
         def __init__(self, fixture):
             ManipulativeFixture.__init__(self, fixture)
             def timedTest():
@@ -152,9 +173,11 @@ class InterruptedFixture(ManipulativeFixture):
 
 def get_capture_fixture():
     class CaptureFixture(ManipulativeFixture):
+        "Capture a test's output and error"
         def __init__(self, fixture):
             ManipulativeFixture.__init__(self, fixture)
             def CaptureTest():
+                # TODO: can't we just use a StringIO here instead of pipes?
                 import sys, os
                 stdout_fh = sys.stdout
                 stderr_fh = sys.stderr
