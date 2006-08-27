@@ -37,7 +37,7 @@ ANSI_CODES = {
     "red"       : "\x1b[31;01m",
 }
 
-from textstream import TextStreamReporter, StreamWriter
+from textstream import StreamWriter
 class TerminalColorWriter(StreamWriter):
     def __init__(self, stream, color):
         StreamWriter.__init__(self, stream)
@@ -108,6 +108,7 @@ def color_writers_creator(writer_class):
             self.warning = writer_class(stream, "yellow")
     return ColorWriters
 
+from textstream import TextStreamReporter
 def create_colored_reporter(writer_class):
     class ColoredReporter(TextStreamReporter):
         def __init__(self, *args, **kwargs):
