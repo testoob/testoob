@@ -25,6 +25,9 @@ def _sample_suite():
     result.addTest(unittest.makeSuite(Test2))
     return result
 
+def _test_basenames(tests):
+    return set([test.id().split('.')[-1] for test in tests])
+
 class unit_tests(unittest.TestCase):
     "Small-grain tests for testoob.extracting"
     def setUp(self):
@@ -33,7 +36,7 @@ class unit_tests(unittest.TestCase):
         del self.all_tests
 
     def testFullExtractor(self):
-        actual = set([test.id().split('.')[-1] for test in self.all_tests])
+        actual = _test_basenames(self.all_tests)
         self.assertEqual(set(('testFoo', 'testBar', 'testBaz')), actual)
 
     def testPredicate(self):
