@@ -44,6 +44,13 @@ class unit_tests(unittest.TestCase):
         iterator = decorator(iter)([7,2,5,6])
         self.assertEqual([7,6], list(iterator))
 
+    def testRegex(self):
+        decorator = extracting.regex(r"te.*(Bar$|F)")
+        extractor = decorator(extracting.full_extractor)
+        tests = extractor( _sample_suite() )
+        self.assertEqual(set(('testFoo', 'testBar')), _test_basenames(tests))
+        
+
 if __name__ == "__main__":
     import testoob
     testoob.main()
