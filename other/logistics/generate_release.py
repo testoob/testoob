@@ -83,6 +83,7 @@ def tail(string, num_lines):
     "tail(string, num_lines) -> the last num_lines of string"
     return "\n".join(string.splitlines()[-num_lines:])
 
+@once
 def base_url():
     return svnclient.info(root_dir()).repos
 
@@ -113,7 +114,7 @@ def version():
     return options().release
 
 def up_to_date(path):
-    return len(get_command_output("svn status -u %s|grep -v '^Status against revision'").strip() % path) == 0
+    return len(get_command_output("svn status -u %s|grep -v '^Status against revision'" % path).strip()) == 0
 
 def replace_string(from_str, to_str, files):
     for file in files:
@@ -124,7 +125,7 @@ def replace_version_string():
     replace_string("__TESTOOB_VERSION__", version(), files)
 
 def svn_copy(source, target, log_message):
-    print "* svn copy: src=%s. target=%s, log=%s" % (source, target, log_message)
+    print "* svn copy: src=%s, target=%s, log=%r" % (source, target, log_message)
     sys.stdout.flush()
     if dry_run(): return
 
