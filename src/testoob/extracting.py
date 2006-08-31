@@ -98,7 +98,7 @@ def _irepeat_items(num_times, iterable):
         for i in xrange(num_times):
             try:
                 x._testoob_extra_description = " (%d%s iteration)" % (i + 1, number_suffixes.get(i + 1, "th"))
-            except AttributeError:
+            except (AttributeError, TypeError):
                 # The unit tests may pass something that isn't an instance, so this
                 # may fail
                 pass
