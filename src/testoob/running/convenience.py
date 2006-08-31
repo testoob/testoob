@@ -34,50 +34,71 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                  extraction_decorators=None, fixture_decorators=None):
     """Runs the suite."""
     from fixture_decorators import BaseFixture, InterruptedFixture
-    if not fixture_decorators: fixture_decorators = [BaseFixture]
-    if extraction_decorators is None: extraction_decorators = []
-    test_extractor = apply_decorators(_full_extractor, extraction_decorators)
 
-    # TODO: find a nicer way of implementing this?
-    num_tests = 0
-    for suite in _suite_iter(suites):
-        num_tests += len(list(test_extractor(suite)))
-    runner.reporter.setParameters(num_tests = num_tests)
+    class TestLoop(object):
+        def __init__(self,
+                suites, runner, interval, stop_on_fail,
+                extraction_decorators, fixture_decorators):
+            self.suites = suites
+            self.runner = runner
+            self.interval = interval
+            self.stop_on_fail = stop_on_fail
+            self.extraction_decorators = extraction_decorators or []
+            self.fixture_decorators = fixture_decorators or [BaseFixture]
 
-    def extract_all_fixtures(suites):
-        for suite in _suite_iter(suites):
-            for fixture in test_extractor(suite):
-                yield fixture
+            self.runner.reporter.setParameters(num_tests = self.num_tests)
 
-    def running_loop(fixture_decorators):
-        import time
-        first = True
-        last_interrupt = False
-        for fixture in extract_all_fixtures(suites):
-            try:
-                decorated_fixture = apply_decorators(fixture, fixture_decorators)
-                if not first and interval is not None:
-                    time.sleep(interval)
-                first = False
-                success = runner.run(decorated_fixture)
-                if not success and stop_on_fail:
-                    return
-            except KeyboardInterrupt, e:
-                if last_interrupt and (time.time() - last_interrupt < 1):
-                    # Two interrupts in less than a second, cause all
-                    # future tests to skip
-                    fixture_decorators = [InterruptedFixture]
-                last_interrupt = time.time()
+        def _all_fixtures(self):
+            for suite in _suite_iter(suites):
+                for fixture in self.test_extractor(suite):
+                    yield fixture
+        all_fixtures = property(_all_fixtures)
 
-                # Run the current test again with InterruptedFixture decorator
-                # So it'll be added to the skipped tests' list.
-                decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
-                runner.run(decorated_fixture)
+        def _num_tests(self):
+            result = 0
+            for suite in _suite_iter(self.suites):
+                result += len(list(self.test_extractor(suite)))
+            return result
+        num_tests = property(_num_tests)
 
-    runner.reporter.start()
-    running_loop(fixture_decorators)
-    runner.done()
-    return runner.isSuccessful()
+        test_extractor = property(
+            lambda self: apply_decorators(_full_extractor, self.extraction_decorators)
+        )
+
+        def do_loop(self):
+            import time
+            first = True
+            last_interrupt = False
+            for fixture in self.all_fixtures:
+                try:
+                    decorated_fixture = apply_decorators(fixture, self.fixture_decorators)
+                    if not first and interval is not None:
+                        time.sleep(interval)
+                    first = False
+                    success = self.runner.run(decorated_fixture)
+                    if not success and stop_on_fail:
+                        return
+                except KeyboardInterrupt, e:
+                    if last_interrupt and (time.time() - last_interrupt < 1):
+                        # Two interrupts in less than a second, cause all
+                        # future tests to skip
+                        self.fixture_decorators = [InterruptedFixture]
+                    last_interrupt = time.time()
+
+                    # Run the current test again with InterruptedFixture decorator
+                    # So it'll be added to the skipped tests' list.
+                    decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
+                    self.runner.run(decorated_fixture)
+
+        def run(self):
+            self.runner.reporter.start()
+            self.do_loop()
+            self.runner.done()
+            return self.runner.isSuccessful()
+
+    loop = TestLoop(suites, runner, interval, stop_on_fail, extraction_decorators, fixture_decorators)
+
+    return loop.run()
 
 ###############################################################################
 # run
