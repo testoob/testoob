@@ -2,7 +2,38 @@
 
 import re, sys, os
 import pysvn
-svnclient = pysvn.Client()
+
+class LoggingProxy(object):
+    def __init__(self, object, log=sys.stderr.write, name=None, dry_run=False):
+        self.__object = object
+        self.__log = log
+        self.__name = name
+        self.__prefix = name and name + "." or ""
+        self.__dry_run = False
+        self.__setattr__ = self.__setattr_impl
+
+    def __call_string(self, *args, **kwargs):
+        args_strings = [repr(x) for x in args]
+        kwargs_strings = ["%s=%r" % item for item in kwargs.items()]
+        return "calling %s(%s)\n" % (self.__name, ", ".join(args_strings + kwargs_strings))
+
+    def __getattr__(self, name):
+        result = getattr(self.__object, name)
+        if callable(result):
+            return LoggingProxy(result, name = self.__prefix + name)
+        self.__log('attr %r accessed\n' % (self.__prefix + name))
+
+    def __call__(self, *args, **kwargs):
+        self.__log(self.__call_string(*args, **kwargs))
+        if self.__dry_run: return
+        return self.__object(*args, **kwargs)
+        
+    def __setattr_impl(self, name, value):
+        self.__log('setting %r to %r' % (name, value))
+        setattr(self.__object, name, value)
+
+def svnclient():
+    return LoggingProxy(pysvn.Client(), dry_run=dry_run())
 
 def once(func):
     """A decorator that runs a function only once.
@@ -85,7 +116,7 @@ def tail(string, num_lines):
 
 @once
 def base_url():
-    return svnclient.info(root_dir()).repos
+    return svnclient().info(root_dir()).repos
 
 def branch_name(): return "RB-%s" % version()
 def trunk_url(): return base_url() + "/trunk"
@@ -97,7 +128,7 @@ def release_tag_url(): return base_url() + "/tags/REL-%s" % version()
 def last_branch_revision():
     entries = [
         e
-        for e in svnclient.ls(branches_url())
+        for e in svnclient().ls(branches_url())
         if os.path.basename(e['name']).startswith("RB")
     ]
 
@@ -130,11 +161,11 @@ def svn_copy(source, target, log_message):
     if dry_run(): return
 
     client = pysvn.Client()
-    client.callback_get_log_message = lambda: True, log_message
+    client.callback_get_log_message = lambda: (True, log_message)
     client.copy( source, target )
 
 def branch_release():
-    svnclient.update( root_dir() )
+    svnclient().update( root_dir() )
 
     if not up_to_date(root_dir()): die("svn tree isn't up-to-date!")
 
