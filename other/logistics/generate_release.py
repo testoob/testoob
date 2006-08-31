@@ -134,7 +134,7 @@ def last_branch_revision():
 
     if len(entries) == 0:
         # no release branches, last revision is the first
-        return 1
+        return 0
     
     return e[-1]["created_rev"].number
 
