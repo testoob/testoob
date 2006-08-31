@@ -85,7 +85,7 @@ class TestLoop(object):
         decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
         self.runner.run(decorated_fixture)
 
-    def do_loop(self):
+    def _run_all_fixtures(self):
         for fixture in self.all_fixtures:
             try:
                 self._run_fixture(fixture)
@@ -96,7 +96,7 @@ class TestLoop(object):
 
     def run(self):
         self.runner.reporter.start()
-        self.do_loop()
+        self._run_all_fixtures()
         self.runner.done()
         return self.runner.isSuccessful()
 
