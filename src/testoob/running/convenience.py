@@ -17,6 +17,8 @@
 
 from __future__ import generators
 
+import time
+
 ###############################################################################
 # apply_runner
 ###############################################################################
@@ -63,18 +65,20 @@ class TestLoop(object):
         lambda self: apply_decorators(_full_extractor, self.extraction_decorators)
     )
 
+    def _run_fixture(self, fixture):
+        decorated_fixture = apply_decorators(fixture, self.fixture_decorators)
+        if not self.first and self.interval is not None:
+            time.sleep(self.interval)
+        self.first = False
+        self.last_result = self.runner.run(decorated_fixture)
+
     def do_loop(self):
-        import time
-        first = True
+        self.first = True
         last_interrupt = False
         for fixture in self.all_fixtures:
             try:
-                decorated_fixture = apply_decorators(fixture, self.fixture_decorators)
-                if not first and self.interval is not None:
-                    time.sleep(self.interval)
-                first = False
-                success = self.runner.run(decorated_fixture)
-                if not success and self.stop_on_fail:
+                self._run_fixture(fixture)
+                if self.stop_on_fail and not self.last_result:
                     return
             except KeyboardInterrupt, e:
                 from fixture_decorators import InterruptedFixture
