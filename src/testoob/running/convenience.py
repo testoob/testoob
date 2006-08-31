@@ -30,75 +30,70 @@ def apply_decorators(callable, decorators):
         result = decorator(result)
     return result
 
-def apply_runner(suites, runner, interval=None, stop_on_fail=False,
-                 extraction_decorators=None, fixture_decorators=None):
-    """Runs the suite."""
-    from fixture_decorators import BaseFixture, InterruptedFixture
+class TestLoop(object):
+    "Runs the suites"
+    def __init__(self,
+            suites, runner, interval=None, stop_on_fail=False,
+            extraction_decorators=None, fixture_decorators=None):
 
-    class TestLoop(object):
-        def __init__(self,
-                suites, runner, interval, stop_on_fail,
-                extraction_decorators, fixture_decorators):
-            self.suites = suites
-            self.runner = runner
-            self.interval = interval
-            self.stop_on_fail = stop_on_fail
-            self.extraction_decorators = extraction_decorators or []
-            self.fixture_decorators = fixture_decorators or [BaseFixture]
+        from fixture_decorators import BaseFixture
+        self.suites = suites
+        self.runner = runner
+        self.interval = interval
+        self.stop_on_fail = stop_on_fail
+        self.extraction_decorators = extraction_decorators or []
+        self.fixture_decorators = fixture_decorators or [BaseFixture]
 
-            self.runner.reporter.setParameters(num_tests = self.num_tests)
+        self.runner.reporter.setParameters(num_tests = self.num_tests)
 
-        def _all_fixtures(self):
-            for suite in _suite_iter(suites):
-                for fixture in self.test_extractor(suite):
-                    yield fixture
-        all_fixtures = property(_all_fixtures)
+    def _all_fixtures(self):
+        for suite in _suite_iter(self.suites):
+            for fixture in self.test_extractor(suite):
+                yield fixture
+    all_fixtures = property(_all_fixtures)
 
-        def _num_tests(self):
-            result = 0
-            for suite in _suite_iter(self.suites):
-                result += len(list(self.test_extractor(suite)))
-            return result
-        num_tests = property(_num_tests)
+    def _num_tests(self):
+        result = 0
+        for suite in _suite_iter(self.suites):
+            result += len(list(self.test_extractor(suite)))
+        return result
+    num_tests = property(_num_tests)
 
-        test_extractor = property(
-            lambda self: apply_decorators(_full_extractor, self.extraction_decorators)
-        )
+    test_extractor = property(
+        lambda self: apply_decorators(_full_extractor, self.extraction_decorators)
+    )
 
-        def do_loop(self):
-            import time
-            first = True
-            last_interrupt = False
-            for fixture in self.all_fixtures:
-                try:
-                    decorated_fixture = apply_decorators(fixture, self.fixture_decorators)
-                    if not first and interval is not None:
-                        time.sleep(interval)
-                    first = False
-                    success = self.runner.run(decorated_fixture)
-                    if not success and stop_on_fail:
-                        return
-                except KeyboardInterrupt, e:
-                    if last_interrupt and (time.time() - last_interrupt < 1):
-                        # Two interrupts in less than a second, cause all
-                        # future tests to skip
-                        self.fixture_decorators = [InterruptedFixture]
-                    last_interrupt = time.time()
+    def do_loop(self):
+        import time
+        first = True
+        last_interrupt = False
+        for fixture in self.all_fixtures:
+            try:
+                decorated_fixture = apply_decorators(fixture, self.fixture_decorators)
+                if not first and self.interval is not None:
+                    time.sleep(self.interval)
+                first = False
+                success = self.runner.run(decorated_fixture)
+                if not success and self.stop_on_fail:
+                    return
+            except KeyboardInterrupt, e:
+                from fixture_decorators import InterruptedFixture
+                if last_interrupt and (time.time() - last_interrupt < 1):
+                    # Two interrupts in less than a second, cause all
+                    # future tests to skip
+                    self.fixture_decorators = [InterruptedFixture]
+                last_interrupt = time.time()
 
-                    # Run the current test again with InterruptedFixture decorator
-                    # So it'll be added to the skipped tests' list.
-                    decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
-                    self.runner.run(decorated_fixture)
+                # Run the current test again with InterruptedFixture decorator
+                # So it'll be added to the skipped tests' list.
+                decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
+                self.runner.run(decorated_fixture)
 
-        def run(self):
-            self.runner.reporter.start()
-            self.do_loop()
-            self.runner.done()
-            return self.runner.isSuccessful()
-
-    loop = TestLoop(suites, runner, interval, stop_on_fail, extraction_decorators, fixture_decorators)
-
-    return loop.run()
+    def run(self):
+        self.runner.reporter.start()
+        self.do_loop()
+        self.runner.done()
+        return self.runner.isSuccessful()
 
 ###############################################################################
 # run
@@ -144,9 +139,7 @@ def run_suites(suites, reporters, runner=None, runDebug=None, threads=None, **kw
         runner = SimpleRunner()
     runner.reporter = _create_reporter_proxy(reporters, runDebug, threads=threads)
     
-    return apply_runner(suites=suites,
-                        runner=runner,
-                        **kwargs)
+    return TestLoop(suites=suites, runner=runner, **kwargs).run()
 
 ###############################################################################
 # text_run
