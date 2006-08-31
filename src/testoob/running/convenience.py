@@ -62,7 +62,7 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                         fixture_decorators = [InterruptedFixture]
                     last_interrupt = time.time()
 
-                    # Run the current test again with InterrupFixture decorator
+                    # Run the current test again with InterruptedFixture decorator
                     # So it'll be added to the skipped tests' list.
                     decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
                     runner.run(decorated_fixture)
