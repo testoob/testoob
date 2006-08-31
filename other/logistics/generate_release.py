@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
 import re, sys, os
+import pysvn
+svnclient = pysvn.Client()
 
 def once(func):
     """A decorator that runs a function only once.
@@ -32,6 +34,9 @@ def parse_args():
     parser.add_option(
         "--update-changelog", action="store_true",
         help="update the changelog")
+
+    parser.add_option("--test", action="store_true",
+            help="For testing the script")
 
     options, args = parser.parse_args()
 
@@ -78,17 +83,8 @@ def tail(string, num_lines):
     "tail(string, num_lines) -> the last num_lines of string"
     return "\n".join(string.splitlines()[-num_lines:])
 
-def get_field(line, field_index):
-    "get_field(line, field_index): the field in the index of the line (starts with 0)"
-    return line.split()[field_index]
-
-@once
-def svn_info():
-    return get_command_output("svn info %s" % root_dir())
-
 def base_url():
-    regexp = r"URL: (?P<url>(http|https|svn|file)://\S+)/trunk"
-    return re.search(regexp, svn_info()).group("url")
+    return svnclient.info(root_dir()).repos
 
 def branch_name(): return "RB-%s" % version()
 def trunk_url(): return base_url() + "/trunk"
@@ -98,8 +94,7 @@ def release_tag_url(): return base_url() + "/tags/REL-%s" % version()
 
 @once
 def last_branch_revision():
-    branch_list = get_command_output("svn list -v %s|grep ' RB-'" % branches_url())
-    return get_field(tail(branch_list, 1), 0)
+    return svnclient.ls(branches_url())[-1]["created_rev"].number
 
 def die(msg):
     raise RuntimeError(msg)
@@ -194,11 +189,27 @@ def perform_release():
     run_tests()
     upload_to_sourceforge()
 
-if options().update_changelog:
-    update_changelog()
+def main():
+    if options().test:
+        print base_url()
+        print trunk_url()
+        print branches_url()
 
-elif options().release:
-    perform_release()
+        import time
+        start = time.time()
+        print last_branch_revision()
+        print "Time for query:", time.time() - start
 
-else:
-    print >>sys.stderr, "Bad arguments, run with '-h' for usage"
+        return
+
+    if options().update_changelog:
+        update_changelog()
+
+    elif options().release:
+        perform_release()
+
+    else:
+        print >>sys.stderr, "Bad arguments, run with '-h' for usage"
+
+if __name__ == "__main__":
+    main()
