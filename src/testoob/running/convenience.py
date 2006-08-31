@@ -53,7 +53,8 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                     if not first and interval is not None:
                         time.sleep(interval)
                     first = False
-                    if not runner.run(decorated_fixture) and stop_on_fail:
+                    success = runner.run(decorated_fixture)
+                    if not success and stop_on_fail:
                         return
                 except KeyboardInterrupt, e:
                     if last_interrupt and (time.time() - last_interrupt < 1):
