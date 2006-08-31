@@ -102,8 +102,8 @@ def die(msg):
 def version():
     return options().release
 
-def up_to_date():
-    return len(get_command_output("svn status -u|grep -v '^Status against revision'").strip()) == 0
+def up_to_date(path):
+    return len(get_command_output("svn status -u %s|grep -v '^Status against revision'").strip() % path) == 0
 
 def replace_string(from_str, to_str, files):
     for file in files:
@@ -114,9 +114,8 @@ def replace_version_string():
     replace_string("__TESTOOB_VERSION__", version(), files)
 
 def branch_release():
-    os.chdir(root_dir())
-    run_command("svn update")
-    if not up_to_date(): die("svn tree isn't up-to-date!")
+    run_command("svn update %s" % root_dir())
+    if not up_to_date(root_dir()): die("svn tree isn't up-to-date!")
     run_command("svn copy %s %s -m 'Branching release %s'" % (trunk_url(), release_branch_url(), version()))
 
 def tag_release():
