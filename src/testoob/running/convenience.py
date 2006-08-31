@@ -67,9 +67,9 @@ class TestLoop(object):
 
     def _run_fixture(self, fixture):
         decorated_fixture = apply_decorators(fixture, self.fixture_decorators)
-        if not self.first and self.interval is not None:
+        if hasattr(self, "not_first") and self.interval is not None:
             time.sleep(self.interval)
-        self.first = False
+        self.not_first = True
         self.last_result = self.runner.run(decorated_fixture)
 
     def _handle_interrupt(self, fixture):
@@ -86,7 +86,6 @@ class TestLoop(object):
         self.runner.run(decorated_fixture)
 
     def do_loop(self):
-        self.first = True
         for fixture in self.all_fixtures:
             try:
                 self._run_fixture(fixture)
