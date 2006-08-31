@@ -610,6 +610,13 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=0,
         )
 
+    def testSkipAllOnDoubleInterrupt(self):
+        testoob.testing.command_line(
+                _testoob_args(tests=["InterruptingTwiceTests"]),
+                expected_error_regex='Skipped 4 tests.*Ran 4 tests',
+                expected_rc=0,
+        )
+
     def testSetUpTearDown(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["CaseSetUpTearDown"]),

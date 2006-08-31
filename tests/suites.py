@@ -157,17 +157,27 @@ class CaseDifferentTestNameSignatures(unittest.TestCase):
     def checkSomething(self): pass
     def numericalTest(self): pass
 
+def _interrupt_self():
+    # simulate Ctrl-C being pressed
+    import os, signal
+    os.kill(os.getpid(), signal.SIGINT)
+
 class InterruptingTests(unittest.TestCase):
     def test_a(self): pass
     def test_b(self): pass
     def test_c(self): pass
-    def test_d_interrupting(self):
-        # simulate Ctrl-C being pressed
-        import os, signal
-        os.kill(os.getpid(), signal.SIGINT)
+    def test_d_interrupting(self): _interrupt_self()
     def test_e(self): pass
     def test_f(self): pass
     def test_g(self): pass
+
+class InterruptingTwiceTests(unittest.TestCase):
+    def test_a(self): pass
+    def test_b(self): pass
+    def test_c_interrupting(self): _interrupt_self()
+    def test_d_interrupting(self): _interrupt_self()
+    def test_e(self): pass
+    def test_f(self): pass
 
 class FailInTheMiddle(unittest.TestCase):
     def test_a(self): pass

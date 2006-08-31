@@ -45,6 +45,7 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
     def running_loop(fixture_decorators):
         import time
         first = True
+        last_interrupt = False
         for suite in _suite_iter(suites):
             for fixture in test_extractor(suite):
                 try:
@@ -55,6 +56,12 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
                     if not runner.run(decorated_fixture) and stop_on_fail:
                         return
                 except KeyboardInterrupt, e:
+                    if last_interrupt and (time.time() - last_interrupt < 1):
+                        # Two interrupts in less than a second, cause all
+                        # future tests to skip
+                        fixture_decorators = [InterruptedFixture]
+                    last_interrupt = time.time()
+
                     # Run the current test again with InterrupFixture decorator
                     # So it'll be added to the skipped tests' list.
                     decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
