@@ -94,7 +94,17 @@ def release_tag_url(): return base_url() + "/tags/REL-%s" % version()
 
 @once
 def last_branch_revision():
-    return svnclient.ls(branches_url())[-1]["created_rev"].number
+    entries = [
+        e
+        for e in svnclient.ls(branches_url())
+        if os.path.basename(e['name']).startswith("RB")
+    ]
+
+    if len(entries) == 0:
+        # no release branches, last revision is the first
+        return 1
+    
+    return e[-1]["created_rev"].number
 
 def die(msg):
     raise RuntimeError(msg)
@@ -113,10 +123,21 @@ def replace_version_string():
     files = [norm_join(root_dir(), file) for file in ("Makefile", "setup.py", "src/testoob/__init__.py")]
     replace_string("__TESTOOB_VERSION__", version(), files)
 
+def svn_copy(source, target, log_message):
+    print "* svn copy: src=%s. target=%s, log=%s" % (source, target, log_message)
+    sys.stdout.flush()
+    if dry_run(): return
+
+    client = pysvn.Client()
+    client.callback_get_log_message = lambda: True, log_message
+    client.copy( source, target )
+
 def branch_release():
-    run_command("svn update %s" % root_dir())
+    svnclient.update( root_dir() )
+
     if not up_to_date(root_dir()): die("svn tree isn't up-to-date!")
-    run_command("svn copy %s %s -m 'Branching release %s'" % (trunk_url(), release_branch_url(), version()))
+
+    svn_copy( trunk_url(), release_branch_url(), "Branching release %s" % version() )
 
 def tag_release():
     run_command("svn copy %s %s -m 'Tagging release %s'" % (release_branch_url(), release_tag_url(), version()))
