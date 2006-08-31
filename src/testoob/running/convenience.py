@@ -15,6 +15,8 @@
 
 "convenience functions for running tests"
 
+from __future__ import generators
+
 ###############################################################################
 # apply_runner
 ###############################################################################
@@ -42,31 +44,35 @@ def apply_runner(suites, runner, interval=None, stop_on_fail=False,
         num_tests += len(list(test_extractor(suite)))
     runner.reporter.setParameters(num_tests = num_tests)
 
+    def extract_all_fixtures(suites):
+        for suite in _suite_iter(suites):
+            for fixture in test_extractor(suite):
+                yield fixture
+
     def running_loop(fixture_decorators):
         import time
         first = True
         last_interrupt = False
-        for suite in _suite_iter(suites):
-            for fixture in test_extractor(suite):
-                try:
-                    decorated_fixture = apply_decorators(fixture, fixture_decorators)
-                    if not first and interval is not None:
-                        time.sleep(interval)
-                    first = False
-                    success = runner.run(decorated_fixture)
-                    if not success and stop_on_fail:
-                        return
-                except KeyboardInterrupt, e:
-                    if last_interrupt and (time.time() - last_interrupt < 1):
-                        # Two interrupts in less than a second, cause all
-                        # future tests to skip
-                        fixture_decorators = [InterruptedFixture]
-                    last_interrupt = time.time()
+        for fixture in extract_all_fixtures(suites):
+            try:
+                decorated_fixture = apply_decorators(fixture, fixture_decorators)
+                if not first and interval is not None:
+                    time.sleep(interval)
+                first = False
+                success = runner.run(decorated_fixture)
+                if not success and stop_on_fail:
+                    return
+            except KeyboardInterrupt, e:
+                if last_interrupt and (time.time() - last_interrupt < 1):
+                    # Two interrupts in less than a second, cause all
+                    # future tests to skip
+                    fixture_decorators = [InterruptedFixture]
+                last_interrupt = time.time()
 
-                    # Run the current test again with InterruptedFixture decorator
-                    # So it'll be added to the skipped tests' list.
-                    decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
-                    runner.run(decorated_fixture)
+                # Run the current test again with InterruptedFixture decorator
+                # So it'll be added to the skipped tests' list.
+                decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
+                runner.run(decorated_fixture)
 
     runner.reporter.start()
     running_loop(fixture_decorators)
