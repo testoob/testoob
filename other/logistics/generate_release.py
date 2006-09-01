@@ -145,7 +145,21 @@ def version():
     return options().release
 
 def up_to_date(path):
-    return len(get_command_output("svn status -u %s|grep -v '^Status against revision'" % path).strip()) == 0
+    def _status_kind_up_to_date(status_kind):
+        print "Checking", status_kind, type(status_kind)
+        from pysvn import wc_status_kind as sk
+        return status_kind in (
+            sk.normal,
+            sk.ignored,
+            sk.none,
+            sk.external,
+        )
+    status_list = svnclient().status(root_dir(), update=True)
+    for status in status_list:
+        for s in (status.prop_status, status.text_status, status.repos_prop_status, status.repos_text_status):
+            if not _status_kind_up_to_date(s):
+                return False
+    return True
 
 def replace_string(from_str, to_str, files):
     for file in files:
