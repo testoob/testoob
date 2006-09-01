@@ -234,9 +234,9 @@ def create_distribution():
     dir = tempfile.mkdtemp(suffix=".generate_release")
     try:
         os.chdir(dir)
-        run_command("svn co -q %s %s" % (release_branch_url(), branch_name()))
+        svnclient().checkout( release_branch_url(), branch_name() )
         os.chdir(branch_name())
-        run_command("gmake dist")
+        run_command("make dist")
         run_command("mkdir -p %s" % release_dir())
         run_command("cp dist/* %s" % release_dir())
     finally:
