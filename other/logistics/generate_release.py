@@ -232,6 +232,7 @@ def distfiles():
 def create_distribution():
     import tempfile
     dir = tempfile.mkdtemp(suffix=".generate_release")
+    original_dir = os.getcwd()
     try:
         os.chdir(dir)
         svnclient().checkout( release_branch_url(), branch_name() )
@@ -240,7 +241,7 @@ def create_distribution():
         run_command("mkdir -p %s" % release_dir())
         run_command("cp dist/* %s" % release_dir())
     finally:
-        os.chdir("/")
+        os.chdir(original_dir)
         run_command("rm -fr %s" % dir)
 
 def run_tests():
