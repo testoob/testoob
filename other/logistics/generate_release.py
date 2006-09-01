@@ -161,13 +161,13 @@ def up_to_date(path):
                 return False
     return True
 
-def replace_string(from_str, to_str, files):
-    for file in files:
-        run_command("""sed -i "" 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
+def replace_string(from_str, to_str, file):
+    run_command("""sed -i "" 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
 
 def replace_version_string():
     files = [norm_join(root_dir(), file) for file in ("Makefile", "setup.py", "src/testoob/__init__.py")]
-    replace_string("__TESTOOB_VERSION__", version(), files)
+    for file in files:
+        replace_string("__TESTOOB_VERSION__", version(), file)
 
 def svn_copy(source, target, log_message):
     print "* svn copy: src=%s, target=%s, log=%r" % (source, target, log_message)
