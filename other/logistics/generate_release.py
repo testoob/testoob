@@ -163,6 +163,14 @@ def up_to_date(path):
 
 def replace_string(from_str, to_str, file):
     run_command("""sed -i "" 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
+    f = open(file)
+    try: content = f.read()
+    finally: f.close()
+    os.rename(file, file + ".bak")
+    f = open(file, "w")
+    try: f.write(content)
+    finally: f.close()
+    os.unlink(file + ".bak")
 
 def replace_version_string():
     files = [norm_join(root_dir(), file) for file in ("Makefile", "setup.py", "src/testoob/__init__.py")]
