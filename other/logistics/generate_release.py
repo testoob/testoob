@@ -186,7 +186,7 @@ def branch_release():
     svn_copy( trunk_url(), release_branch_url(), "Branching release %s" % version() )
 
 def tag_release():
-    run_command("svn copy %s %s -m 'Tagging release %s'" % (release_branch_url(), release_tag_url(), version()))
+    svn_copy( release_branch_url(), release_tag_url(), version() )
 
 def changelog():
     return norm_join(root_dir(), "docs/CHANGELOG")
@@ -199,13 +199,13 @@ def update_changelog():
     run_command("rm -f %s" % temp_changelog)
 
 def switch_to_branch():
-    run_command("svn switch %s %s" % (release_branch_url(), root_dir()))
+    svnclient().switch( root_dir(), release_branch_url() )
 
 def switch_to_trunk():
-    run_command("svn switch %s %s" % (trunk_url(), root_dir()))
+    svnclient().switch( root_dir(), trunk_url() )
 
 def commit(msg):
-    run_command("svn commit %s -m '%s'" % (root_dir(), msg))
+    svnclient().checkin( root_dir(), msg )
 
 def create_release_branch():
     branch_release()
