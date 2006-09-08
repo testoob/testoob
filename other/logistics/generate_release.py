@@ -4,7 +4,7 @@ import re, sys, os, warnings
 import pysvn
 
 def __log(s):
-    sys.stderr.write("* " + str(s))
+    print >>sys.stderr, "* " + str(s)
 
 def _args_string(*args, **kwargs):
     args_strings = [repr(x) for x in args]
@@ -32,10 +32,10 @@ class LoggingProxy(object):
         result = getattr(self.__object, name)
         if callable(result):
             return LoggingProxy(result, name = self.__prefix + name)
-        self.__log('attr %r accessed\n' % (self.__prefix + name))
+        self.__log('attr %r accessed' % (self.__prefix + name))
 
     def __call__(self, *args, **kwargs):
-        self.__log("calling %s(%s)\n" % (self.__name, _args_string(*args, **kwargs)))
+        self.__log("calling %s(%s)" % (self.__name, _args_string(*args, **kwargs)))
         if self.__dry_run: return
         return self.__object(*args, **kwargs)
 
