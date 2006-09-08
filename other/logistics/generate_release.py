@@ -209,7 +209,7 @@ def update_changelog():
     run_command("rm -f %s" % temp_changelog)
 
 def switch_to_branch():
-    svnclient().switch( release_branch_url() )
+    svnclient().switch( root_dir(), release_branch_url() )
 
 def switch_to_trunk():
     svnclient().switch( root_dir(), trunk_url() )
