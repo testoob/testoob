@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import re, sys, os
+import re, sys, os, warnings
 import pysvn
 
 class LoggingProxy(object):
@@ -165,6 +165,9 @@ def up_to_date(path):
     return True
 
 def replace_string(from_str, to_str, file):
+    if not os.path.exists(file):
+        warnings.warn("File '%s' not found, skipping" % file)
+        return
     f = open(file)
     try: content = f.read()
     finally: f.close()
