@@ -3,8 +3,11 @@
 import re, sys, os, warnings
 import pysvn
 
+def __log(s):
+    sys.stderr.write("* " + str(s))
+
 class LoggingProxy(object):
-    def __init__(self, object, log=sys.stderr.write, name=None, dry_run=False):
+    def __init__(self, object, log=__log, name=None, dry_run=False):
         self.__object = object
         self.__log = log
         self.__name = name
@@ -108,7 +111,7 @@ def get_command_output(cmd):
     return commands.getoutput(cmd)
 
 def run_command(cmd):
-    print "* Running '%s'..." % cmd
+    __log("Running '%s'..." % cmd)
     sys.stdout.flush()
     if dry_run(): return
     os.system(cmd)
@@ -149,7 +152,6 @@ def version():
 
 def up_to_date(path):
     def _status_kind_up_to_date(status_kind):
-        print "Checking", status_kind, type(status_kind)
         from pysvn import wc_status_kind as sk
         return status_kind in (
             sk.normal,
@@ -183,7 +185,7 @@ def replace_version_string():
         replace_string("__TESTOOB_VERSION__", version(), file)
 
 def svn_copy(source, target, log_message):
-    print "* svn copy: src=%s, target=%s, log=%r" % (source, target, log_message)
+    __log("svn copy: src=%s, target=%s, log=%r" % (source, target, log_message))
     sys.stdout.flush()
     if dry_run(): return
 
