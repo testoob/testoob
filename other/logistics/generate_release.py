@@ -171,6 +171,9 @@ def up_to_date(path):
     for status in status_list:
         for s in (status.prop_status, status.text_status, status.repos_prop_status, status.repos_text_status):
             if not _status_kind_up_to_date(s):
+                if s == pysvn.wc_status_kind.unversioned:
+                    warnings.warn("%s is unversioned" % status.path)
+                    continue
                 return False
     return True
 
