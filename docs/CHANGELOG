@@ -4,6 +4,27 @@
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
+== Testoob 1.12, 8 September, 2006
+
+Enhancements:
+ * Added color support on Windows consoles, #260 and #261
+ * Added '--timeout-with-threads', which also works on Windows, #262
+ * Ctrl-C skips one test, 2 in succession skips to the end, #267
+
+Bugfixes:
+ * On Windows, 4Suite is chosen before MSXML so the "date" field in HTML
+   output works. #256
+ * --pbar fixes: import (#257), race condition (#258), and passing exceptions (#259)
+
+Internal:
+ * Better release testing (no path mangling, and added isolated tests)
+ * More unit tests, #155
+ * Many code cleanups and refactorings
+ * Updated release script to use pysvn, #268
+
+Contributors:
+ Misha Seltzer, Amir Szekely, Barak Schiller, Michael McFaden, Ori Peleg
+
 == Testoob 1.11, 1 July, 2006
 
 Bugfix release, some options wouldn't run (Thanks Jochen!)
