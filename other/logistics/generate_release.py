@@ -88,7 +88,7 @@ def parse_args():
     if not options.root_dir: parser.error("root dir missing")
 
     if options.release:
-        version_re=r"^\d(\.\d)+[a-z]?$"
+        version_re=r"^\d(\.\d+)+[a-z]?$"
         if not re.match(version_re, options.release):
             parser.error("bad version format, should match " + version_re)
 
