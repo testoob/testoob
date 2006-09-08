@@ -216,10 +216,10 @@ def changelog():
 
 def update_changelog():
     temp_changelog = "%s.temp" % changelog()
-    run_command("mv %s %s" % (changelog(), temp_changelog))
+    log_call(os.rename, changelog(), temp_changelog)
     run_command("svn log -v -r%s:HEAD %s | cat - %s > %s" %
             (last_branch_revision(), trunk_url(), temp_changelog, changelog()))
-    run_command("rm -f %s" % temp_changelog)
+    log_call(os.unlink, temp_changelog)
 
 def switch_to_branch():
     svnclient().switch( root_dir(), release_branch_url() )
