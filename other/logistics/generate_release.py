@@ -3,24 +3,24 @@
 import re, sys, os, warnings
 import pysvn
 
-def __log(s):
+def _log(s):
     print >>sys.stderr, "* " + str(s)
 
 def _args_string(*args, **kwargs):
     args_strings = [repr(x) for x in args]
     kwargs_strings = ["%s=%r" % item for item in kwargs.items()]
-    return ", ".join(args_strings, kwargs_strings)
+    return ", ".join(args_strings + kwargs_strings)
 
 def log_call(callable, *args, **kwargs):
     try:
         name = callable.func_name
     except AttributeError:
         name = str(callable)
-    __log("Calling %s(%s)" % (name, _args_string(*args, **kwargs)))
+    _log("Calling %s(%s)" % (name, _args_string(*args, **kwargs)))
     callable(*args, **kwargs)
 
 class LoggingProxy(object):
-    def __init__(self, object, log=__log, name=None, dry_run=False):
+    def __init__(self, object, log=_log, name=None, dry_run=False):
         self.__object = object
         self.__log = log
         self.__name = name
@@ -119,7 +119,7 @@ def get_command_output(cmd):
     return commands.getoutput(cmd)
 
 def run_command(cmd):
-    __log("Running '%s'..." % cmd)
+    _log("Running '%s'..." % cmd)
     sys.stdout.flush()
     if dry_run(): return
     os.system(cmd)
@@ -193,7 +193,7 @@ def replace_version_string():
         replace_string("__TESTOOB_VERSION__", version(), file)
 
 def svn_copy(source, target, log_message):
-    __log("svn copy: src=%s, target=%s, log=%r" % (source, target, log_message))
+    _log("svn copy: src=%s, target=%s, log=%r" % (source, target, log_message))
     sys.stdout.flush()
     if dry_run(): return
 
