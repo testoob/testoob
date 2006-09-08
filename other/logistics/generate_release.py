@@ -162,7 +162,6 @@ def up_to_date(path):
     return True
 
 def replace_string(from_str, to_str, file):
-    run_command("""sed -i "" 's/%(from_str)s/%(to_str)s/g' %(file)s""" % vars())
     f = open(file)
     try: content = f.read()
     finally: f.close()
