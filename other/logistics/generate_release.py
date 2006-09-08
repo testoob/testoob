@@ -10,7 +10,7 @@ class LoggingProxy(object):
         self.__name = name
         self.__prefix = name and name + "." or ""
         self.__dry_run = False
-        self.__setattr__ = self.__setattr_impl
+        self._init_done = True
 
     def __call_string(self, *args, **kwargs):
         args_strings = [repr(x) for x in args]
@@ -27,10 +27,13 @@ class LoggingProxy(object):
         self.__log(self.__call_string(*args, **kwargs))
         if self.__dry_run: return
         return self.__object(*args, **kwargs)
-        
-    def __setattr_impl(self, name, value):
-        self.__log('setting %r to %r' % (name, value))
-        setattr(self.__object, name, value)
+
+    def __setattr__(self, name, value):
+        if not hasattr(self, "_init_done") or not getattr(self, "_init_done"):
+            self.__dict__[name] = value
+        else:
+            self.__log('setting %r to %r' % (name, value))
+            setattr(self.__object, name, value)
 
 def svnclient():
     return LoggingProxy(pysvn.Client(), dry_run=dry_run())
@@ -206,7 +209,7 @@ def update_changelog():
     run_command("rm -f %s" % temp_changelog)
 
 def switch_to_branch():
-    svnclient().switch( root_dir(), release_branch_url() )
+    svnclient().switch( release_branch_url() )
 
 def switch_to_trunk():
     svnclient().switch( root_dir(), trunk_url() )
