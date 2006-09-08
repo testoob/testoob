@@ -139,7 +139,7 @@ def last_branch_revision():
         # no release branches, last revision is the first
         return 0
     
-    return e[-1]["created_rev"].number
+    return entries[-1]["created_rev"].number
 
 def die(msg):
     raise RuntimeError(msg)
