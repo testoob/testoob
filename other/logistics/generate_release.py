@@ -6,6 +6,19 @@ import pysvn
 def __log(s):
     sys.stderr.write("* " + str(s))
 
+def _args_string(*args, **kwargs):
+    args_strings = [repr(x) for x in args]
+    kwargs_strings = ["%s=%r" % item for item in kwargs.items()]
+    return ", ".join(args_strings, kwargs_strings)
+
+def log_call(callable, *args, **kwargs):
+    try:
+        name = callable.func_name
+    except AttributeError:
+        name = str(callable)
+    __log("Calling %s(%s)" % (name, _args_string(*args, **kwargs)))
+    callable(*args, **kwargs)
+
 class LoggingProxy(object):
     def __init__(self, object, log=__log, name=None, dry_run=False):
         self.__object = object
@@ -15,11 +28,6 @@ class LoggingProxy(object):
         self.__dry_run = False
         self._init_done = True
 
-    def __call_string(self, *args, **kwargs):
-        args_strings = [repr(x) for x in args]
-        kwargs_strings = ["%s=%r" % item for item in kwargs.items()]
-        return "calling %s(%s)\n" % (self.__name, ", ".join(args_strings + kwargs_strings))
-
     def __getattr__(self, name):
         result = getattr(self.__object, name)
         if callable(result):
@@ -27,7 +35,7 @@ class LoggingProxy(object):
         self.__log('attr %r accessed\n' % (self.__prefix + name))
 
     def __call__(self, *args, **kwargs):
-        self.__log(self.__call_string(*args, **kwargs))
+        self.__log("calling %s(%s)\n" % (self.__name, _args_string(*args, **kwargs)))
         if self.__dry_run: return
         return self.__object(*args, **kwargs)
 
