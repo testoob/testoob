@@ -1,0 +1,498 @@
+X About
+X ---
+X 
+X testoob is an advanced unit testing framework for Python.
+X 
+X It integrates effortlessly with existing "PyUnit":http://pyunit.sourceforge.net/ (module 'unittest') test suites.
+
+=======================
+=======================
+=======================
+
+X How do I write tests?
+X ---
+X New to automated testing? "Dive Into Python":http://diveintopython.org has excellent tutorials:
+X 
+X * "Unit Testing":http://diveintopython.org/unit_testing/index.html
+X * "Test-First Programming":http://diveintopython.org/unit_testing/stage_1.html
+
+=======================
+=======================
+=======================
+
+X Running the tests
+X ---
+X [textile]
+X On Unix systems, run the tests from the command-line like this:
+X 
+X <pre class="console">
+X prompt> testoob suite.py
+X ..
+X ----------------------------------------------------------------------
+X Ran 2 tests in 0.002s
+X OK
+X prompt>
+X </pre>
+X 
+X On Windows, find your Python installation directory. Let's assume it's <code>c:\python</code>. Then run:
+X <pre class="console">
+X prompt> python c:\python\scripts\testoob suite.py
+X ..
+X ----------------------------------------------------------------------
+X Ran 2 tests in 0.003s
+X OK
+X prompt>
+X </pre>
+X 
+X If you prefer, you can add the following at the end of the suite source file:
+X [/textile]
+X <code lang="python">
+X if __name__ == "__main__":
+X   import testoob
+X   testoob.main()
+X </code>
+X [textile]
+X And then run the tests with:
+X <pre class="console">
+X prompt> python suite.py
+X ..
+X ----------------------------------------------------------------------
+X Ran 2 tests in 0.002s
+X OK
+X prompt>
+X </pre>
+X [/textile]
+
+=======================
+=======================
+=======================
+
+Running your own test suite
+---
+
+[textile]
+You can run test suites you created on your own.
+
+If you have a function like:
+[/textile]
+
+<code lang="python">
+def suite():
+  result = unittest.TestSuite()
+  # ...
+  return result
+</code>
+
+[textile]
+You can run it by giving the function name:
+<pre class="console">
+prompt> testoob suite.py suite
+</pre>
+
+You can also change the call to <code>testoob.main</code>:
+[/textile]
+
+<code lang="python">
+if __name__ == "__main__":
+  import testoob
+  testoob.main(defaultTest="suite")
+</code>
+
+=======================
+=======================
+=======================
+
+Requirements
+---
+
+* "Python":http://www.python.org 2.2 or higher
+* "4Suite":http://4suite.org for HTML output.
+* "Pyro":http://pyro.sourceforge.net for advanced multi-process running
+
+=======================
+=======================
+=======================
+
+Color Output
+---
+
+Testoob automatically detects if your terminal supports color output. You can force it with <code>--color-mode</code>.
+
+!/images/screenshot01.png(Screenshot)!
+
+=======================
+=======================
+=======================
+
+Choose which tests will run
+---
+
+Choosing which tests will run can be done in one of the following ways:
+
+ * "regular expressions":http://www.python.org/doc/current/lib/re-syntax.html with the '--regex' command-line option
+ * Unix-style "glob patterns":http://www.python.org/doc/current/lib/module-fnmatch.html with the '--glob' command-line option
+ * By giving the test name, including modules and class
+
+!/images/screenshot01.png(Screenshot)!
+
+=======================
+=======================
+=======================
+
+Immediate Reports
+---
+
+Get immediate failure reports with the '--immediate' command-line option.
+
+<pre class="console">
+prompt> testoob tests/suites.py --regex='test[A-D]|CaseFailure|test[0-9]' --immediate
+..........F
+======================================================================
+FAIL: testFailure (suites.CaseFailure.testFailure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "tests/suites.py", line 53, in testFailure
+    def testFailure(self): self.fail()
+AssertionError
+======================================================================
+....
+----------------------------------------------------------------------
+Ran 15 tests in 0.018s
+FAILED (failures=1)
+prompt>
+</pre>
+
+=======================
+
+XML Output
+---
+
+[textile]
+Output XML with the '--xml' command-line option. You can then pass them to an automated system, such as "Cruise Control":http://cruisecontrol.sourceforge.net/ .
+
+Example output:
+[/textile]
+<code lang="xml">
+<testsuites>
+  <testcase name="testSuccess (suites.CaseMixed)" time="0.0002">
+    <result>success</result>
+  </testcase>
+  <testcase name="testError (suites.CaseMixed)" time="0.0014">
+    <result>error</result>
+    <error message="" type="exceptions.RuntimeError">
+Traceback (most recent call last):
+  ...
+    </error>
+  </testcase>
+  <total_time value="0.0016"/>
+</testsuites>
+</code>
+=======================
+
+HTML  Output
+---
+
+[textile]
+Output HTML for viewing test results in a web browser with the '--html' command-line option.
+
+Requires the "4Suite":http://4suite.org/ Python package.
+
+The HTML output is generated with XSLT from the XML output. It's possible to use an external XSLT processor, such as "xsltproc":http://xmlsoft.org/XSLT/xsltproc.html, "Xalan":http://xml.apache.org/, or "Saxon":http://saxon.sourceforge.net/.
+[/textile]
+
+<table border="1">
+  <tr>
+    <td>Name</td>
+    <td>Time</td>
+    <td>Result</td>
+    <td>Info</td>
+  </tr>
+  <tr>
+    <td>test7 (suites.CaseDigits)</td>
+    <td>0.0002</td>
+    <td><font color="green">Success</font></td>
+  </tr>
+  <tr>
+    <td>testError (suites.CaseError)</td>
+    <td>0.0016</td>
+    <td><font color="red">error</font></td>
+    <td>
+      <pre class="clear">Traceback (most recent call last):
+File "../../tests/suites.py", line 59, in testError
+def testError(self): raise RuntimeError
+RuntimeError</pre>
+    </td>
+  </tr>
+</table>
+
+=======================
+
+Debug
+---
+
+Run "pdb":http://www.python.org/doc/current/lib/debugger-commands.html on failing tests with the '--debug' command-line option.
+
+<pre class="console">
+prompt> testoob tests/suites.py -v --debug CaseMixed.testSuccess CaseMixed.testError
+testSuccess (suites.CaseMixed.testSuccess) ... ok
+testError (suites.CaseMixed.testError) ... ERROR
+
+Debugging for error in test: testError (suites.CaseMixed.testError)
+> /path/to/project/tests/suites.py(46)testError()
+-> def testError(self): raise RuntimeError
+(Pdb)
+</pre>
+=======================
+
+Verbose Asserts
+---
+
+Get full information on your asserts with the '--vassert' command-line option.
+
+Useful to see that you're testing what you think you are.
+
+<pre class="console">
+prompt> testoob tests/suites.py --regex='test[0-1]' --vassert
+test0 (suites.CaseDigits.test0) ... ok
+  [ PASSED (assertEquals) first: "00" second: "00" ]
+test1 (suites.CaseDigits.test1) ... ok
+  [ PASSED (assertEquals) first: "11" second: "11" ]
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.008s
+OK
+prompt>
+</pre>
+=======================
+
+Multiple Processes
+---
+
+Run tests in parallel in different processes with the '--processes' command-line option.
+
+This should work in most cases, even when the code isn't thread-safe.
+=======================
+
+Multiple Threads
+---
+
+Run tests in parallel with the '--threads' command-line option.
+
+Requires "Twisted":http://twistedmatrix.com/products/download.
+
+Without threads:
+<pre class="console">
+prompt> testoob tests/timed_suite.py
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 16.174s
+OK
+prompt>
+</pre>
+
+With threads:
+<pre class="output">
+prompt> testoob tests/timed_suite.py --threads=7
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 3.376s
+OK
+prompt>
+</pre>
+
+*NOTE*: Make sure your tests are thread safe! If they're not, don't expect this option to work. If you're using C extensions that aren't thread safe, the tests can crash quite messily.
+=======================
+
+Repeat tests
+---
+
+Repeat each test a number of times with the '<code>--repeat</code>' command-line option.
+
+Some uses for this:
+* For non-deterministic tests (pass with probability)
+* For stress-testing, possibly combined with '<code>--threads</code>' or '<code>--processes</code>'.
+
+
+=======================
+
+Wait Between Tests
+---
+
+Sleep between tests with the '<code>--interval</code>' command line option.
+=======================
+
+Test Command-Line Utilities
+---
+
+[textile]
+Use <a href="/api/public/testoob.testing-module.html"> <code>testoob.testing.command_line</code> </a> to test command-line utilities. You can check an application's standard output, standard error, and return code.
+
+Checking that <code>nmap</code> detects a local HTTP server:
+[/textile]
+<code lang="python">
+def testNmapLocalHTTPServer(self):
+    testoob.testing.command_line(["nmap", "localhost"],
+                                 expected_output_regex="80/tcp   open  http")
+</code>
+
+[textile]
+Testing <code>md5sum</code>:
+[/textile]
+<code lang="python">
+def testMD5Sum(self):
+    testoob.testing.command_line(
+      ["md5sum"],
+      input="abc\n",
+      expected_output="0bee89b07a248e27c83fc3d5951213c1 *-\n")
+</code>
+=======================
+
+Unit Testing Tutorials
+---
+
+The best Python learning resource, "Dive Into Python":http://diveintopython.org, has excellent tutorials:
+
+* "Unit Testing":http://diveintopython.org/unit_testing/index.html
+* "Test-First Programming":http://diveintopython.org/unit_testing/stage_1.html
+
+They're a great introduction to unit testing. I recommend them even if you're a salty testing dog, I know I enjoy rereading them.
+=======================
+
+We Would Like To Thank
+---
+
+The following projects, texts, and people have provided, and continue to provide, inspiration for Testoob.
+
+* The users of Testoob
+* "PyUnit":http://pyunit.sourceforge.net, a.k.a "unittest":http://docs.python.org/lib/module-unittest.html
+* "Steve Purcell":http://www.pythonconsulting.com/, author of PyUnit
+
+* "Pragmatic Unit Testing":http://www.pragmaticprogrammer.com/starter_kit/ut/
+* "Pragmatic Project Automation":http://www.pragmaticautomation.com/cgi-bin/pragauto.cgi
+
+* "JFunc":http://jfunc.sourceforge.net
+* "py.test":http://codespeak.net/py/current/doc/test.html
+* "Zope":http://www.zope.org
+* "JUnitScenario":http://junitscenario.sourceforge.net
+
+=======================
+
+Python Testing Options
+---
+
+There are several options when it comes to testing in Python.
+
+For an up-to-date list and descriptions, check out the "Python Testing Tools Taxonomy":http://pycheesecake.org/wiki/PythonTestingToolsTaxonomy
+
+It's best to experiment and choose what best agrees with you, but here are some personal recommendations:
+
+* "Testoob":http://testoob.sourceforge.net, this project
+* "PyUnit":http://pyunit.sourceforge.net/pyunit.html / "unittest":http://docs.python.org/lib/module-unittest.html, the standard, cooperates with Testoob
+* "doctest":http://docs.python.org/lib/module-doctest.html, the standard for literate testing, cooperates with Testoob
+* "nose":http://somethingaboutorange.com/mrl/projects/nose/, should cooperate with Testoob
+* "py.test":http://codespeak.net/py/current/doc/test.html, part of "PyPy":http://codespeak.net/pypy
+* "PyFit":http://fitnesse.org/FitServers.PythonFit, the Python version of "FitNesse":http://www.fitnesse.org/ acceptance testing
+
+If you're missing a feature in Testoob, don't forget to tell us!
+=======================
+
+License
+---
+
+Testoob is released under the "Apache License, Version 2.0":http://www.apache.org/licenses/LICENSE-2.0.
+
+!http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://www.opensource.org/docs/definition.php
+
+=======================
+
+Our Aims
+---
+
+We aim to:
+
+* Provide simple and powerful testing facilities
+* Promote writing tests in Python for C/C++ code
+* Make testing fun!
+* Have fun ourselves doing all of the above
+=======================
+
+Getting the Source
+---
+
+We use "Subversion":http://subversion.tigris.org/ for version control.
+
+h2. Repository URL
+
+http://opensvn.csie.org/testoob/trunk
+
+h2. Fetching a working copy
+
+On Linux/Unix machines with subversion installed the following should work:
+<pre class="console">
+svn checkout http://opensvn.csie.org/testoob/trunk testoob
+</pre>
+
+On Windows, try "TortoiseSVN":http://tortoisesvn.sourceforge.net/
+
+h2. More information
+
+* "The Subversion Home Page":http://subversion.tigris.org/
+* "Version Control with Subversion":http://svnbook.red-bean.com/
+=======================
+
+Feedback
+---
+
+h1. Tracker
+
+To report bugs or request features, use our Trac instance at:
+
+"https://opensvn.csie.org/traccgi/testoob/trac.cgi/newticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/newticket
+
+h1. Mailing lists
+
+Ask questions and discuss Testoob on the "testoob-user":http://lists.sourceforge.net/mailman/listinfo/testoob-user mailing list.
+
+=======================
+
+Platforms
+---
+
+Testoob is verified to work with Python versions:
+
+* 2.4
+* 2.3.5
+* 2.2.3 
+
+And on platforms:
+
+* Linux
+* Windows
+* FreeBSD
+* Cygwin
+=======================
+
+Code Credit
+---
+
+Code from the following projects is used in Testoob:
+
+* "PyUnit":http://pyunit.sourceforge.net
+* "ElementTree":http://effbot.org/zone/element-index.htm
+* "PyPy":http://codespeak.net/pypy
+=======================
+
+Credits
+---
+
+Lead contributors:
+
+* Ori Peleg &lt;orispammerpel at users dot sourceforge dot net&gt;
+* Misha Seltzer &lt;mishadontspamme at seltzer dot com&gt;
+
+Other contributors:
+
+* Barak Schiller &lt;bspamalotschiller at gmail dot com&gt;
+* Wolfram Kriesing &lt;ilikespamwolfram at kriesing dot de&gt;
+=======================
+

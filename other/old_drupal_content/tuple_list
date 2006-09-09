@@ -1,0 +1,147 @@
+((S'How do I write tests?'
+p0
+S'New to automated testing? "Dive Into Python":http://diveintopython.org has excellent tutorials:\r\n* "Unit Testing":http://diveintopython.org/unit_testing/index.html\r\n* "Test-First Programming":http://diveintopython.org/unit_testing/stage_1.html'
+p1
+tp2
+(S'Running the tests'
+p3
+S'On Unix systems, run the tests from the command-line like this:\r\n\r\n<pre class="console">\r\nprompt> testoob suite.py\r\n..\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.002s\r\nOK\r\nprompt>\r\n</pre>\r\n\r\nOn Windows, find your Python installation directory. Let\'s assume it\'s <code>c:\\python</code>. Then run:\r\n<pre class="console">\r\nprompt> python c:\\python\\scripts\\testoob suite.py\r\n..\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.003s\r\nOK\r\nprompt>\r\n</pre>\r\n\r\nIf you prefer, you can add the following at the end of the suite source file:\r\n<geshi python>\r\nif __name__ == "__main__":\r\n  import testoob\r\n  testoob.main()\r\n</geshi>\r\n\r\nAnd then run the tests with:\r\n<pre class="console">\r\nprompt> python suite.py\r\n..\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.002s\r\nOK\r\nprompt>\r\n</pre>\r\n'
+p4
+tp5
+(S'Mary Had A Little Lamb'
+p6
+S'h1. How many lambs?\r\n\r\n<geshi python>\r\nprint "No. of lambs:", len(lambs)\r\n</geshi>\r\n\r\nh1. And if I\'m hungry?\r\n\r\n<geshi python>\r\nclass BBQ:\r\n  def roast(self, meat):\r\n    meat.cooked = True\r\n    meat.flavor = "awesome"\r\n    print "ahh... the aroma..."\r\n\r\nbbq = BBQ()\r\n\r\nfor lamb in lambs:\r\n  bbq.roast(lamb)\r\n  eat(lamb)\r\n</geshi>'
+p7
+tp8
+(S'Running your own test suite'
+p9
+S'You can run test suites you created on your own.\r\n\r\nIf you have a function like:\r\n<geshi python>\r\ndef suite():\r\n  result = unittest.TestSuite()\r\n  # ...\r\n  return result\r\n</geshi>\r\n\r\nYou can run it by giving the function name:\r\n<pre class="console">\r\nprompt> testoob suite.py suite\r\n</pre>\r\n\r\nYou can also change the call to <code>testoob.main</code>:\r\n<geshi python>\r\nif __name__ == "__main__":\r\n  import testoob\r\n  testoob.main(defaultTest="suite")\r\n</geshi>\r\n'
+p10
+tp11
+(S'Requirements'
+p12
+S'* "Python":http://www.python.org 2.2 or higher\r\n* "4Suite":http://4suite.org for HTML output.\r\n* "Twisted":http://twistedmatrix.com/products/download for running in threads.\r\n* "Pyro":http://pyro.sourceforge.net for advanced multi-process running'
+p13
+tp14
+(S'About'
+p15
+S'testoob is an advanced unit testing framework for Python.\r\n\r\nIt integrates effortlessly with existing "PyUnit":http://pyunit.sourceforge.net/ (module \'unittest\') test suites.'
+p16
+tp17
+(S'Color Output'
+p18
+S"Enable color output on the console with the '--color' command-line option.\r\n\r\n!/images/screenshot01.png(Screenshot)!\r\n"
+p19
+tp20
+(S'Regular Expressions'
+p21
+S'Choose which tests to run using "regular expressions":http://www.python.org/doc/current/lib/re-syntax.html with the \'--regex\' command-line option.\r\n\r\n!/images/screenshot01.png(Screenshot)!\r\n'
+p22
+tp23
+(S'Glob Patterns'
+p24
+S'Choose which tests to run with Unix-style "glob patterns":http://www.python.org/doc/current/lib/module-fnmatch.html with the \'--glob\' command-line option.\r\n'
+p25
+tp26
+(S'Immediate Reports'
+p27
+S'Get immediate failure reports with the \'--immediate\' command-line option.\r\n\r\n<pre class="console">\r\nprompt> testoob tests/suites.py --regex=\'test[A-D]|CaseFailure|test[0-9]\' --immediate\r\n..........F\r\n======================================================================\r\nFAIL: testFailure (suites.CaseFailure.testFailure)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File "tests/suites.py", line 53, in testFailure\r\n    def testFailure(self): self.fail()\r\nAssertionError\r\n======================================================================\r\n....\r\n----------------------------------------------------------------------\r\nRan 15 tests in 0.018s\r\nFAILED (failures=1)\r\nprompt>\r\n</pre>\r\n'
+p28
+tp29
+(S'XML Output'
+p30
+S'[textile]\r\nOutput XML with the \'--xml\' command-line option. You can then pass them to an automated system, such as "Cruise Control":http://cruisecontrol.sourceforge.net/ .\r\n\r\nExample output:\r\n[/textile]\r\n<geshi xml>\r\n<testsuites>\r\n  <testcase name="testSuccess (suites.CaseMixed)" time="0.0002">\r\n    <result>success</result>\r\n  </testcase>\r\n  <testcase name="testError (suites.CaseMixed)" time="0.0014">\r\n    <result>error</result>\r\n    <error message="" type="exceptions.RuntimeError">\r\nTraceback (most recent call last):\r\n  ...\r\n    </error>\r\n  </testcase>\r\n  <total_time value="0.0016"/>\r\n</testsuites>\r\n</geshi>'
+p31
+tp32
+(S'HTML  Output'
+p33
+S'[textile]\r\nOutput HTML for viewing test results in a web browser with the \'--html\' command-line option.\r\n\r\nRequires the "4Suite":http://4suite.org/ Python package.\r\n\r\nThe HTML output is generated with XSLT from the XML output. It\'s possible to use an external XSLT processor, such as "xsltproc":http://xmlsoft.org/XSLT/xsltproc.html, "Xalan":http://xml.apache.org/, or "Saxon":http://saxon.sourceforge.net/.\r\n[/textile]\r\n\r\n<table border="1">\r\n  <tr>\r\n    <td>Name</td>\r\n    <td>Time</td>\r\n    <td>Result</td>\r\n    <td>Info</td>\r\n  </tr>\r\n  <tr>\r\n    <td>test7 (suites.CaseDigits)</td>\r\n    <td>0.0002</td>\r\n    <td><font color="green">Success</font></td>\r\n  </tr>\r\n  <tr>\r\n    <td>testError (suites.CaseError)</td>\r\n    <td>0.0016</td>\r\n    <td><font color="red">error</font></td>\r\n    <td>\r\n      <pre class="clear">Traceback (most recent call last):\r\nFile "../../tests/suites.py", line 59, in testError\r\ndef testError(self): raise RuntimeError\r\nRuntimeError</pre>\r\n    </td>\r\n  </tr>\r\n</table>\r\n'
+p34
+tp35
+(S'Debug'
+p36
+S'Run "pdb":http://www.python.org/doc/current/lib/debugger-commands.html on failing tests with the \'--debug\' command-line option.\r\n\r\n<pre class="console">\r\nprompt> testoob tests/suites.py -v --debug CaseMixed.testSuccess CaseMixed.testError\r\ntestSuccess (suites.CaseMixed.testSuccess) ... ok\r\ntestError (suites.CaseMixed.testError) ... ERROR\r\n\r\nDebugging for error in test: testError (suites.CaseMixed.testError)\r\n> /path/to/project/tests/suites.py(46)testError()\r\n-> def testError(self): raise RuntimeError\r\n(Pdb)\r\n</pre>'
+p37
+tp38
+(S'Verbose Asserts'
+p39
+S'Get full information on your asserts with the \'--vassert\' command-line option.\r\n\r\nUseful to see that you\'re testing what you think you are.\r\n\r\n<pre class="console">\r\nprompt> testoob tests/suites.py --regex=\'test[0-1]\' --vassert\r\ntest0 (suites.CaseDigits.test0) ... ok\r\n  [ PASSED (assertEquals) first: "00" second: "00" ]\r\ntest1 (suites.CaseDigits.test1) ... ok\r\n  [ PASSED (assertEquals) first: "11" second: "11" ]\r\n\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.008s\r\nOK\r\nprompt>\r\n</pre>'
+p40
+tp41
+(S'Multiple Processes'
+p42
+S"Run tests in parallel in different processes with the '--processes' command-line option.\r\n\r\nThis should work in most cases, even when the code isn't thread-safe."
+p43
+tp44
+(S'Multiple Threads'
+p45
+S'Run tests in parallel with the \'--threads\' command-line option.\r\n\r\nRequires "Twisted":http://twistedmatrix.com/products/download.\r\n\r\nWithout threads:\r\n<pre class="console">\r\nprompt> testoob tests/timed_suite.py\r\n...............\r\n----------------------------------------------------------------------\r\nRan 15 tests in 16.174s\r\nOK\r\nprompt>\r\n</pre>\r\n\r\nWith threads:\r\n<pre class="output">\r\nprompt> testoob tests/timed_suite.py --threads=7\r\n...............\r\n----------------------------------------------------------------------\r\nRan 15 tests in 3.376s\r\nOK\r\nprompt>\r\n</pre>\r\n\r\n*NOTE*: Make sure your tests are thread safe! If they\'re not, don\'t expect this option to work. If you\'re using C extensions that aren\'t thread safe, the tests can crash quite messily.'
+p46
+tp47
+(S'Repeat tests'
+p48
+S"Repeat each test a number of times with the '<code>--repeat</code>' command-line option.\r\n\r\nSome uses for this:\r\n* For non-deterministic tests (pass with probability)\r\n* For stress-testing, possibly combined with '<code>--threads</code>' or '<code>--processes</code>'.\r\n\r\n"
+p49
+tp50
+(S'Wait Between Tests'
+p51
+S"Sleep between tests with the '<code>--interval</code>' command line option."
+p52
+tp53
+(S'Test Command-Line Utilities'
+p54
+S'[textile]\r\nUse <a href="/api/public/testoob.testing-module.html"> <code>testoob.testing.command_line</code> </a> to test command-line utilities. You can check an application\'s standard output, standard error, and return code.\r\n\r\nChecking that <code>nmap</code> detects a local HTTP server:\r\n[/textile]\r\n<geshi python>\r\ndef testNmapLocalHTTPServer(self):\r\n    testoob.testing.command_line(["nmap", "localhost"],\r\n                                 expected_output_regex="80/tcp   open  http")\r\n</geshi>\r\n\r\n[textile]\r\nTesting <code>md5sum</code>:\r\n[/textile]\r\n<geshi python>\r\ndef testMD5Sum(self):\r\n    testoob.testing.command_line(\r\n      ["md5sum"],\r\n      input="abc\\n",\r\n      expected_output="0bee89b07a248e27c83fc3d5951213c1 *-\\n")\r\n</geshi>'
+p55
+tp56
+(S'Unit Testing Tutorials'
+p57
+S'The best Python learning resource, "Dive Into Python":http://diveintopython.org, has excellent tutorials:\r\n\r\n* "Unit Testing":http://diveintopython.org/unit_testing/index.html\r\n* "Test-First Programming":http://diveintopython.org/unit_testing/stage_1.html\r\n\r\nThey\'re a great introduction to unit testing. I recommend them even if you\'re a salty testing dog, I know I enjoy rereading them.'
+p58
+tp59
+(S'We Would Like To Thank'
+p60
+S'The following projects, texts, and people have provided, and continue to provide, inspiration for Testoob.\r\n\r\n* The users of Testoob\r\n* "PyUnit":http://pyunit.sourceforge.net, a.k.a "unittest":http://docs.python.org/lib/module-unittest.html\r\n* "Steve Purcell":http://www.pythonconsulting.com/, author of PyUnit\r\n\r\n* "Pragmatic Unit Testing":http://www.pragmaticprogrammer.com/starter_kit/ut/\r\n* "Pragmatic Project Automation":http://www.pragmaticautomation.com/cgi-bin/pragauto.cgi\r\n\r\n* "JFunc":http://jfunc.sourceforge.net\r\n* "py.test":http://codespeak.net/py/current/doc/test.html\r\n* "Zope":http://www.zope.org\r\n* "JUnitScenario":http://junitscenario.sourceforge.net\r\n'
+p61
+tp62
+(S'Python Testing Options'
+p63
+S'There are several options when it comes to testing in Python.\r\n\r\nFor an up-to-date list and descriptions, check out the "Python Testing Tools Taxonomy":http://pycheesecake.org/wiki/PythonTestingToolsTaxonomy\r\n\r\nIt\'s best to experiment and choose what best agrees with you, but here are some personal recommendations:\r\n\r\n* "Testoob":http://testoob.sourceforge.net, this project\r\n* "PyUnit":http://pyunit.sourceforge.net/pyunit.html / "unittest":http://docs.python.org/lib/module-unittest.html, the standard, cooperates with Testoob\r\n* "doctest":http://docs.python.org/lib/module-doctest.html, the standard for literate testing, cooperates with Testoob\r\n* "nose":http://somethingaboutorange.com/mrl/projects/nose/, should cooperate with Testoob\r\n* "py.test":http://codespeak.net/py/current/doc/test.html, part of "PyPy":http://codespeak.net/pypy\r\n* "PyFit":http://fitnesse.org/FitServers.PythonFit, the Python version of "FitNesse":http://www.fitnesse.org/ acceptance testing\r\n\r\nIf you\'re missing a feature in Testoob, don\'t forget to tell us!'
+p64
+tp65
+(S'License'
+p66
+S'Testoob is released under the "Apache License, Version 2.0":http://www.apache.org/licenses/LICENSE-2.0.\r\n\r\n!http://opensource.org/trademarks/opensource/web/transparent/opensource-110x95-t.png(Open Source)!:http://www.opensource.org/docs/definition.php\r\n'
+p67
+tp68
+(S'Our Aims'
+p69
+S'We aim to:\r\n\r\n* Provide simple and powerful testing facilities\r\n* Promote writing tests in Python for C/C++ code\r\n* Make testing fun!\r\n* Have fun ourselves doing all of the above'
+p70
+tp71
+(S'Getting the Source'
+p72
+S'We use "Subversion":http://subversion.tigris.org/ for version control.\r\n\r\nh2. Repository URL\r\n\r\nhttp://opensvn.csie.org/testoob/trunk\r\n\r\nh2. Fetching a working copy\r\n\r\nOn Linux/Unix machines with subversion installed the following should work:\r\n<pre class="console">\r\nsvn checkout http://opensvn.csie.org/testoob/trunk testoob\r\n</pre>\r\n\r\nOn Windows, try "TortoiseSVN":http://tortoisesvn.sourceforge.net/\r\n\r\nh2. More information\r\n\r\n* "The Subversion Home Page":http://subversion.tigris.org/\r\n* "Version Control with Subversion":http://svnbook.red-bean.com/'
+p73
+tp74
+(S'Feedback'
+p75
+S'h1. Tracker\r\n\r\nTo report bugs or request features, use our Trac instance at:\r\n\r\n"https://opensvn.csie.org/traccgi/testoob/trac.cgi/newticket":https://opensvn.csie.org/traccgi/testoob/trac.cgi/newticket\r\n\r\nh1. Mailing lists\r\n\r\nAsk questions and discuss Testoob on the "testoob-user":http://lists.sourceforge.net/mailman/listinfo/testoob-user mailing list.\r\n'
+p76
+tp77
+(S'Platforms'
+p78
+S'Testoob is verified to work with Python versions:\r\n\r\n* 2.4\r\n* 2.3.5\r\n* 2.2.3 \r\n\r\nAnd on platforms:\r\n\r\n* Linux\r\n* Windows\r\n* FreeBSD\r\n* Cygwin'
+p79
+tp80
+(S'Code Credit'
+p81
+S'Code from the following projects is used in Testoob:\r\n\r\n* "PyUnit":http://pyunit.sourceforge.net\r\n* "ElementTree":http://effbot.org/zone/element-index.htm\r\n* "PyPy":http://codespeak.net/pypy'
+p82
+tp83
+(S'Credits'
+p84
+S'Lead contributors:\r\n\r\n* Ori Peleg &lt;orispammerpel at users dot sourceforge dot net&gt;\r\n* Misha Seltzer &lt;mishadontspamme at seltzer dot com&gt;\r\n\r\nOther contributors:\r\n\r\n* Barak Schiller &lt;bspamalotschiller at gmail dot com&gt;\r\n* Wolfram Kriesing &lt;ilikespamwolfram at kriesing dot de&gt;'
+p85
+tp86
+tp87
+.
