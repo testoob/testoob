@@ -270,16 +270,12 @@ def create_distribution():
         os.chdir(original_dir)
         run_command("rm -fr %s" % dir)
 
-def run_tests():
-    pass # TODO
-
 def upload_to_sourceforge():
     run_command("ncftpput upload.sourceforge.net incoming " + " ".join(distfiles()))
 
 def perform_release():
     create_release_branch()
     create_distribution()
-    run_tests()
     upload_to_sourceforge()
 
 def main():
