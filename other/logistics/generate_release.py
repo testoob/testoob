@@ -264,14 +264,14 @@ def create_distribution():
     dir = tempfile.mkdtemp(suffix=".generate_release")
     original_dir = os.getcwd()
     try:
-        os.chdir(dir)
+        log_call(os.chdir, dir)
         svnclient().checkout( release_branch_url(), branch_name() )
-        os.chdir(branch_name())
+        log_call(os.chdir, branch_name())
         run_command("make distfiles")
         run_command("mkdir -p %s" % release_dir())
         run_command("cp dist/* %s" % release_dir())
     finally:
-        os.chdir(original_dir)
+        log_call(os.chdir, original_dir)
         run_command("rm -fr %s" % dir)
 
 def upload_to_sourceforge():
