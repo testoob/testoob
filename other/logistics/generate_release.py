@@ -3,6 +3,8 @@
 import re, sys, os, warnings
 import pysvn
 
+first_working_directory = os.getcwd()
+
 def _log(s):
     print >>sys.stderr, "* " + str(s)
 
@@ -112,7 +114,9 @@ def norm_join(*args):
 
 def root_dir():
     "the project's root dir"
-    return options().root_dir
+    if os.path.isabs( options().root_dir ):
+        return options().root_dir
+    return normjoin( first_working_directory, options().root_dir )
 
 def get_command_output(cmd):
     import commands
