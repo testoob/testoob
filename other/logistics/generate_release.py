@@ -188,6 +188,9 @@ def replace_string(from_str, to_str, file):
     f = open(file)
     try: content = f.read()
     finally: f.close()
+
+    content.replace(from_str, to_str)
+
     os.rename(file, file + ".bak")
     f = open(file, "w")
     try: f.write(content)
