@@ -6,18 +6,22 @@ Lets assume we're releasing version 6.2
 
   edit the changes and commit.
 
+* Create a SourceForge release
+  (Admin -> File Releases -> Add Release)
+  Or directly:
+  http://sourceforge.net/project/admin/newrelease.php?package_id=152827&group_id=138557
+
+  Call the release '6.2'
+
+  Add just the changelog for now
+
 * Update the website sources with the news
 
 * Generate the release (branches, creates distfile, uploads to sourceforge)
 
     ./other/logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.
 
-* Create a SourceForge release
-  (Admin -> File Releases -> Add Release)
-  Or directly:
-  http://sourceforge.net/project/admin/newrelease.php?package_id=152827&group_id=138557
-
-  Call the release '6.2', choose the distfile
+* Add the files to the SourceForge file release
 
 * Download the release, see that it works
 
