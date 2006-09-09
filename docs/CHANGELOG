@@ -4,7 +4,7 @@
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
-== Testoob 1.12, 8 September, 2006
+== Testoob 1.12, 9 September, 2006
 
 Enhancements:
  * Added color support on Windows consoles, #260 and #261
