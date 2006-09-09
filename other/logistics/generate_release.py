@@ -263,7 +263,7 @@ def create_distribution():
         os.chdir(dir)
         svnclient().checkout( release_branch_url(), branch_name() )
         os.chdir(branch_name())
-        run_command("make dist")
+        run_command("make distfiles")
         run_command("mkdir -p %s" % release_dir())
         run_command("cp dist/* %s" % release_dir())
     finally:
