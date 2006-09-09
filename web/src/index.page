@@ -12,6 +12,19 @@ h1. Testoob: Advanced Testing in Python
 
 h2. News
 
+h3. 9 September, 2006: Testoob 1.12 released
+
+New version, with some enhancements, bugfixes, and internal changes.
+
+* Color support on Windows
+* Skip a single test with Ctrl-C (twice skips all)
+* New "timeout with threads" option, works on Windows too
+* Windows and --pbar bugfixes
+
+More info:
+* "The changelog":http://sourceforge.net/project/shownotes.php?release_id=XXX&group_id=138557
+* "The Trac milestone report":https://opensvn.csie.org/traccgi/testoob/trac.cgi/milestone/version1.12
+
 h3. 1 July, 2006: Testoob 1.11 released
 
 Fixed a serious bug which prevented several options from running.
