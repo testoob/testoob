@@ -1,4 +1,6 @@
 from unittest import TestCase
+import sys
+import testoob.testing
 
 class MethodsCalledMock:
     def __init__(self):
@@ -87,10 +89,11 @@ class err_info_misc(TestCase):
         try:
             raise item_to_throw
         except:
-            import sys
             return sys.exc_info()
 
     def test_should_skip_string_exception(self):
+        if sys.version_info >= (2,5):
+            testoob.testing.skip(reason="raising string exceptions is deprecated")
         from testoob.reporting.err_info import _should_skip
         self.failIf( _should_skip(self._get_exc_info("abc")[0]) )
 
