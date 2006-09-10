@@ -43,7 +43,6 @@ Topic :: Software Development :: Testing
 
 # patch distutils if it can't cope with the "classifiers" or
 # "download_url" keywords
-import sys
 if sys.version < '2.2.3':
     from distutils.dist import DistributionMetadata
     DistributionMetadata.classifiers = None
