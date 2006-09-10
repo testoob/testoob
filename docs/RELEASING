@@ -40,6 +40,10 @@ Lets assume we're releasing version 6.2
   - The mailing lists (combine and edit the news announcement and the
     changelog)
 
+* Upload files to the cheeseshop
+  - A distutils tarball
+  - Python 2.3 + 2.4 eggs, 'easy-install -zxN testoob-x.xx.tar.bz2'
+
 * Update the wiki pages
   - Wikipedia
   - The Python Wiki
