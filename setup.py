@@ -2,7 +2,6 @@ kwargs = {
     'packages' : ['testoob', 'testoob.compatibility', 'testoob.reporting', 'testoob.running', 'testoob.commandline'],
     'package_dir' : {'': 'src'},
     'scripts'  : ['src/testoob/testoob'],
-    'data_files'  : [('testoob', ['other/setcolor.exe'])],
 
     # meta-data
     'name'             : 'testoob',
@@ -16,6 +15,9 @@ kwargs = {
     'description'      : 'Testoob - An advanced unit testing framework',
 }
 
+import sys
+if sys.platform.startswith("win"):
+    kwargs['data_files'] = [('testoob', ['other/setcolor.exe'])],
 
 kwargs['long_description'] = """
 Testoob - Python Testing Out Of (The) Box
