@@ -21,6 +21,7 @@ test:
 .PHONY: testall
 testall:
 	$(call test_with,python2.4)
+	$(call test_with,python2.5)
 	$(call test_with,python2.3)
 	$(call test_with,python2.2)
 
@@ -34,6 +35,7 @@ isolated_test:
 .PHONY: isolated_testall
 isolated_testall:
 	$(ISOLATED_TEST_CMD) --python=python2.4
+	$(ISOLATED_TEST_CMD) --python=python2.5
 	$(ISOLATED_TEST_CMD) --python=python2.3
 	$(ISOLATED_TEST_CMD) --python=python2.2 --install-python=python
 
