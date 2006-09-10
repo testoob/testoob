@@ -16,6 +16,7 @@
 "test running logic"
 
 from baserunner import BaseRunner
+from simplerunner import SimpleRunner
 from threadedrunner import ThreadedRunner
 from processedrunner import ProcessedRunner
 from listingrunner import ListingRunner
