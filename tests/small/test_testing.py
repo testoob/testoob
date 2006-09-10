@@ -157,8 +157,7 @@ class assert_raises_tests(TestCase):
         try:
             tt.assert_raises(RuntimeError, func, expected_args=("abc", "def"))
         except AssertionError, e:
-            import re
-            expected = re.escape("func() raised exceptions.RuntimeError with unexpected args: expected=('abc', 'def'), actual=(123, 456)")
+            expected = "func\(\) raised .*exceptions.RuntimeError.* with unexpected args: expected=\('abc', 'def'\), actual=\(123, 456\)"
             tt.assert_matches( expected, str(e) )
 
     def test_expected_regex_success(self):
@@ -179,7 +178,7 @@ class assert_raises_tests(TestCase):
             tt.assert_raises(RuntimeError, func, 1, b=2, expected_regex="xxx")
         except AssertionError, e:
             import re
-            expected = re.escape("func(1, b=2) raised exceptions.RuntimeError, but the regular expression 'xxx' doesn't match '1 - 2'")
+            expected = "func\(1, b=2\) raised .*exceptions.RuntimeError.*, but the regular expression 'xxx' doesn't match '1 - 2'"
             tt.assert_matches(expected, str(e))
 
     def test_unexpected_exception_type(self):
@@ -187,8 +186,7 @@ class assert_raises_tests(TestCase):
         try:
             tt.assert_raises(ValueError, func)
         except AssertionError, e:
-            import re
-            expected = re.escape("func() raised an unexpected exception type: expected=ValueError, actual=exceptions.IndexError")
+            expected = "func\(\) raised an unexpected exception type: expected=ValueError, actual=.*exceptions.IndexError.*"
             tt.assert_matches(expected, str(e))
 
 if __name__ == "__main__":
