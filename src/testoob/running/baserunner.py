@@ -15,16 +15,16 @@
 
 "Useful base class for runners"
 
+import testoob.asserter
+
 class BaseRunner(object):
     """default implementations of setting a reporter and done()"""
     def __init__(self):
-        from testoob.asserter import Asserter
-        self._Asserter = Asserter
         self.reporter = None
 
     def run(self, fixture):
-        # Let the assert functions know it's reporter.
-        self._Asserter().set_reporter(fixture.get_fixture(), self.reporter)
+        # Let the assert functions know its reporter
+        testoob.asserter.Asserter().set_reporter(fixture.get_fixture(), self.reporter)
 
     def done(self):
         self.reporter.done()
