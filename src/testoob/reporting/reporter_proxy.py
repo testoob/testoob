@@ -85,8 +85,8 @@ class ReporterProxy:
     def addAssert(self, test, assertName, varList, exception):
         self._apply_method("addAssert", create_test_info(test), assertName, varList, exception)
 
-    def addSkip(self, test, err):
-        self._apply_method("addSkip", create_test_info(test), create_err_info(test, err))
+    def addSkip(self, test, err, isRegistered=True):
+        self._apply_method("addSkip", create_test_info(test), create_err_info(test, err), isRegistered)
 
     def isSuccessful(self):
         for reporter in self.observing_reporters:

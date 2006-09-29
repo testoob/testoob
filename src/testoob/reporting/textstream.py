@@ -76,8 +76,8 @@ class TextStreamReporter(BaseReporter):
         BaseReporter.addSuccess(self, test_info)
         self._report_result("OK", ".", self.writers.success)
 
-    def addSkip(self, test_info, err_info):
-        BaseReporter.addSkip(self, test_info, err_info)
+    def addSkip(self, test_info, err_info, isRegistered=True):
+        BaseReporter.addSkip(self, test_info, err_info, isRegistered)
         self._report_result("SKIPPED", "S", self.writers.warning)
 
     def _report_failure(self, long_string, short_string, writer, test_info, err_info):

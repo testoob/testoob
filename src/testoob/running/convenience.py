@@ -73,16 +73,16 @@ class TestLoop(object):
         self.last_result = self.runner.run(decorated_fixture)
 
     def _handle_interrupt(self, fixture):
-        from fixture_decorators import InterruptedFixture
+        from fixture_decorators import get_interrupterd_fixture
         if hasattr(self, "last_interrupt") and (time.time() - self.last_interrupt < 1):
             # Two interrupts in less than a second, cause all
             # future tests to skip
-            self.fixture_decorators = [InterruptedFixture]
+            self.fixture_decorators = [get_interrupterd_fixture()]
         self.last_interrupt = time.time()
 
         # Run the current test again with InterruptedFixture decorator
         # So it'll be added to the skipped tests' list.
-        decorated_fixture = apply_decorators(fixture, [InterruptedFixture])
+        decorated_fixture = apply_decorators(fixture, [get_interrupterd_fixture(True)])
         self.runner.run(decorated_fixture)
 
     def _run_all_fixtures(self):

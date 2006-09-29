@@ -101,6 +101,6 @@ class ProgressBarReporter(BaseReporter):
         BaseReporter.addSuccess(self, test_info)
         self._pbg.advance()
 
-    def addSkip(self, test_info, err_info):
-        BaseReporter.addSkip(self, test_info, err_info)
+    def addSkip(self, test_info, err_info, isRegistered=True):
+        BaseReporter.addSkip(self, test_info, err_info, isRegistered)
         self._pbg.advance()

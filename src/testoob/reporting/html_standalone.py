@@ -85,8 +85,8 @@ class OldHTMLReporter(BaseReporter):
         self._sio.write(HTMLReporter._SuccessTemplate%(str(test_info), self._test_time(test_info)))
 
     _SkipTemplate='<tr><td>%s</td><td>%s</td><td><font color="blue">skipped</font></td><td>%s</td></tr>'
-    def addSkip(self, test_info, err_info):
-        BaseReporter.addSkip(self, test_info, err_info)
+    def addSkip(self, test_info, err_info, isRegistered=True):
+        BaseReporter.addSkip(self, test_info, err_info, isRegistered)
         self._sio.write(HTMLReporter._SkipTemplate%(str(test_info), self._test_time(test_info), str(err_info.exception_value())))
 
     _FailTemplate="""

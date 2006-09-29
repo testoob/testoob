@@ -580,7 +580,7 @@ FAILED \(failures=1, errors=1\)
     def testSkippingTests(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["skipping"]),
-                expected_error_regex='Skipped 2 tests.*Ran 3 tests.*OK',
+                expected_error_regex='Skipped 2 tests.*Ran 1 test.*OK',
                 expected_rc=0,
         )
     def testSkippingTestsVerbose(self):
@@ -606,14 +606,14 @@ FAILED \(failures=1, errors=1\)
     def testSkipOnInterrupt(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["InterruptingTests"]),
-                expected_error_regex='Skipped 1 tests.*Test was interrupted.*Ran 7 tests',
+                expected_error_regex='Skipped 1 tests.*Test was interrupted.*Ran 6 tests',
                 expected_rc=0,
         )
 
     def testSkipAllOnDoubleInterrupt(self):
         testoob.testing.command_line(
                 _testoob_args(tests=["InterruptingTwiceTests"]),
-                expected_error_regex='Skipped 4 tests.*Ran 4 tests',
+                expected_error_regex='Skipped 4 tests.*Ran 2 tests',
                 expected_rc=0,
         )
 

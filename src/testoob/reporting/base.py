@@ -41,6 +41,10 @@ class IReporter:
         "Called when the given test has been run"
         pass
 
+    def eraseTest(self, test_info):
+        "Called when the given test shouldn't have been registered"
+        pass
+
     def addError(self, test_info, err_info):
         """
         Called when an error has occurred.
@@ -81,7 +85,7 @@ class IReporter:
     def setCoverageInfo(self, cover_amount, coverage):
         "Sets the coverage info for the reporter"
 
-    def addSkip(self, test_info, err_info):
+    def addSkip(self, test_info, err_info, isRegistered=True):
         "Called when the test was skipped"
 
 import time as _time
@@ -126,8 +130,11 @@ class BaseReporter(IReporter):
     def addSuccess(self, test_info):
         self.successes.append(test_info)
 
-    def addSkip(self, test_info, err_info):
+    def addSkip(self, test_info, err_info, isRegistered=True):
         self.skips.append((test_info, err_info))
+        # We don't want to count skipped tests.
+        if isRegistered:
+            self.testsRun -= 1
 
     def addAssert(self, test_info, assertName, varList, exception):
         self.asserts[test_info].append((assertName, varList, exception))
