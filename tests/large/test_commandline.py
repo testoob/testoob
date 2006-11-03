@@ -762,5 +762,11 @@ FAILED \(failures=1, errors=1\)
             skip_check = skip_check,
         )
 
+    def testVersion(self):
+        testoob.testing.command_line(
+            args = _testoob_args(options=["--version"]),
+            expected_output_regex = 'Testoob ' + testoob.__version__,
+        )
+
 if __name__ == "__main__":
     testoob.main()

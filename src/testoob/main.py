@@ -32,7 +32,6 @@ import commandline
 def _arg_parser():
     p = commandline.parsing.parser
 
-    p.add_option("--version", action="store_true", help="Print the version of testoob")
     p.add_option("-q", "--quiet",   action="store_true", help="Minimal output")
     p.add_option("-v", "--verbose", action="store_true", help="Verbose output")
     p.add_option("--vassert", action="store_true", help="Make asserts verbose")
@@ -52,13 +51,6 @@ def _arg_parser():
     p.add_option("--profdata", metavar="FILE", default="testoob.stats", help="Target file for profiling information, default is '%default'")
     p.add_option("--rerun-on-fail", action="store_true", help="Used with --debug, rerun a failing test when debugging it")
 
-    options, parameters = p.parse_args()
-    if options.version:
-        from __init__ import __version__
-        print __version__
-        from sys import exit
-        exit(0)
-    
     return p
 
 def _get_verbosity(options):

@@ -34,7 +34,12 @@ examples:
         from testoob.compatibility import optparse
 
     formatter=optparse.TitledHelpFormatter(max_help_position=30)
-    return optparse.OptionParser(usage=usage, formatter=formatter)
+    from testoob import __version__ as version
+    return optparse.OptionParser(
+            usage = usage,
+            formatter = formatter,
+            version = "Testoob %s" % version,
+        )
 
 parser = _parser()
 
