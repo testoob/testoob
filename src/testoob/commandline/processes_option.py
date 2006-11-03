@@ -24,7 +24,7 @@ def process_options(options):
     if options.processes is not None:
         try:
             enable_processes_pyro(options.processes)
-        except ArgumentsError:
+        except parsing.ArgumentsError:
             enable_processes_old(options.processes)
 
 parsing.option_processors.append(process_options)

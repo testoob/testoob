@@ -387,23 +387,26 @@ FAILED \(failures=1, errors=1\)
 """
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
-    def _check_processes_immediate(self, processes_type):
+    def _check_processes_immediate(self, option_suffix):
         # Check that the fail message appears in the middle
         regex = "OK.*FAIL.*OK"
         testoob.testing.command_line(
             args = _testoob_args(
                 tests=["FailInTheMiddle"],
-                options=["-v", "--immediate", "--processes_%s=2" % processes_type]),
+                options=["-v", "--immediate", "--processes%s=2"%option_suffix]),
             expected_error_regex = "OK.*FAIL.*OK",
             rc_predicate=lambda rc: rc != 0,
             skip_check = _missing_modules_skip_check,
         )
 
     def testProcessesOldImmediate(self):
-        self._check_processes_immediate("old")
+        self._check_processes_immediate("_old")
 
     def testProcessesPyroImmediate(self):
-        self._check_processes_immediate("pyro")
+        self._check_processes_immediate("_pyro")
+
+    def testProcessesDefaultImmediate(self):
+        self._check_processes_immediate("")
 
     def testSkipWithProcesses(self):
         testoob.testing.command_line(
