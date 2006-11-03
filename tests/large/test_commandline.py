@@ -137,14 +137,34 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
         regex = "testFailure.*FAIL.*FAIL: testFailure.*Traceback.*testSuccess.*OK"
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
+    def _check_pdb_run(self, options, pdb_message):
+        args = _testoob_args(tests=["CaseMixed.testFailure"], options=options)
+        regex=r"Debugging for failure in test: testFailure.*%s.*\(Pdb\)" % pdb_message
+        testoob.testing.command_line(
+                args = args,
+                expected_output_regex = regex,
+                expected_error_regex = "", # accept anything on stderr
+                rc_predicate = lambda rc: rc != 0,
+            )
+
     def testLaunchingPdb(self):
-        args = _testoob_args(tests=["CaseMixed.testFailure"], options=["--debug"])
-        output_regex="Debugging for failure in test: testFailure \(suites\.CaseMixed\.testFailure\).*raise self\.failureException, msg.*\(Pdb\)"
-        error_regex="" # accept anything on the standard error
-        testoob.testing.command_line(args=args,
-                                     expected_output_regex=output_regex,
-                                     expected_error_regex=error_regex,
-                                     expected_rc=1)
+        self._check_pdb_run(
+            options=["--debug"],
+            pdb_message=r"raise self\.failureException, msg",
+        )
+
+    def testRerunOnFail(self):
+        self._check_pdb_run(
+            options=["--debug", "--rerun-on-fail"],
+            pdb_message=r"def testFailure\(self\)",
+        )
+
+    def testRerunOnFailWithoutDebug(self):
+        testoob.testing.command_line(
+            args = _testoob_args(options=["--rerun-on-fail"]),
+            expected_error_regex = 'testoob: error: .* requires --debug',
+            rc_predicate = lambda rc: rc != 0,
+        )
 
     def _get_file_report(self, option_name):
         """

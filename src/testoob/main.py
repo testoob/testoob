@@ -50,6 +50,7 @@ def _arg_parser():
     profiler_choices = ["hotshot", "profile"]
     p.add_option("--profiler", type="choice", choices=profiler_choices, help="Profile the tests with a profiler, choices are: %s" % profiler_choices)
     p.add_option("--profdata", metavar="FILE", default="testoob.stats", help="Target file for profiling information, default is '%default'")
+    p.add_option("--rerun-on-fail", action="store_true", help="Used with --debug, rerun a failing test when debugging it")
 
     options, parameters = p.parse_args()
     if options.version:
@@ -188,6 +189,10 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["fixture_decorators"].append(
             fixture_decorators.get_thread_timingout_fixture(options.timeout_with_threads))
 
+    if options.rerun_on_fail is not None:
+        if options.debug is None:
+            raise ArgumentsError("--rerun-on-fail requires --debug")
+
     if options.debug is not None:
         import pdb
         def runDebug(test, err_info, flavour, reporter, real_add):
@@ -198,7 +203,20 @@ def _main(suite, defaultTest, options, test_names, parser):
             real_add(test, err_info)
             print "\nDebugging for %s in test: %s" % (
                     flavour, reporter.getDescription(test))
-            pdb.post_mortem(err_info.traceback())
+            if options.rerun_on_fail is not None:
+                #test.funcname will be our current test function
+                #use that to get the function object for our method
+                #and call it manually. WD-rpw 10-31-06
+                methodName = test.funcname()
+                method = getattr( test.fixture,  methodName)
+                print "rerunning test for failed %s()" % (methodName)
+                try:
+                    pdb.runcall( method )
+                except:
+                    pdb.post_mortem( err_info.traceback() )
+            else:
+                pdb.post_mortem(err_info.traceback())
+                
         kwargs["runDebug"] = runDebug
 
     if options.threads is not None:
