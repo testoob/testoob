@@ -130,6 +130,20 @@ test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
 """.strip()
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
+    def testVassertTestoobTesting(self):
+        args = _testoob_args(options=["--vassert", "CaseTestoobAsserts"])
+        regex = r"""
+test_assert_matchs \(suites\.CaseTestoobAsserts\.test_assert_matchs\) \.\.\. OK
+  \[ PASSED \(assert_matches\) actual: "The word Blah is written WITH h" msg: "Checking spelling" \]
+test_assert_ture \(suites\.CaseTestoobAsserts\.test_assert_ture\) \.\.\. OK
+  \[ PASSED \(assert_true\) msg: "Checking if 'True' is true" \]
+
+----------------------------------------------------------------------
+Ran 2 tests in \d\.\d+s
+OK
+""".strip()
+        testoob.testing.command_line(args=args, expected_error_regex=regex)
+
     def testImmediateReporting(self):
         args = _testoob_args(tests=["CaseMixed.testFailure", "CaseMixed.testSuccess"],
                             options=["-v", "--immediate"])

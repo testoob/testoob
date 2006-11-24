@@ -14,6 +14,7 @@
 # limitations under the License.
 
 "Help hook into asserts, for verbose asserts"
+import sys
 
 class Asserter:
     # Singleton
@@ -45,7 +46,14 @@ class Asserter:
                 additional_args = args[num_free_args:] + additional_args
             # Can't be a dictionary, because the order matters.
             varList = zip(variables[1:], (args[1:num_free_args] + additional_args))
-            test = args[0]
+            # Here is some evil did to find the function which called me.
+            # What I do here, is I raise an exception, take it's traceback, and
+            # take the "self" argument of the function that is one step back of
+            # me in the traceback.
+            try:
+                raise ZeroDivisionError
+            except ZeroDivisionError:
+                test = sys.exc_info()[2].tb_frame.f_back.f_locals["self"]
             # If we run something that has no reporter, it should just run
             # (happens in testing of testoob with testoob).
             if not self._reporters.get(test):
@@ -71,3 +79,4 @@ class Asserter:
 
 def register_asserter():
     Asserter().make_asserts_report("unittest", "TestCase", "(^assert)|(^fail[A-Z])|(^fail$)")
+    Asserter().make_asserts_report("testoob", "testing", "^assert")

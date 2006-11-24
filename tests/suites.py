@@ -135,6 +135,15 @@ class Skipping(unittest.TestCase):
         import testoob
         raise testoob.SkipTestException()
 
+class CaseTestoobAsserts(unittest.TestCase):
+    def test_assert_ture(self):
+        import testoob
+        testoob.testing.assert_true(True, "Checking if 'True' is true")
+
+    def test_assert_matchs(self):
+        import testoob
+        testoob.testing.assert_matches(".*Blah.*", "The word Blah is written WITH h", "Checking spelling")
+
 class CaseSetUpTearDown(unittest.TestCase):
     def setUp(self):
         self.a = 5
