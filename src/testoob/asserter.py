@@ -29,7 +29,7 @@ class Asserter:
 
     def _make_assert_report(self, Class, method_name):
         # Prevent recursion (accures in testoob tests, when ran with testoob :-) ).
-        if getattr(Class, method_name).im_func.__name__ == "_assert_reporting_func":
+        if getattr(Class, method_name).__name__ == "_assert_reporting_func":
             return
         variables = eval("Class.%s" % method_name).func_code.co_varnames
         setattr(Class, "_real_function_%s" % method_name, eval("Class.%s" % method_name))
