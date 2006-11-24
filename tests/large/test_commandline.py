@@ -430,7 +430,7 @@ FAILED \(failures=1, errors=1\)
 
     def testSkipWithProcesses(self):
         testoob.testing.command_line(
-                _testoob_args(tests=["skipping"], options=["--processes_pyro=2"]),
+                _testoob_args(tests=["Skipping"], options=["--processes_pyro=2"]),
                 expected_error_regex="Skipped 2 tests",
                 expected_rc=0,
                 skip_check = _missing_modules_skip_check,
@@ -602,13 +602,13 @@ FAILED \(failures=1, errors=1\)
         )
     def testSkippingTests(self):
         testoob.testing.command_line(
-                _testoob_args(tests=["skipping"]),
+                _testoob_args(tests=["Skipping"]),
                 expected_error_regex='Skipped 2 tests.*Ran 1 test.*OK',
                 expected_rc=0,
         )
     def testSkippingTestsVerbose(self):
         testoob.testing.command_line(
-                _testoob_args(options=["-v"], tests=["skipping"]),
+                _testoob_args(options=["-v"], tests=["Skipping"]),
                 expected_error_regex='SKIPPED.*SKIPPED',
                 expected_rc=0,
         )

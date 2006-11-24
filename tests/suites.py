@@ -126,7 +126,7 @@ class CaseDocstring(unittest.TestCase):
         "this test always passes"
         pass
 
-class skipping(unittest.TestCase):
+class Skipping(unittest.TestCase):
     def test_one(self): pass
     def test_two(self):
         import testoob.testing
