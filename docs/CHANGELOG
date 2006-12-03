@@ -1,8 +1,30 @@
                            -== Testoob Changelog ==-
 
-'testoob' is an advanced testing framework for Python. It is designed to
+'Testoob' is an advanced testing framework for Python. It is designed to
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
+
+== Testoob 1.13, 3 December, 2006
+
+Enhancements:
+ * Python 2.5 support, #281
+ * New option --rerun-on-fail (added by Ryan Wilcox), #288
+ * --vassert now works with 'testoob.testing' functions, #289
+
+Bugfixes:
+ * Install Windows executable helper only on Windows, #279
+ * Skipped tests don't count as run tests, #271
+ * '--processes' fixed (by Chad Whitacre), #287
+ * Missing import in tests fixed (by Lukasz Strzygowski)
+
+Internal:
+ * Unit tests for 'testoob.running', #155
+ * Using optparse's '--version' hook, #285
+ * Testoob is tested by a PyBot, #282 (by Grig Gheorghiu)
+
+Contributors:
+ Misha Seltzer, Ori Peleg, Ryan Wilcox, Chad Whitacre, Lukasz Strzygowski,
+ Wolfram Kriesing, Grig Gheorghiu
 
 == Testoob 1.12, 9 September, 2006
 
