@@ -49,6 +49,9 @@ if sys.version < '2.2.3':
     DistributionMetadata.download_url = None
 
 # run setup
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 setup(**kwargs)
