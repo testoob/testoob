@@ -164,10 +164,6 @@ def text_run(*args, **kwargs):
 
     kwargs.setdefault("reporters", [])
 
-	# Always have at least one base reporter, so isSuccessful always works
-    from testoob.reporting.base import BaseReporter
-    kwargs["reporters"].append(BaseReporter())
-
     import sys
     from testoob.reporting import TextStreamReporter
     reporter_class = _pop(kwargs, "reporter_class", TextStreamReporter)
@@ -180,6 +176,11 @@ def text_run(*args, **kwargs):
                 stream=sys.stderr)
 
         kwargs["reporters"].append(reporter_instance)
+
+    # Always have at least one base reporter, so isSuccessful always works
+    if len(kwargs["reporters"]) == 0:
+        from testoob.reporting.base import BaseReporter
+        kwargs["reporters"].append(BaseReporter())
 
     for reporter in kwargs["reporters"]:
         reporter.setCoverageInfo(*coverage)
