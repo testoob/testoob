@@ -12,6 +12,17 @@ h1. Testoob: Advanced Testing in Python
 
 h2. News
 
+h3. 3 December, 2006: Testoob 1.13 released
+
+* Python 2.5 support
+* New "rerun on fail" option (by Ryan Wilcox)
+* '--vassert' enhancements
+* Various bugfixes
+
+More info:
+* "The changelog":http://sourceforge.net/project/shownotes.php?release_id=468351&group_id=138557
+* "The Trac milestone report":https://opensvn.csie.org/traccgi/testoob/trac.cgi/milestone/version1.13
+
 h3. 9 September, 2006: Testoob 1.12 released
 
 New version, with some enhancements, bugfixes, and internal changes.
@@ -24,29 +35,3 @@ New version, with some enhancements, bugfixes, and internal changes.
 More info:
 * "The changelog":http://sourceforge.net/project/shownotes.php?release_id=446199&group_id=138557
 * "The Trac milestone report":https://opensvn.csie.org/traccgi/testoob/trac.cgi/milestone/version1.12
-
-h3. 1 July, 2006: Testoob 1.11 released
-
-Fixed a serious bug which prevented several options from running.
-
-"Download it here":http://sourceforge.net/project/showfiles.php?group_id=138557
-
-h3. 24 June, 2006: Testoob 1.1 released
-
-This is a pretty big release - "Download it here":http://sourceforge.net/project/showfiles.php?group_id=138557
-
-* A Huge number of bugfixes
-* Over 4 times faster
-* New features are:
-** A failed tests summary (incredibly useful)
-** A simple Tk GUI progress report
-** A better assertRaises
-** Profiling support
-** Silent running
-** Graceful behavior on interrupt (Ctrl-C)
-** Optionally skip a command-line test _after_ the command is run
-
-More info:
-
-* "The changelog":http://sourceforge.net/project/shownotes.php?release_id=427357&group_id=138557
-* "The Trac milestone report":https://opensvn.csie.org/traccgi/testoob/trac.cgi/milestone/version1.1
