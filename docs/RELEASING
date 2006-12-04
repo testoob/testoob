@@ -48,6 +48,11 @@ Lets assume we're releasing version 6.2
   - Wikipedia
   - The Python Wiki
 
-* Add a ticket on https://bugs.gentoo.org/ to package the release, and assign to to Lukasz Strzygowski <lucass_gentoo_org>
+* Notify packagers
+  - Gentoo: Add a ticket on https://bugs.gentoo.org/ to package the release,
+    and assign to to Lukasz Strzygowski <lucass_gentoo_org> (or CC him). See
+    bug #157098 for example.
+  - FreeBSD: mail Tobias Roth <ports_fsck_ch> and Martin Wilke
+    <miwi_freebsd_org>
 
 * Celebrate
