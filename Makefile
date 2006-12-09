@@ -13,7 +13,7 @@ WEBDISTFILE = $(DISTDIR)/testoob_website-$(VERSION).tar.bz2
 all:
 	@echo nothing to be done
 
-test_with = PYTHONPATH=src:$(PYTHONPATH) TESTOOB_DEVEL_TEST=1 $(1) ./src/testoob/testoob $(SUITEFILE) suite $(ARGS)
+test_with = PYTHONPATH=src:$(PYTHONPATH) TESTOOB_DEVEL_TEST=1 $(1) ./src/testoob/testoob $(SUITEFILE) suite $(ARGS) $(2)
 .PHONY: test
 test:
 	$(call test_with,python)
@@ -25,6 +25,9 @@ testall:
 	$(call test_with,python2.3)
 	$(call test_with,python2.2)
 
+.PHONY: smoke
+smoke:
+	$(call test_with,python,--regex=testFailureRunQuiet)
 
 ISOLATED_TEST_CMD = ./scripts/isolated_test.py --test-args="$(ARGS)"
 
