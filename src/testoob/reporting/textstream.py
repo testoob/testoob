@@ -60,6 +60,7 @@ class TextStreamReporter(BaseReporter):
         self.vassert = options.verbosity == 3
         self.immediate = options.immediate
         self.descriptions = options.descriptions
+        self.time_each_test = options.time_each_test
 
     def startTest(self, test_info):
         BaseReporter.startTest(self, test_info)
@@ -71,7 +72,7 @@ class TextStreamReporter(BaseReporter):
     def _report_result(self, long_string, short_string, writer):
         if self.showAll:
             writer.write("\n" * self.multiLineOutput)
-            writer.writeln(long_string)
+            writer.write(long_string)
         elif self.dots:
             writer.write(short_string)
 
@@ -80,8 +81,11 @@ class TextStreamReporter(BaseReporter):
         self._report_result("OK", ".", self.writers.success)
 
     def addSkip(self, test_info, err_info, isRegistered=True):
+        # TODO: why does addSkip get called _after_ stopTest?
         BaseReporter.addSkip(self, test_info, err_info, isRegistered)
-        self._report_result("SKIPPED", "S", self.writers.warning)
+        # newline needed because newline added in stopTest gets printed before
+        # SKIPPED does
+        self._report_result("SKIPPED\n", "S", self.writers.warning)
 
     def _report_failure(self, long_string, short_string, writer, test_info, err_info):
         self._report_result(long_string, short_string, writer)
@@ -103,6 +107,13 @@ class TextStreamReporter(BaseReporter):
         BaseReporter.stopTest(self, test_info)
         if self.vassert and not self.immediate:
             self._printVasserts(test_info)
+        if self.time_each_test:
+            self.writers.normal.write(
+                " [%.2f seconds]" % self.current_test_total_time
+            )
+
+        if self.showAll:
+            self._writeln("")
 
     def _vassertMessage(self, assertName, varList):
         msg = "(" + assertName + ") "

@@ -782,5 +782,36 @@ FAILED \(failures=1, errors=1\)
             expected_output_regex = 'Testoob ' + testoob.__version__,
         )
 
+    def testTimeEachTestSuccess(self):
+        testoob.testing.command_line(
+            args = _testoob_args(
+                options=["-v", "--time-each-test"], tests=["CaseDigits"]
+            ),
+            expected_rc = 0,
+            expected_error_regex = ".*".join(['OK \[[0-9.]+ seconds\]']*10)
+        )
+
+    def testTimeEachTestMixed(self):
+        testoob.testing.command_line(
+            args = _testoob_args(
+                options=["-v", "--time-each-test"], tests=["CaseMixed"]
+            ),
+            rc_predicate = lambda rc: rc != 0,
+            expected_error_regex = ".*".join([
+                    'ERROR \[[0-9.]+ seconds\]',
+                    'FAIL \[[0-9.]+ seconds\]',
+                    'OK \[[0-9.]+ seconds\]',
+                ])
+        )
+
+    def testTimeEachTestNoVerbose(self):
+        testoob.testing.command_line(
+            args = _testoob_args(
+                options=["--time-each-test"], tests=["CaseDigits"]
+            ),
+            expected_rc = 0,
+            expected_error_regex = '\.\s*\[[0-9.]+ seconds\]' * 10
+        )
+
 if __name__ == "__main__":
     testoob.main()

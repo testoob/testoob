@@ -117,9 +117,11 @@ class BaseReporter(IReporter):
     def startTest(self, test_info):
         self.testsRun += 1
         self.asserts[test_info] = []
+        self.current_test_start_time = _time.time()
 
     def stopTest(self, test_info):
-        pass
+        self.current_test_total_time = _time.time() - self.current_test_start_time
+        del self.current_test_start_time
 
     def addError(self, test_info, err_info):
         self.errors.append((test_info, err_info))
