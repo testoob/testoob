@@ -28,6 +28,7 @@ except NameError:
         from compatibility.sets import Set as set
 
 import commandline
+import testoob.reporting
 
 def _arg_parser():
     p = commandline.parsing.parser
@@ -117,8 +118,8 @@ def _main(suite, defaultTest, options, test_names, parser):
     conflicting_options("processes", "processes_old", "processes_pyro", "debug")
     conflicting_options("capture", "list")
 
+    testoob.reporting.options.verbosity = _get_verbosity(options)
     commandline.parsing.kwargs = {
-        "verbosity" : _get_verbosity(options),
         "stop_on_fail" : options.stop_on_fail,
         "reporters" : [],
         "extraction_decorators" : [],
@@ -152,7 +153,7 @@ def _main(suite, defaultTest, options, test_names, parser):
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_coverage_fixture(cov))
         if options.coverage != "silent":
-            kwargs["coverage"] = (options.coverage, cov)
+            testoob.reporting.options.coverage = (options.coverage, cov)
     
     if options.capture is not None:
         from running import fixture_decorators

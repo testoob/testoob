@@ -13,13 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Reporting facilities subpackage"
+"""
+Options class for reporters
 
-from colored import ColoredTextReporter
-from html_xslt import HTMLReporter
-from textstream import TextStreamReporter
-from xml import XMLFileReporter
-from reporter_proxy import ReporterProxy
-from test_info import TestInfo
-from pdf import PdfReporter
-import options
+Reporters receive this module instance when created. Contains useful defaults
+and any change made here applies to all of them.
+"""
+
+descriptions = 1
+verbosity = 1
+immediate = False
+coverage = (None, None)
+silent = False

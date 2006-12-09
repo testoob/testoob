@@ -47,16 +47,19 @@ class TextStreamReporter(BaseReporter):
     separator1 = '=' * 70
     separator2 = '-' * 70
 
-    def __init__(self, stream, descriptions, verbosity, immediate = False, create_writers = StreamWriters):
+    def __init__(self, stream, create_writers = StreamWriters):
+        # TODO - why the hell do we save re?
         import re
         self.re = re
         BaseReporter.__init__(self)
         self.writers = create_writers(stream)
-        self.showAll = verbosity > 1
-        self.dots = verbosity == 1
-        self.vassert = verbosity == 3
-        self.immediate = immediate
-        self.descriptions = descriptions
+
+        from testoob.reporting import options
+        self.showAll = options.verbosity > 1
+        self.dots = options.verbosity == 1
+        self.vassert = options.verbosity == 3
+        self.immediate = options.immediate
+        self.descriptions = options.descriptions
 
     def startTest(self, test_info):
         BaseReporter.startTest(self, test_info)

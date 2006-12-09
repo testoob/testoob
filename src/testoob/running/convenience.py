@@ -152,15 +152,8 @@ def run_suites(suites, reporters, runner=None, runDebug=None, threads=None, **kw
 def text_run(*args, **kwargs):
     """
     Run suites with a TextStreamReporter.
-    Accepts keyword 'verbosity' (0, 1, 2 or 3, default is 1)
-    and 'immediate' (True or False)
     """
     from testoob.utils import _pop
-
-    verbosity = _pop(kwargs, "verbosity", 1)
-    immediate = _pop(kwargs, "immediate", False)
-    coverage  = _pop(kwargs, "coverage",  (None, None))
-    silent    = _pop(kwargs, "silent",    False)
 
     kwargs.setdefault("reporters", [])
 
@@ -168,20 +161,16 @@ def text_run(*args, **kwargs):
     from testoob.reporting import TextStreamReporter
     reporter_class = _pop(kwargs, "reporter_class", TextStreamReporter)
 
+    from testoob.reporting.options import silent
     if not silent:
-        reporter_instance = reporter_class(
-                verbosity=verbosity,
-                immediate=immediate,
-                descriptions=1,
-                stream=sys.stderr)
-
-        kwargs["reporters"].append(reporter_instance)
+        kwargs["reporters"].append(reporter_class(stream=sys.stderr))
 
     # Always have at least one base reporter, so isSuccessful always works
     if len(kwargs["reporters"]) == 0:
         from testoob.reporting.base import BaseReporter
         kwargs["reporters"].append(BaseReporter())
 
+    from testoob.reporting.options import coverage
     for reporter in kwargs["reporters"]:
         reporter.setCoverageInfo(*coverage)
 
