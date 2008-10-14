@@ -56,7 +56,11 @@ class ErrInfo:
         return _should_skip(self.exc_info[0])
 
     def exception_type(self):
-        return str(self.exc_info[0])
+        t = self.exc_info[0]
+        try:
+            return t.__module__ + "." + t.__name__
+        except AttributeError:
+            return str(t)
 
     def exception_value(self):
         return str(self.exc_info[1])
