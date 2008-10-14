@@ -111,37 +111,18 @@ testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. OK
 
     def testVassertSimple(self):
         args = _testoob_args(options=["--regex=CaseDigits.test0", "--vassert"])
-        regex = r"""
-test0 \(suites\.CaseDigits\.test0\) \.\.\. OK
-  \[ PASSED \(assertEquals\) first: "00" second: "00" \]
-
-----------------------------------------------------------------------
-""".strip()
+        regex = r"""\[ PASSED \(assertEquals\) first: "00" second: "00" \]"""
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testVassertFormatStrings(self):
         args = _testoob_args(options=["--regex=MoreTests.test.*FormatString",
                                      "--vassert"])
-        regex = r"""
-test.*FormatString \(suites\.MoreTests\.test.*FormatString\) \.\.\. OK
-  \[ PASSED \(assertEquals\) first: "%s" second: "%s" \]
-
-----------------------------------------------------------------------
-""".strip()
+        regex = r"""\[ PASSED \(assertEquals\) first: "%s" second: "%s" \]"""
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testVassertTestoobTesting(self):
         args = _testoob_args(options=["--vassert", "CaseTestoobAsserts"])
-        regex = r"""
-test_assert_matchs \(suites\.CaseTestoobAsserts\.test_assert_matchs\) \.\.\. OK
-  \[ PASSED \(assert_matches\) actual: "The word Blah is written WITH h" msg: "Checking spelling" \]
-test_assert_ture \(suites\.CaseTestoobAsserts\.test_assert_ture\) \.\.\. OK
-  \[ PASSED \(assert_true\) msg: "Checking if 'True' is true" \]
-
-----------------------------------------------------------------------
-Ran 2 tests in \d\.\d+s
-OK
-""".strip()
+        regex = r"""\[ PASSED \(assert_matches\) actual: "The word Blah is written WITH h" msg: "Checking spelling" \].*\[ PASSED \(assert_true\) msg: "Checking if 'True' is true" \]"""
         testoob.testing.command_line(args=args, expected_error_regex=regex)
 
     def testImmediateReporting(self):
@@ -214,12 +195,18 @@ OK
             _safe_unlink(output_file)
 
     def testXMLReporting(self):
-        try:
-            from elementtree import ElementTree
+        # silly try/except chaining to find an available version of ElementTree
+        try: import elementtree.ElementTree as ET
         except ImportError:
-            testoob.testing.skip(reason="Needs ElementTree")
+            try: import cElementTree as ET
+            except ImportError:
+                try: import lxml.etree as ET
+                except ImportError:
+                    try: import xml.etree.ElementTree as ET # Python 2.5
+                    except ImportError:
+                        testoob.testing.skip(reason="Needs ElementTree")
 
-        root = ElementTree.XML( self._get_file_report("xml") )
+        root = ET.XML( self._get_file_report("xml") )
 
         # testsuites tag
         self.assertEqual("results", root.tag)
