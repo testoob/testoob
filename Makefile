@@ -16,7 +16,7 @@ all:
 test_with = PYTHONPATH=src:$(PYTHONPATH) TESTOOB_DEVEL_TEST=1 $(1) ./src/testoob/testoob $(SUITEFILE) suite $(ARGS) $(2)
 .PHONY: test
 test:
-	$(call test_with,python)
+	$(call test_with,$(PYTHON))
 
 .PHONY: testall
 testall:
