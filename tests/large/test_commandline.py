@@ -15,6 +15,10 @@ def _echo_args(string):
     else:
         return ["echo", string]
 
+def _unsupported_on_windows():
+    if sys.platform.startswith("win"):
+        testoob.testing.skip(reason="Unsuported on Windows")
+
 def current_directory():
     from os.path import dirname, abspath, normpath
     return normpath(abspath(dirname(__file__)))
@@ -377,8 +381,7 @@ AssertionError: Timeout.*
 """.strip()
     def testTimeOut(self):
         regex = self._timeout_regex_base + "Ran 2 tests in 2\.\d+s"
-        if sys.platform.startswith("win"):
-            testoob.testing.skip(reason="Unsuported on Windows")
+        _unsupported_on_windows()
         args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
 
@@ -438,6 +441,7 @@ FAILED \(failures=1, errors=1\)
         self._check_processes_immediate("")
 
     def testSkipWithProcesses(self):
+        _unsupported_on_windows()
         testoob.testing.command_line(
                 _testoob_args(tests=["Skipping"], options=["--processes_pyro=2"]),
                 expected_error_regex="Skipped 2 tests",
