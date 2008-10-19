@@ -18,9 +18,9 @@
 __unittest=1
 
 class TestoobAssertionError(AssertionError):
-    def __init__(self, message, long_message=None, description=None):
-        AssertionError.__init__(self, message)
-        self.message = message
+    def __init__(self, msg, long_message=None, description=None):
+        AssertionError.__init__(self, msg)
+        self.msg = msg
         self.long_message = long_message
         self.description = description
 
@@ -28,7 +28,7 @@ class TestoobAssertionError(AssertionError):
         result = []
         if self.description is not None:
             result.append( "[%s]" % self.description )
-        result.append( self.message )
+        result.append( self.msg )
         if self.long_message is not None:
             result.append( "----- long message -----" )
             result.append(self.long_message)
