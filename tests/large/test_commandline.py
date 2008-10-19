@@ -8,6 +8,13 @@ def _safe_unlink(filename):
     if os.path.exists(filename):
         os.unlink(filename)
 
+def _echo_args(string):
+    """cross-platform args for echoing a string"""
+    if sys.platform.startswith("win"):
+        return ["cmd", "/c", "echo", string]
+    else:
+        return ["echo", string]
+
 def current_directory():
     from os.path import dirname, abspath, normpath
     return normpath(abspath(dirname(__file__)))
@@ -730,7 +737,7 @@ FAILED \(failures=1, errors=1\)
         testoob.testing.assert_raises(
             testoob.SkipTestException,
 
-            testoob.testing.command_line, ["echo", "look into a glass onion"],
+            testoob.testing.command_line, _echo_args("look into a glass onion"),
             skip_check=check,
 
             expected_regex = 'No onion support yet',
@@ -738,7 +745,7 @@ FAILED \(failures=1, errors=1\)
 
     def testCommandLineSkipCheckNotSkipping(self):
         try:
-            testoob.testing.command_line( ["echo", "abc"], skip_check=lambda *args:None )
+            testoob.testing.command_line( _echo_args("abc"), skip_check=lambda *args:None )
         except testoob.SkipTestException:
             self.fail("Got unexpected SkipTestException")
 
