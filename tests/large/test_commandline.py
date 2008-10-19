@@ -424,6 +424,7 @@ FAILED \(failures=1, errors=1\)
         self._check_processes_immediate("_old")
 
     def testProcessesPyroImmediate(self):
+        testoob.testing.skip("Usually hangs")
         self._check_processes_immediate("_pyro")
 
     def testProcessesDefaultImmediate(self):
