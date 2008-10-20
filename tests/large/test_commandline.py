@@ -431,13 +431,16 @@ FAILED \(failures=1, errors=1\)
         )
 
     def testProcessesOldImmediate(self):
+        _unsupported_on_windows()
         self._check_processes_immediate("_old")
 
     def testProcessesPyroImmediate(self):
         testoob.testing.skip("Usually hangs")
+        _unsupported_on_windows()
         self._check_processes_immediate("_pyro")
 
     def testProcessesDefaultImmediate(self):
+        _unsupported_on_windows()
         self._check_processes_immediate("")
 
     def testSkipWithProcesses(self):
