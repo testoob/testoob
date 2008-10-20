@@ -101,6 +101,8 @@ class BaseReporter(IReporter):
         self.errors = []
         self.skips = []
         self.asserts = {}
+	self.start_times = {}
+	self.total_times = {}
         self.cover_amount = None
         self.coverage = None
 
@@ -108,20 +110,19 @@ class BaseReporter(IReporter):
         self.parameters = parameters
 
     def start(self):
-        self.start_time = _time.time()
+        self.reporter_start_time = _time.time()
 
     def done(self):
-        self.total_time = _time.time() - self.start_time
-        del self.start_time
+        self.total_time = _time.time() - self.reporter_start_time
+        del self.reporter_start_time
 
     def startTest(self, test_info):
         self.testsRun += 1
         self.asserts[test_info] = []
-        self.current_test_start_time = _time.time()
+	self.start_times[test_info] = _time.time()
 
     def stopTest(self, test_info):
-        self.current_test_total_time = _time.time() - self.current_test_start_time
-        del self.current_test_start_time
+        self.current_test_total_time = _time.time() - self.start_times.pop(test_info)
 
     def addError(self, test_info, err_info):
         self.errors.append((test_info, err_info))

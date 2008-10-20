@@ -611,8 +611,6 @@ FAILED \(failures=1, errors=1\)
                 expected_rc=1,
         )
     def testThreadsSanity(self):
-        if sys.platform.startswith("win"):
-            self.fail("Hangs on Windows for some reason")
         testoob.testing.command_line(
                 _testoob_args(options=["--threads=3"], tests=["CaseDigits"]),
                 expected_error_regex='Ran 10 tests.*OK',
