@@ -1,5 +1,6 @@
 import testoob
 import testoob.testing as tt
+import testoob.run_cmd
 from unittest import TestCase
 
 def _generate_command(output="", error="", rc=0):
@@ -26,7 +27,7 @@ def _get_results(**kwargs):
     Generate a command with the parameters, run it, and return the
     normalized results
     """
-    output, error, rc = tt._run_command(_generate_command(**kwargs))
+    output, error, rc = testoob.run_cmd.run_command(_generate_command(**kwargs))
     return tt._normalize_newlines(output), tt._normalize_newlines(error), rc
 
 def _verify_command_line_success(output="", error="", rc=0, **kwargs):

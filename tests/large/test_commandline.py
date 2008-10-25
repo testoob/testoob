@@ -1,6 +1,7 @@
 import unittest, testoob, os, sys, tempfile
 import helpers
 import testoob.testing # for skip()
+import testoob.run_cmd
 
 _suite_file = os.path.abspath(helpers.project_subpath("tests/suites.py"))
 
@@ -39,7 +40,7 @@ def _grep(pattern, string):
         ])
 
 def _run_testoob(args, grep=None):
-    stdout, stderr, rc = testoob.testing._run_command(args)
+    stdout, stderr, rc = testoob.run_cmd.run_command(args)
     if grep is not None:
         return _grep(grep, stderr)
     return stderr

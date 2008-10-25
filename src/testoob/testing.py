@@ -34,21 +34,6 @@ class TestoobAssertionError(AssertionError):
             result.append(self.long_message)
         return "\n".join(result)
 
-def _run_command(args, input=None):
-    """_run_command(args, input=None) -> stdoutstring, stderrstring, returncode
-    Runs the command, giving the input if any.
-    The command is specified as a list: 'ls -l' would be sent as ['ls', '-l'].
-    Returns the standard output and error as strings, and the return code"""
-    try:
-        from subprocess import Popen, PIPE
-    except ImportError:
-        # Python 2.2 and 2.3 compatibility
-        from compatibility.subprocess import Popen, PIPE
-
-    p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = p.communicate(input)
-    return stdout, stderr, p.returncode
-
 def _normalize_newlines(string):
     import re
     return re.sub(r'(\r\n|\r|\n)', '\n', string)
@@ -146,8 +131,9 @@ def command_line(
         used as the skip reason.
     """
 
+    from run_cmd import run_command
     # run command
-    output, error, rc = _run_command(args, input)
+    output, error, rc = run_command(args, input)
 
     if skip_check is not None:
         skip_reason = skip_check(output, error, rc)
