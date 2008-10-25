@@ -16,10 +16,6 @@
 "Color text stream reporting"
 
 import os, sys
-try:
-    import subprocess
-except ImportError:
-    from testoob.compatibility import subprocess
 
 ANSI_CODES = {
     "reset"     : "\x1b[0m",
@@ -77,6 +73,10 @@ class Win32ColorWriterWithExecutable(WindowsColorBaseWriter):
     def _set_color(self, code):
         # TODO: fail in advance if setcolor.exe isn't availble?
         if self.setcolor_available:
+            try:
+                import subprocess
+            except ImportError:
+                from testoob.compatibility import subprocess
             subprocess.Popen(r'"%s" %s' % (self.setcolor_path, code)).wait()
 
 class Win32ConsoleColorWriter(WindowsColorBaseWriter):
