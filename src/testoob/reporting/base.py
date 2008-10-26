@@ -122,7 +122,10 @@ class BaseReporter(IReporter):
 	self.start_times[test_info] = _time.time()
 
     def stopTest(self, test_info):
-        self.current_test_total_time = _time.time() - self.start_times.pop(test_info)
+        # TODO: In Python >= 2.3 can use dict.pop
+        start_time = self.start_times[test_info]
+        del self.start_times[test_info]
+        self.current_test_total_time = _time.time() - start_time
 
     def addError(self, test_info, err_info):
         self.errors.append((test_info, err_info))

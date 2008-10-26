@@ -20,8 +20,9 @@ test:
 
 .PHONY: testall
 testall:
-	$(call test_with,python2.4)
+	$(call test_with,python2.6)
 	$(call test_with,python2.5)
+	$(call test_with,python2.4)
 	$(call test_with,python2.3)
 	$(call test_with,python2.2)
 
