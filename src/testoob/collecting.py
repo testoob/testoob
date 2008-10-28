@@ -75,6 +75,10 @@ def collector_from_modules(modules, globals_dict):
     return suite
 
 def _frame_filename(frame):
+    if '__file__' in frame.f_globals:
+        return frame.f_globals["__file__"]
+
+    # backwards compatability
     return frame.f_code.co_filename
 
 def _first_external_frame():
