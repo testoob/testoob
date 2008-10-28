@@ -74,14 +74,21 @@ def collector_from_modules(modules, globals_dict):
         return result
     return suite
 
+def _frame_filename(frame):
+    if '__file__' in frame.f_globals:
+        return frame.f_globals["__file__"]
+
+    # backwards compatability
+    return frame.f_code.co_filename
+
 def _first_external_frame():
     import sys
 
-    current_file = sys._getframe().f_code.co_filename
+    current_file = _frame_filename( sys._getframe() )
 
     # find the first frame with a filename different than this one
     frame = sys._getframe()
-    while frame.f_code.co_filename == current_file:
+    while _frame_filename(frame) == current_file:
         frame = frame.f_back
 
     return frame
