@@ -45,7 +45,7 @@ class IronPythonCommandRunner(object):
         p.StartInfo.FileName = args[0]
         p.StartInfo.Arguments = " ".join(args[1:])
         p.Start()
-        if have_stdinA:
+        if have_stdin:
             p.StandardInput.Write(input)
         p.WaitForExit() 
         stdout = p.StandardOutput.ReadToEnd()
