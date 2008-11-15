@@ -117,12 +117,19 @@ def _load_suite(module_name):
         warnings.warn("No tests loaded for module '%s'" % module_name)
     return result
 
-def collect_from_files(glob_pattern, modulename=None, path=None, file=None):
-    if modulename is None:
-        modulename = _calling_module_name()
+def collect_from_files(glob_pattern, name=None, modulename=None, path=None, file=None):
+    if name is not None and modulename is not None:
+        raise ValueError("conflicting arguments 'name' and 'modulename' can't be specified together")
+
+    if modulename is not None:
+        warnings.warn("'modulename' parameter name is deprecated, use 'name' instead")
+        name = modulename
+
+    if name is None:
+        name = _calling_module_name()
 
     if path is not None and file is not None:
-        raise ValueError("path and file can't be specified together")
+        raise ValueError("conflicting arguments 'path' and 'file' can't be specified together")
 
     if path is None:
         if file is None:
@@ -133,7 +140,7 @@ def collect_from_files(glob_pattern, modulename=None, path=None, file=None):
     # mimicking unittest.TestLoader.loadTestsFromNames, but with more checks
     suites = [
         _load_suite(name)
-        for name in _module_names(glob_pattern, modulename, path)
+        for name in _module_names(glob_pattern, name, path)
     ]
 
     import unittest
