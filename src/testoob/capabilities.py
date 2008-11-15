@@ -2,8 +2,17 @@ import sys
 
 class Capabilities(object):
     @property
+    def getframe(self):
+        try:
+            sys._getframe()
+            return True
+        except ValueError:
+            # IronPython 1.1
+            return False
+
+    @property
     def f_back(self):
-        return hasattr(sys._getframe(), "f_back")
+        return self.getframe and hasattr(sys._getframe(), "f_back")
 
     @property
     def settrace(self):

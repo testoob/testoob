@@ -6,6 +6,8 @@ import testoob
 
 class frame_code(TestCase):
     def test_frame_filename(self):
+        if not testoob.capabilities.c.getframe:
+            testoob.testing.skip("requires 'sys._getframe'")
         self.assertEqual(__file__, collecting._frame_filename(sys._getframe()))
 
     def test_first_external_frame(self):
