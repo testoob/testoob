@@ -22,6 +22,8 @@ try:
 except ImportError:
     from compatibility.itertools import ifilter as _ifilter
 
+from os.path import dirname, normpath
+
 def _is_test_case(x):
     import types, unittest
     try:
@@ -97,7 +99,6 @@ def _calling_module_name():
     return _first_external_frame().f_globals["__name__"]
 
 def _calling_module_directory():
-    from os.path import dirname, normpath
     return normpath(dirname(_first_external_frame().f_code.co_filename))
 
 def _module_names(glob_pattern, modulename, path):
@@ -116,12 +117,18 @@ def _load_suite(module_name):
         warnings.warn("No tests loaded for module '%s'" % module_name)
     return result
 
-def collect_from_files(glob_pattern, modulename=None, path=None):
+def collect_from_files(glob_pattern, modulename=None, path=None, file=None):
     if modulename is None:
         modulename = _calling_module_name()
 
+    if path is not None and file is not None:
+        raise ValueError("path and file can't be specified together")
+
     if path is None:
-        path = _calling_module_directory()
+        if file is None:
+            path = _calling_module_directory()
+        else:
+            path = dirname(file)
 
     # mimicking unittest.TestLoader.loadTestsFromNames, but with more checks
     suites = [
