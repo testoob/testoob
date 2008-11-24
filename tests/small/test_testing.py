@@ -1,7 +1,26 @@
+import sys
 import testoob
 import testoob.testing as tt
 import testoob.run_cmd
 from unittest import TestCase
+
+def get_python_executable_ironpython_hack():
+    assert sys.platform == 'cli'
+    # Hack for IronPython - use CPython if available, ipy.exe is way too slow
+
+    # TODO: can probably look this up in the registry
+    import os
+    for possibility in [(r"c:\Python%s\python.exe"%ver) for ver in ("24","25","26")]:
+        if os.path.exists(possibility):
+            return possibility
+
+    # no executable found, revert to ipy.exe
+    return sys.executable
+
+def get_python_executable():
+    if sys.platform == 'cli':
+        return get_python_executable_ironpython_hack()
+    return sys.executable
 
 def _generate_command(output="", error="", rc=0):
     """
@@ -19,8 +38,7 @@ def _generate_command(output="", error="", rc=0):
         'sys.exit(%d)' % rc,
     )
 
-    import sys
-    return [sys.executable, "-c", "; ".join(python_commands)]
+    return [get_python_executable(), "-c", "; ".join(python_commands)]
 
 def _get_results(**kwargs):
     """
