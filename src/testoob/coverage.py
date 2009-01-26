@@ -75,7 +75,7 @@ class Coverage:
         initialize the code coverage module, gets list of directories and files
         which's coverage is not needed.
         """
-        # coverage is a dictinary mapping filenames to another dictionary with
+        # coverage is a dictionary mapping filenames to another dictionary with
         # the following keys:
         #    lines   - a set of number of executable lines in the file.
         #    covered - a set of numbers of executed lines in the file.
@@ -149,7 +149,10 @@ class Coverage:
 
         if not (filename.endswith(".py") or filename.endswith(".pyc")):
             return False
-        
+            
+        if '__unittest' in frame.f_globals:
+            return False
+            
         if not self.coverage.has_key(filename):
             self.coverage[filename] = {
                 "lines": set(_find_executable_linenos(filename)),

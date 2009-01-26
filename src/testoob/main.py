@@ -149,7 +149,9 @@ def _main(suite, defaultTest, options, test_names, parser):
         import os
         # Ignore coverage from the 'testoob' library (where this file is), and
         # from the python system library (assuming 'os' module placed there).
-        cov = Coverage(map(os.path.dirname, [__file__, os.__file__]))
+        testoob_dirname = os.path.dirname(_main.func_code.co_filename)
+        python_dirname = os.path.dirname(os.execl.func_code.co_filename)
+        cov = Coverage((testoob_dirname, python_dirname))
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_coverage_fixture(cov))
         if options.coverage != "silent":
