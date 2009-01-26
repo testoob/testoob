@@ -20,7 +20,8 @@ import threading, sys
 
 class NumberWidget:
     def __init__(self,master,label,count=0):
-        self.text = Label(master,text=label+' :')
+        font = ('Helvetica', 10, 'bold')
+        self.text = Label(master,text=label+' :', font=font)
         self.text.pack(side=LEFT)
         self.number = Label(master,text=str(count),width=5)
         self.number.pack(side=LEFT)
@@ -55,8 +56,9 @@ class ProgressBarGuiThread(threading.Thread):
         self.percent_label = self.canvas.create_text(self.bar_width/2, self.bar_height/2, font=('Helvetica', 10, 'bold'))
     
     def create_frame(self):
-        self.frame = Frame(self.root)
-        self.frame.pack()
+        frame = Frame(self.root)
+        frame.pack()
+        return frame
         
     def set_state(self,state):
         if state == 'failed':
@@ -67,18 +69,18 @@ class ProgressBarGuiThread(threading.Thread):
             self.num_skipped += 1
         elif state == 'ok':
             self.num_tests_run += 1
-
+        
     def run(self):
         try:
             try:
                 self.root = Tk()
                 self.count = 0
                 self.create_bar_widget()
-                self.create_frame()
-                self.test_cases = NumberWidget(self.root, 'Test Cases',self.num_tests)
-                self.tests_run = NumberWidget(self.root, 'Tests Run')
-                self.failures = NumberWidget(self.root, 'Failures')
-                self.skipped = NumberWidget(self.root, 'Skipped')
+                frame = self.create_frame()
+                self.test_cases = NumberWidget(frame, 'Test Cases',self.num_tests)
+                self.tests_run = NumberWidget(frame, 'Tests Run')
+                self.failures = NumberWidget(frame, 'Failures')
+                self.skipped = NumberWidget(frame, 'Skipped')
                 self.update()
                 self.ready_event.set()
                 self.root.mainloop()
@@ -99,7 +101,12 @@ class ProgressBarGuiThread(threading.Thread):
         self.root.quit()
 
         # Tk complains when __del__ is called from different thread
-        del self.root, self.canvas
+        del self.test_cases
+        del self.tests_run
+        del self.failures
+        del self.skipped
+        del self.canvas
+        del self.root
 
     def update(self):
         self.canvas.coords(self.progress_bar, 1, 1, self.ratio * self.bar_width, self.bar_height)
@@ -128,10 +135,11 @@ class ProgressBarReporter(BaseReporter):
         self._pbg.wait_until_ready()
         if self._pbg.error:
             raise self._pbg.error[1]
-
+            
     def done(self):
         BaseReporter.done(self)
         self._pbg.die()
+        self._pbg.join()
 
     def addError(self, test_info, err_info):
         BaseReporter.addError(self, test_info, err_info)
