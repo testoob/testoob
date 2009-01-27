@@ -43,12 +43,16 @@ class TerminalColorWriter(StreamWriter):
         StreamWriter.write(self, self.code)
         StreamWriter.write(self, s)
         StreamWriter.write(self, self.reset)
+    def has_light_background(self):
+        return False
+        
 
 WIN32_SETCOLOR_CODES = {
     "reset"  : "d",
     "red"    : "r",
     "green"  : "g",
     "yellow" : "y",
+    "blue"   : "b",
 }
 
 class WindowsColorBaseWriter(StreamWriter):
@@ -61,6 +65,7 @@ class WindowsColorBaseWriter(StreamWriter):
         StreamWriter.write(self, s)
         self._set_color(self.reset)
 
+
 class Win32ColorWriterWithExecutable(WindowsColorBaseWriter):
     setcolor_path = os.path.join(sys.prefix, "testoob", "setcolor.exe")
     setcolor_available = os.path.isfile(setcolor_path)
@@ -71,13 +76,18 @@ class Win32ColorWriterWithExecutable(WindowsColorBaseWriter):
         self.reset = WIN32_SETCOLOR_CODES["reset"]
 
     def _set_color(self, code):
-        # TODO: fail in advance if setcolor.exe isn't availble?
+        # TODO: fail in advance if setcolor.exe isn't available?
         if self.setcolor_available:
             try:
                 import subprocess
             except ImportError:
                 from testoob.compatibility import subprocess
             subprocess.Popen(r'"%s" %s' % (self.setcolor_path, code)).wait()
+
+    def has_light_background(self):
+        # Unknown how to check the background color with setcolor.exe
+        return False
+
 
 class Win32ConsoleColorWriter(WindowsColorBaseWriter):
     def _out_handle(self):
@@ -86,12 +96,16 @@ class Win32ConsoleColorWriter(WindowsColorBaseWriter):
     out_handle = property(_out_handle)
 
     def _codes(self):
-        from win32console import FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_INTENSITY
+        from win32console import (FOREGROUND_RED, FOREGROUND_GREEN, 
+                                 FOREGROUND_BLUE, FOREGROUND_INTENSITY)
+        BACKGROUND = self.out_handle.GetConsoleScreenBufferInfo()['Attributes'] & 0xf0
         return {
             "reset"  : self.out_handle.GetConsoleScreenBufferInfo()['Attributes'],
-            "red"    : FOREGROUND_RED | FOREGROUND_INTENSITY,
-            "green"  : FOREGROUND_GREEN | FOREGROUND_INTENSITY,
-            "yellow" : FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY,
+            "red"    : FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND,
+            "green"  : FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND,
+            "yellow" : FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND,
+            "blue"   : FOREGROUND_BLUE | FOREGROUND_INTENSITY | BACKGROUND,
+
         }
     CODES = property(_codes)
 
@@ -99,9 +113,18 @@ class Win32ConsoleColorWriter(WindowsColorBaseWriter):
         StreamWriter.__init__(self, stream)
         self.code  = self.CODES[color]
         self.reset = self.CODES["reset"]
-
+        
     def _set_color(self, code):
         self.out_handle.SetConsoleTextAttribute( code )
+
+    def has_light_background(self):
+        from win32console import (BACKGROUND_RED, BACKGROUND_GREEN, 
+                                 BACKGROUND_BLUE, BACKGROUND_INTENSITY)
+        background = self.out_handle.GetConsoleScreenBufferInfo()['Attributes'] & 0xf0
+        white = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY
+        yellow = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY
+        return background in [white, yellow]
+            
 
 class WindowsCtypesColorWriter(WindowsColorBaseWriter):
     # Constants from the Windows API
@@ -111,6 +134,10 @@ class WindowsCtypesColorWriter(WindowsColorBaseWriter):
     FOREGROUND_GREEN     = 0x0002 # text color contains green.
     FOREGROUND_RED       = 0x0004 # text color contains red.
     FOREGROUND_INTENSITY = 0x0008 # text color is intensified.
+    BACKGROUND_BLUE      = 0x0010 # background color contains blue.
+    BACKGROUND_GREEN     = 0x0020 # background color contains green.
+    BACKGROUND_RED       = 0x0040 # background color contains red.
+    BACKGROUND_INTENSITY = 0x0080 # background color is intensified.
     
     def _out_handle(self):
         import ctypes
@@ -143,11 +170,13 @@ class WindowsCtypesColorWriter(WindowsColorBaseWriter):
     console_screen_buffer_info = property(_console_screen_buffer_info)
 
     def _codes(self):
+        BACKGROUND = self.console_screen_buffer_info["wattr"] & 0xf0
         return {
             "reset"  : self.console_screen_buffer_info["wattr"],
-            "red"    : self.FOREGROUND_RED | self.FOREGROUND_INTENSITY,
-            "green"  : self.FOREGROUND_GREEN | self.FOREGROUND_INTENSITY,
-            "yellow" : self.FOREGROUND_GREEN | self.FOREGROUND_RED | self.FOREGROUND_INTENSITY,
+            "red"    : self.FOREGROUND_RED | self.FOREGROUND_INTENSITY | BACKGROUND,
+            "green"  : self.FOREGROUND_GREEN | self.FOREGROUND_INTENSITY | BACKGROUND,
+            "yellow" : self.FOREGROUND_GREEN | self.FOREGROUND_RED | self.FOREGROUND_INTENSITY | BACKGROUND,
+            "blue"   : self.FOREGROUND_BLUE | self.FOREGROUND_INTENSITY | BACKGROUND,
         }
     CODES = property(_codes)
 
@@ -160,13 +189,36 @@ class WindowsCtypesColorWriter(WindowsColorBaseWriter):
         import ctypes
         ctypes.windll.kernel32.SetConsoleTextAttribute(self.out_handle, code)
 
+    def has_light_background(self):
+        background = self.console_screen_buffer_info["wattr"] & 0xf0
+        white = self.BACKGROUND_RED | self.BACKGROUND_GREEN | self.BACKGROUND_BLUE | self.BACKGROUND_INTENSITY
+        yellow = self.BACKGROUND_RED | self.BACKGROUND_GREEN | self.BACKGROUND_INTENSITY
+        return background in [white, yellow]
+
+
 def color_writers_creator(writer_class):
     class ColorWriters:
+        def _get_warning_color(self, light_background):
+            if "TESTOOB_WARNING_COLOR" in os.environ:
+                warning_color = os.environ["TESTOOB_WARNING_COLOR"]
+                if warning_color in ["blue", "yellow"]:
+                    return warning_color
+                else:
+                    raise ValueError(
+                        "Unsupported value for TESTOOB_WARNING_COLOR: %s, "
+                        "only 'blue' and 'yellow' are supported")
+            if light_background:
+                warning_color = "blue"
+            else:
+                warning_color = "yellow"
+            return warning_color
+            
         def __init__(self, stream):
             self.normal  = StreamWriter(stream)
             self.success = writer_class(stream, "green")
             self.failure = writer_class(stream, "red")
-            self.warning = writer_class(stream, "yellow")
+            light_bg = self.success.has_light_background()
+            self.warning = writer_class(stream, self._get_warning_color(light_bg))
     return ColorWriters
 
 from textstream import TextStreamReporter

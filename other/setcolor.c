@@ -39,6 +39,9 @@ int main()
     case 'y':
       SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
       break;
+    case 'b':
+      SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+      break;
     default:
       return 1;
   }
