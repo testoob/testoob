@@ -150,7 +150,7 @@ def _main(suite, defaultTest, options, test_names, parser):
         # Ignore coverage from the 'testoob' library (where this file is), and
         # from the python system library (assuming 'os' module placed there).
         testoob_dirname = os.path.dirname(_main.func_code.co_filename)
-        python_dirname = os.path.dirname(os.execl.func_code.co_filename)
+        python_dirname = os.path.dirname(os.getenv.func_code.co_filename)
         cov = Coverage((testoob_dirname, python_dirname))
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_coverage_fixture(cov))
