@@ -381,7 +381,7 @@ FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
 AssertionError: Timeout.*
 """.strip()
     def testTimeOut(self):
-        regex = self._timeout_regex_base + "Ran 2 tests in 2\.\d+s"
+        regex = self._timeout_regex_base + "Ran 2 tests in (2\.\d+)|(1\.99\d)s"
         _unsupported_on_windows()
         args = _testoob_args(options=["--timeout=1"], tests=["CaseSlow"])
         testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
