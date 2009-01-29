@@ -92,6 +92,19 @@ def _get_suites(suite, defaultTest, test_names, test_loader=None):
         print >>sys.stderr, "ERROR: Can't find test case '%s'" % testName(e)
         sys.exit(1)
 
+def _dirname_from_func(func):
+    return os.path.dirname(func.func_code.co_filename)
+
+def _coverage_ignore_paths():
+    # Ignore coverage from the 'testoob' library (where this file is), and
+    # from the python system library (assuming 'os' module placed there).
+
+    # Getting the directory name from functions instead of __file__ so it
+    # will work with soft links to the actual modules.
+    testoob_dirname = _dirname_from_func(_coverage_ignore_paths)
+    python_dirname = _dirname_from_func(os.getenv)
+    return (testoob_dirname, python_dirname)
+
 from commandline.parsing import ArgumentsError
 
 def _main(suite, defaultTest, options, test_names, parser):
@@ -146,12 +159,7 @@ def _main(suite, defaultTest, options, test_names, parser):
     if options.coverage is not None:
         from running import fixture_decorators
         from coverage import Coverage
-        import os
-        # Ignore coverage from the 'testoob' library (where this file is), and
-        # from the python system library (assuming 'os' module placed there).
-        testoob_dirname = os.path.dirname(_main.func_code.co_filename)
-        python_dirname = os.path.dirname(os.getenv.func_code.co_filename)
-        cov = Coverage((testoob_dirname, python_dirname))
+        cov = Coverage(_coverage_ignore_paths())
         kwargs["fixture_decorators"].append(
                 fixture_decorators.get_coverage_fixture(cov))
         if options.coverage != "silent":
