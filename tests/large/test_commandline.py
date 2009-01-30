@@ -623,6 +623,12 @@ FAILED \(failures=1, errors=1\)
                 expected_error_regex='Skipped 2 tests.*Ran 1 test.*OK',
                 expected_rc=0,
         )
+    def testSkippingTestsBgcolorOption(self):
+        testoob.testing.command_line(
+                _testoob_args(options=['--bgcolor=light'],tests=["Skipping"]),
+                expected_error_regex='Skipped 2 tests.*Ran 1 test.*OK',
+                expected_rc=0,
+        )
     def testSkippingTestsVerbose(self):
         testoob.testing.command_line(
                 _testoob_args(options=["-v"], tests=["Skipping"]),

@@ -25,3 +25,4 @@ verbosity = 1
 immediate = False
 coverage = (None, None)
 silent = False
+bgcolor = None
