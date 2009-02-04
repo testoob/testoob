@@ -1,7 +1,6 @@
 import sys
 
 class Capabilities(object):
-    @property
     def getframe(self):
         try:
             sys._getframe()
@@ -9,17 +8,18 @@ class Capabilities(object):
         except ValueError:
             # IronPython 1.1
             return False
+    getframe = property(getframe)
 
-    @property
     def f_back(self):
         return self.getframe and hasattr(sys._getframe(), "f_back")
+    f_back = property(f_back)
 
-    @property
     def settrace(self):
         try:
             sys.settrace(None)
             return True
         except NotImplementedError:
             return False
+    settrace = property(settrace)
 
 c = Capabilities()
