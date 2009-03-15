@@ -33,16 +33,13 @@ if in_development_mode():
     print "Development mode: adding %r to sys.path" % module_path()
     add_module_path( module_path() )
 
-# TODO: subclass testoob.reporting.BaseReporter, implements most of the methods here
-class ReporterWithMemory:
+from testoob.reporting.base import BaseReporter
+class ReporterWithMemory(BaseReporter):
     "A reporter that remembers info on the test fixtures run"
     def __init__(self):
+        BaseReporter.__init__(self)
         self.started = []
-        self.successes = []
-        self.errors = []
-        self.failures = []
         self.finished = []
-        self.asserts = {}
         self.stdout = ""
         self.stderr = ""
 
@@ -53,8 +50,6 @@ class ReporterWithMemory:
         # TODO: use test_info.methodname()
         l.append(str(test_info).split()[0])
 
-    def setParameters(self, **parameters):
-        pass # TODO: placeholder
     def start(self):
         self.has_started = True
     def done(self):
@@ -71,8 +66,6 @@ class ReporterWithMemory:
         self._append_test(self.successes, test_info)
     def addAssert(self, test_info, assertName, varList, exception):
         self.asserts[str(test_info).split()[0]] = (assertName, exception.__class__)
-    def isSuccessful(self):
-        pass
 
     def __str__(self):
         attrs = ("started","successes","errors","failures","finished","stdout","stderr")

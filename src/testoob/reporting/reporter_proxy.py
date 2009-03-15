@@ -93,3 +93,13 @@ class ReporterProxy:
             if not reporter.isSuccessful():
                 return False # One failed reporter is enough
         return True
+
+    def isFailed(self):
+        for reporter in self.observing_reporters:
+            if hasattr(reporter,'isFailed'):
+                if reporter.isFailed():
+                    return True # One failed reporter is enough
+            else:
+                if not reporter.isSuccessful():
+                    return True
+        return False

@@ -21,5 +21,5 @@ class SimpleRunner(BaseRunner):
     def run(self, fixture):
         BaseRunner.run(self, fixture)
         fixture(self.reporter)
-        return self.reporter.isSuccessful()
+        return not self.reporter.isFailed()
 

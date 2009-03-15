@@ -198,6 +198,14 @@ class FailInTheMiddle(unittest.TestCase):
     def test_h(self): pass
     def test_i(self): pass
 
+class SkipFirstThenFail(unittest.TestCase):
+    def test_a_skip(self):
+        import testoob
+        raise testoob.SkipTestException()
+    def test_b_fail(self):
+        self.fail()
+    def test_c(self): pass
+
 
 def suite():
     result = unittest.TestSuite()

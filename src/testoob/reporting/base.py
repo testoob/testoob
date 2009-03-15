@@ -82,6 +82,10 @@ class IReporter:
         "Tells whether or not this result was a success"
         pass
 
+    def isFailed(self):
+        "Tells whether or not this result was a failure"
+        pass
+
     def setCoverageInfo(self, cover_amount, coverage):
         "Sets the coverage info for the reporter"
 
@@ -101,8 +105,8 @@ class BaseReporter(IReporter):
         self.errors = []
         self.skips = []
         self.asserts = {}
-	self.start_times = {}
-	self.total_times = {}
+        self.start_times = {}
+        self.total_times = {}
         self.cover_amount = None
         self.coverage = None
 
@@ -151,6 +155,14 @@ class BaseReporter(IReporter):
         if len(self.errors)     > 0: return False
         if len(self.successes) == 0: return False
         return True
+
+    def isFailed(self):
+        """Tells whether or not this result was failed. This is
+        not the inverse of isSuccessful, because a result can
+        be nothing in case it's skipped."""
+        if len(self.failures)   > 0: return True
+        if len(self.errors)     > 0: return True
+        return False
 
     def setCoverageInfo(self, cover_amount, coverage):
         self.cover_amount = cover_amount

@@ -28,11 +28,11 @@ class test_SimpleRunner(unittest.TestCase):
         self.runner.reporter = mock.Mock()
 
     def test_run_retval_true(self):
-        self.runner.reporter.mockAddReturnValues( isSuccessful=True )
+        self.runner.reporter.mockAddReturnValues( isFailed=False )
         self.assertEqual(True, self.runner.run(fixture = mock.Mock()))
 
     def test_run_retval_false(self):
-        self.runner.reporter.mockAddReturnValues( isSuccessful=False )
+        self.runner.reporter.mockAddReturnValues( isFailed=True )
         self.assertEqual(False, self.runner.run(fixture = mock.Mock()))
 
     def test_run(self):

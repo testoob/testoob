@@ -380,6 +380,25 @@ FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
 .*
 AssertionError: Timeout.*
 """.strip()
+
+    def testStopOnFailSkip(self):
+        args = _testoob_args(options=["--stop-on-fail"], tests=["SkipFirstThenFail"])
+        regex=r"""SF
+======================================================================
+FAIL: .*
+----------------------------------------------------------------------
+"""
+        testoob.testing.command_line(args=args, expected_error_regex=regex, expected_rc=1)
+
+    _timeout_regex_base = r"""
+FAIL: testBuisy \(suites\.CaseSlow\.testBuisy\)
+.*
+AssertionError: Timeout.*
+FAIL: testSleep \(suites\.CaseSlow\.testSleep\)
+.*
+AssertionError: Timeout.*
+""".strip()
+
     def testTimeOut(self):
         regex = self._timeout_regex_base + "Ran 2 tests in (2\.\d+)|(1\.99\d)s"
         _unsupported_on_windows()
