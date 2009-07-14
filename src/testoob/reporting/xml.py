@@ -49,8 +49,6 @@ class XMLReporter(BaseReporter):
 
         self.writer.end("results")
 
-        assert len(self.test_starts) == 0
-
     def get_xml(self):
         return self._sio.getvalue()
 
@@ -93,7 +91,6 @@ class XMLReporter(BaseReporter):
 
     def _test_time(self, test_info):
         result = time.time() - self.test_starts[test_info]
-        del self.test_starts[test_info]
         return "%.4f" % result
 
     def _write_coverage(self, coverage):

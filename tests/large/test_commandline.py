@@ -832,6 +832,38 @@ FAILED \(failures=1, errors=1\)
             expected_rc = 0,
             expected_error_regex = '\.\s*\[[0-9.]+ seconds\]' * 10
         )
+        
+    def testHtmlDoubleFailure(self):
+        regex=r"""E
+======================================================================
+ERROR: test_failing \(suites\.TestDoubleFailure\.test_failing\)
+----------------------------------------------------------------------
+Traceback.*
+Exception: Teardown failing.
+
+======================================================================
+FAIL: test_failing \(suites\.TestDoubleFailure\.test_failing\)
+----------------------------------------------------------------------
+Traceback.*
+AssertionError: Testcase failing.
+
+Erred 1 tests
+ - test_failing \(suites\.TestDoubleFailure\)
+Failed 1 tests
+ - test_failing \(suites\.TestDoubleFailure\)
+----------------------------------------------------------------------
+Ran 1 test in 0\.\d+s
+FAILED \(failures=1, errors=1\)
+"""
+        testoob.testing.command_line(
+            args = _testoob_args(
+                options=["--html=double_fail.html"],
+                tests=["TestDoubleFailure"]
+            ),
+            expected_rc = 1,
+            expected_error_regex = regex
+        )
+        
 
 if __name__ == "__main__":
     testoob.main()

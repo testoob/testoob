@@ -206,6 +206,11 @@ class SkipFirstThenFail(unittest.TestCase):
         self.fail()
     def test_c(self): pass
 
+class TestDoubleFailure(unittest.TestCase):
+    def tearDown(self):
+        raise Exception('Teardown failing.')
+    def test_failing(self):
+        self.fail('Testcase failing.')
 
 def suite():
     result = unittest.TestSuite()
