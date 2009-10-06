@@ -834,7 +834,7 @@ FAILED \(failures=1, errors=1\)
         )
         
     def testHtmlDoubleFailure(self):
-        regex=r"""E
+        regex=r"""FE
 ======================================================================
 ERROR: test_failing \(suites\.TestDoubleFailure\.test_failing\)
 ----------------------------------------------------------------------
@@ -852,7 +852,7 @@ Erred 1 tests
 Failed 1 tests
  - test_failing \(suites\.TestDoubleFailure\)
 ----------------------------------------------------------------------
-Ran 1 test in 0\.\d+s
+Ran 1 test in .*
 FAILED \(failures=1, errors=1\)
 """
         testoob.testing.command_line(
