@@ -4,6 +4,38 @@
 integrate effortlessly with existing PyUnit (standard module 'unittest') test
 suites.
 
+== Testoob 1.15, 6 October, 2009
+
+Revival release -- wouldn't have happened without Ronnie van 't Westeinde's
+contributions and prodding!
+
+The new project home is http://code.google.com/p/testoob
+
+Skipping version 1.14 since it's been used to signify some internal patched
+versions.
+
+Enhancements:
+ * TESTOOB_WARNING_COLOR env var to change color (Ronnie van 't Westeinde)
+ * Progress bar improvements (Ronnie van 't Westeinde)
+ * Coverage improvements (Ronnie van 't Westeinde)
+ * New option '--time-each-test' (by Ziv, Amir, and Anton), #288
+ * No deprecation warnings with Python 2.6
+ * Better color support detection in win32 with ctypes
+ * Preliminary IronPython and Jython support
+
+Bugfixes:
+ * Fixed reporter race condition (only happened on Windows)
+ * '--stop-on-fail' no longer stops when first test is skipped (Ronnie van 't Westeinde)
+ * '--html' works correctly when test + setup/teardown both fail (Ronnie van 't Westeinde)
+
+Internal:
+ * Many tests made simpler and less sensitive mork work to be done)
+ * Ctrl-C tests work on Windows
+ * Some API changes to testoob.collecting
+
+Contributors:
+ * This release is entirely made possible by Ronnie van 't Westeinde
+
 == Testoob 1.13, 3 December, 2006
 
 Enhancements:

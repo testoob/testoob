@@ -8,7 +8,7 @@ kwargs = {
     'version'          : '__TESTOOB_VERSION__',
     'author'           : 'Ori Peleg',
     'author_email'     : 'testoob@gmail.com',
-    'url'              : 'http://testoob.sourceforge.net',
+    'url'              : 'http://code.google.com/p/testoob',
     'download_url'     : 'http://sourceforge.net/project/showfiles.php?group_id=138557',
     'license'          : 'Apache License, Version 2.0',
     'platforms'        : ['any'],

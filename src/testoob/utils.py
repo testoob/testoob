@@ -51,7 +51,7 @@ def add_fields_pickling(klass, disable_unpickleable_fields=False):
 
     Useful for 'fields' classes that contain unpickleable members.
 
-    Used in Testoob, http://testoob.sourceforge.net
+    Used in Testoob, http://code.google.com/p/testoob
 
     A contrived example for a 'fields' class:
 

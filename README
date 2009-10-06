@@ -14,12 +14,13 @@ module.
 It's designed and built to be easy to use and extend.
 
 ===========================================================
-= Documentation:
+= Links:
 ===========================================================
 
-See Testoob's homepage:
-
-  http://testoob.sourceforge.net
+Home:        http://code.google.com/p/testoob
+Discussion:  http://groups.google.com/group/testoob
+Old docs:    http://testoob.sourceforge.net
+Source code: http://code.google.com/p/testoob/wiki/SourceControl
 
 ===========================================================
 = Features:
@@ -71,6 +72,7 @@ Testoob has been created with the help of:
 - Barak Schiller (bspamalotschiller at gmail.com)
 - Misha Seltzer (mishadontspamme at seltzer dot com)
 - Wolfram Kriesing (ilikespamwolfram at kriesing dot de)
+- Ronnie van 't Westeinde <Ronnie.gimmespam.van.t.Westeinde at gmail dot com>
 
 To mail us, remove spam-related words from the user names.
 
