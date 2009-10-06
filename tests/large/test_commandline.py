@@ -860,6 +860,7 @@ FAILED \(failures=1, errors=1\)
                 options=["--html=double_fail.html"],
                 tests=["TestDoubleFailure"]
             ),
+            skip_check = _missing_modules_skip_check,
             expected_rc = 1,
             expected_error_regex = regex
         )
