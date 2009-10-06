@@ -855,15 +855,19 @@ Failed 1 tests
 Ran 1 test in .*
 FAILED \(failures=1, errors=1\)
 """
-        testoob.testing.command_line(
-            args = _testoob_args(
-                options=["--html=double_fail.html"],
-                tests=["TestDoubleFailure"]
-            ),
-            skip_check = _missing_modules_skip_check,
-            expected_rc = 1,
-            expected_error_regex = regex
-        )
+        output_file = tempfile.mktemp(".testoob-testing-double_fail")
+        try:
+            testoob.testing.command_line(
+                args = _testoob_args(
+                    options=["--html=" + output_file],
+                    tests=["TestDoubleFailure"]
+                ),
+                skip_check = _missing_modules_skip_check,
+                expected_rc = 1,
+                expected_error_regex = regex
+            )
+        finally:
+            _safe_unlink(output_file)
         
 
 if __name__ == "__main__":
