@@ -165,6 +165,7 @@ def command_line(
         e.long_message = "\n".join([
             "command_line test failed",
             "== args: %s" % args,
+            "== equiv. cmdline: '%s'" % " ".join(args),
             "== rc: %s" % rc,
             annotated_err_string("stdout", output),
             annotated_err_string("stderr", error),
