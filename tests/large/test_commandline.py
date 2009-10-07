@@ -3,6 +3,14 @@ import helpers
 import testoob.testing # for skip()
 import testoob.run_cmd
 
+def _disable_subprocess_color_support_if_necessary():
+    from testoob.reporting.color_support import can_autodetect_color_support
+    if can_autodetect_color_support():
+        return
+    from testoob.reporting.color_support import DISABLE_COLOR_SUPPORT_ENV_VAR_NAME
+    os.environ[DISABLE_COLOR_SUPPORT_ENV_VAR_NAME] = "1"
+_disable_subprocess_color_support_if_necessary()
+
 _suite_file = os.path.abspath(helpers.project_subpath("tests/suites.py"))
 
 def _safe_unlink(filename):
