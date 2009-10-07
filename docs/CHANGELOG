@@ -29,9 +29,10 @@ Bugfixes:
  * '--html' works correctly when test + setup/teardown both fail (Ronnie van 't Westeinde)
 
 Internal:
- * Many tests made simpler and less sensitive mork work to be done)
+ * Many tests made simpler and less sensitive (more work to be done)
  * Ctrl-C tests work on Windows
  * Some API changes to testoob.collecting
+ * Fixed some tests failing on Windows without ctypes available (py2.4 and earlier)
 
 Contributors:
  * This release is entirely made possible by Ronnie van 't Westeinde
