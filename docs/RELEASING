@@ -17,9 +17,26 @@ Lets assume we're releasing version 6.2
 
 * Update the website sources with the news
 
-* Generate the release (branches, creates distfile, uploads to sourceforge)
+* Generate tarballs and Windows installer
+  * bzr branch lp:testoob -rtag:REL-6.2 REL-6.2
+  * cd REL-6.2
+  * make dist
+  * # files are in dist/ subdir
 
-    ./other/logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.
+  (old release script:
+  ./other/logistics/generate_release.py --for-keeps --release=6.2 --root-dir=.)
+
+* Generate eggs:
+  * cd REL-6.2/dist
+  * easy_install-2.3 -zxN testoob-6.2.tar.gz
+  * easy_install-2.4 -zxN testoob-6.2.tar.gz
+  * easy_install-2.5 -zxN testoob-6.2.tar.gz
+  * easy_install-2.6 -zxN testoob-6.2.tar.gz
+
+* Upload files to the cheeseshop
+  - A distutils tarball
+  - Python 2.3 + 2.4 eggs, 'easy-install -zxN testoob-x.xx.tar.bz2'
+
 
 * Add the files to the SourceForge file release
 
@@ -39,10 +56,6 @@ Lets assume we're releasing version 6.2
   - Vaults of Parnassus (http://py.vaults.ca/submit)
   - The mailing lists (combine and edit the news announcement and the
     changelog)
-
-* Upload files to the cheeseshop
-  - A distutils tarball
-  - Python 2.3 + 2.4 eggs, 'easy-install -zxN testoob-x.xx.tar.bz2'
 
 * Update the wiki pages
   - Wikipedia

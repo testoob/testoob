@@ -9,7 +9,7 @@ kwargs = {
     'author'           : 'Ori Peleg',
     'author_email'     : 'testoob@gmail.com',
     'url'              : 'http://code.google.com/p/testoob',
-    'download_url'     : 'http://sourceforge.net/project/showfiles.php?group_id=138557',
+    'download_url'     : 'http://code.google.com/p/testoob/downloads/list',
     'license'          : 'Apache License, Version 2.0',
     'platforms'        : ['any'],
     'description'      : 'Testoob - An advanced unit testing framework',
@@ -24,6 +24,10 @@ Testoob - Python Testing Out Of (The) Box
 
 Testoob is an advanced unit testing framework for Python. It integrates
 effortlessly with existing PyUnit (module "unittest") test suites.
+
+Version 1.15 (Oct. 2009) adds better Python 2.6, IronPython, and Jython
+support, as well as test coverage improvements, better color support, and
+some new options and bugfixes.
 """.strip()
 
 kwargs['classifiers'] = """
