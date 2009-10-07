@@ -49,10 +49,14 @@ See docs/INSTALL
 = Testing
 ===========================================================
 
-Use GNU make (usually 'make' or 'gmake') from the project root:
+On *nix, use GNU make (usually 'make' or 'gmake') from the project root:
 
   make test    # test with the default python version
   make testall # test with different python versions
+
+On Windows, run from the project root:
+
+  python tests\alltests.py
 
 ===========================================================
 = License:
