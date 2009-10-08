@@ -10,7 +10,7 @@ def get_python_executable_ironpython_hack():
 
     # TODO: can probably look this up in the registry
     import os
-    for possibility in [(r"c:\Python%s\python.exe"%ver) for ver in ("24","25","26")]:
+    for possibility in [(r"c:\Python%s\python.exe"%ver) for ver in ("26","25","24", "23")]:
         if os.path.exists(possibility):
             return possibility
 
