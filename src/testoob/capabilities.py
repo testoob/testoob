@@ -8,6 +8,9 @@ class Capabilities(object):
         except ValueError:
             # IronPython 1.1
             return False
+        except AttributeError:
+            # IronPython 2.6
+            return False
     getframe = property(getframe)
 
     def f_back(self):

@@ -35,8 +35,6 @@ def get_python_executable(args):
     result = PYTHON_EXECUTABLES[key]
     if key == "2.2":
         args.append("--color-mode=never") # Python 2.2 pywin32 problems
-    if key == "ipy2.6":
-        append_to_pathvar('IRONPYTHONPATH', r"C:\Python26\Lib")
     if not os.path.exists(result):
         die("Can't find python executable '%s'"%result)
     return result
