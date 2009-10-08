@@ -53,9 +53,8 @@ Lets assume we're releasing version 6.2
   - cheeseshop ('python setup.py register')
     * FROM THE RELEASE BRANCH!!!
     * change the 'long description' to a news release
-  - Vaults of Parnassus (http://py.vaults.ca/submit)
-  - The mailing lists (combine and edit the news announcement and the
-    changelog)
+  - The mailing lists (combine and edit the news announcement and the changelog)
+  - comp.lang.python.announce + comp.lang.python
 
 * Update the wiki pages
   - Wikipedia
