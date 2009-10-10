@@ -22,6 +22,8 @@ PYTHON_EXECUTABLES = {
     "2.4" : r"C:\Python24\python.exe",
     "2.3" : r"C:\Python23\python.exe",
     "2.2" : r"C:\Python22\python.exe",
+    "3.1" : r"C:\Python31\python.exe",
+    "3.0" : r"C:\Python30\python.exe",
     "ipy2.6" : r"C:\Program Files\IronPython 2.6\ipy.exe",
 }
 DEFAULT_KEY = "2.6"
