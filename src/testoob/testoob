@@ -19,7 +19,7 @@ def addPythonPath(path):
     sys.path.insert(0, normpath(path))
 
 def testoob_main(attrname):
-    exec "from testoob.main import %(attrname)s as result" % vars()
+    exec("from testoob.main import %(attrname)s as result" % vars())
     return result
 
 options, file_name, test_names, parser = parseArgs()
