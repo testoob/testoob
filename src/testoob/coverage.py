@@ -150,7 +150,7 @@ class Coverage:
         if not (filename.endswith(".py") or filename.endswith(".pyc")):
             return False
             
-        if not self.coverage.has_key(filename):
+        if not filename in self.coverage:
             self.coverage[filename] = {
                 "lines": set(_find_executable_linenos(filename)),
                 "covered": set()
