@@ -44,7 +44,7 @@ def get_run_args(args):
     exec_info = PYTHON_EXECUTABLES[key]
     if not os.path.exists(exec_info.py_args[0]):
         die("Can't find python executable '%s'"%exec_info.py_args[0])
-    return exec_info.py_args, exec_info.testoob_extra_args
+    return exec_info.py_args, exec_info.testoob_extra_args + args
 
 print "Can specify python version on the commandline, one of %r" % sorted(PYTHON_EXECUTABLES.keys())
 print "Example: '%s 2.6'" % (sys.argv[0])
@@ -55,4 +55,5 @@ test_file = os.path.join(base_dir, "tests", "alltests.py")
 
 test_args = py_args + [testoob_executable, test_file, "suite"] + testoob_extra_args
 import subprocess
+print " ".join(test_args)
 subprocess.call(test_args)
