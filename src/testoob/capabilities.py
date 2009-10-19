@@ -35,14 +35,13 @@ class Capabilities(object):
     settrace = _cache_result(settrace)
     settrace = property(settrace)
 
-    def trace_coverage_support(self):
+    def trace_coverage_support(self, sample_filename):
         try:
             import trace
-            trace.find_executable_linenos(__file__)
+            trace.find_executable_linenos(sample_filename)
             return True
         except NotImplementedError:
             return False
     trace_coverage_support = _cache_result(trace_coverage_support)
-    trace_coverage_support = property(trace_coverage_support)
 
 c = Capabilities()

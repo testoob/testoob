@@ -79,7 +79,7 @@ class system_tests(CoverageTest):
     def test_percentage_full(self):
         if not testoob.capabilities.c.settrace:
             testoob.testing.skip("requires sys.settrace")
-        if not testoob.capabilities.c.trace_coverage_support:
+        if not testoob.capabilities.c.trace_coverage_support(sample.__file__.replace(".pyc", ".py")):
             testoob.testing.skip("requires coverage support from trace")
         self.coverage.runfunc(sample.foo, 5)
         self.assertEqual( 100, self.coverage.total_coverage_percentage() )
