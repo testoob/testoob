@@ -30,6 +30,7 @@ PYTHON_EXECUTABLES = {
     "3.1" : Exec([r"C:\Python31\python.exe"]),
     "3.0" : Exec([r"C:\Python30\python.exe"]),
     "2to3" : Exec([r"C:\Python26\python.exe", "-3"]),
+    "ipy2.0" : Exec([r"C:\Program Files\IronPython 2.0.2\ipy.exe"]),
     "ipy2.6" : Exec([r"C:\Program Files\IronPython 2.6\ipy.exe"]),
 }
 DEFAULT_KEY = "2.6"
