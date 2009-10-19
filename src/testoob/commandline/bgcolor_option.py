@@ -6,10 +6,7 @@ parsing.parser.add_option(
     type    = "choice",
     choices = bgcolor_choices,
     default = "auto",
-    help    = """
-    What's the background color of the terminal. This is used to 
-    determine a readable warning color. Choices are %s, default
-    is '%default'"""
+    help    = """What's the background color of the terminal. This is used to determine a readable warning color. Choices are """ + str(bgcolor_choices) + """, default is '%default'"""
 )
 
 def process_options(options):
