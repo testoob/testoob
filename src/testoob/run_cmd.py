@@ -43,7 +43,9 @@ class IronPythonCommandRunner(object):
         p.StartInfo.RedirectStandardOutput = True
         p.StartInfo.RedirectStandardError = True
         p.StartInfo.FileName = args[0]
-        p.StartInfo.Arguments = " ".join(['"%s"'%x for x in args[1:]])
+        def escape_newlines(s):
+            return s.replace("\n", "\\n")
+        p.StartInfo.Arguments = " ".join(['"%s"'%escape_newlines(x) for x in args[1:]])
         p.Start()
         if have_stdin:
             p.StandardInput.Write(input)

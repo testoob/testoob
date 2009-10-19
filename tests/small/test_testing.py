@@ -27,15 +27,15 @@ def _generate_command(output="", error="", rc=0):
     Generate an args list that produces the given output, error, and
     return code
     """
-    assert output.find('"""') < 0
-    assert error.find('"""') < 0
+    assert output.find("'''") < 0
+    assert error.find("'''") < 0
     python_commands = (
-        'import sys',
-        'sys.stdout.write("""%s""")' % output,
-        'sys.stdout.flush()',
-        'sys.stderr.write("""%s""")' % error,
-        'sys.stderr.flush()',
-        'sys.exit(%d)' % rc,
+        "import sys",
+        "sys.stdout.write('''%s''')" % output,
+        "sys.stdout.flush()",
+        "sys.stderr.write('''%s''')" % error,
+        "sys.stderr.flush()",
+        "sys.exit(%d)" % rc,
     )
 
     return [get_python_executable(), "-c", "; ".join(python_commands)]
