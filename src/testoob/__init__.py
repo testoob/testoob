@@ -16,7 +16,7 @@
 "An unittest-compatible Python testing framework"
 
 __author__ = 'The Testoob Team'
-__version__ = '1.15'
+__version__ = '1.16'
 
 from main import main
 import testing

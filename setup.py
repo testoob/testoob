@@ -5,7 +5,7 @@ kwargs = {
 
     # meta-data
     'name'             : 'testoob',
-    'version'          : '1.15',
+    'version'          : '1.16',
     'author'           : 'Ori Peleg',
     'author_email'     : 'testoob@gmail.com',
     'url'              : 'http://code.google.com/p/testoob',
@@ -25,9 +25,7 @@ Testoob - Python Testing Out Of (The) Box
 Testoob is an advanced unit testing framework for Python. It integrates
 effortlessly with existing PyUnit (module "unittest") test suites.
 
-Version 1.15 (Oct. 2009) adds better Python 2.6, IronPython, and Jython
-support, as well as test coverage improvements, better color support, and
-some new options and bugfixes.
+Version 1.16 (2009) makes you coffee!
 """.strip()
 
 kwargs['classifiers'] = """
