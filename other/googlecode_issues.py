@@ -21,6 +21,7 @@ def get_optparser():
     p.add_option("--user", "-u", metavar="USERNAME")
     p.add_option("--project", "-p")
     return p
+
 def main(args):
     optparser = get_optparser()
 
@@ -39,6 +40,10 @@ def main(args):
         issues_client.client_login(opts.user, password, CLIENT_NAME)
     except gdata.client.BadAuthentication, e:
         die("Couldn't authenticate user '%s': %s" % (opts.user, e))
+
+    issues_feed = issues_client.get_issues(opts.project)
+    for issue in issues_feed.entry:
+        print issue.title.text
 
 if __name__ == "__main__":
     main(sys.argv)
