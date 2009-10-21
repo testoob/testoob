@@ -22,6 +22,18 @@ def get_optparser():
     p.add_option("--project", "-p")
     return p
 
+def get_issues_client(username):
+    password = getpass.getpass("Password for user '%s': " % username)
+
+    issues_client = gdata.projecthosting.client.ProjectHostingClient()
+
+    try:
+        issues_client.client_login(username, password, CLIENT_NAME)
+    except gdata.client.BadAuthentication, e:
+        die("Couldn't authenticate user '%s': %s" % (username, e))
+
+    return issues_client
+
 def main(args):
     optparser = get_optparser()
 
@@ -32,16 +44,9 @@ def main(args):
     if opts.user is None:
         optparser.error("Missing required option 'user'")
 
-    password = getpass.getpass("Password for user '%s': " % opts.user)
 
-    issues_client = gdata.projecthosting.client.ProjectHostingClient()
-
-    try:
-        issues_client.client_login(opts.user, password, CLIENT_NAME)
-    except gdata.client.BadAuthentication, e:
-        die("Couldn't authenticate user '%s': %s" % (opts.user, e))
-
-    issues_feed = issues_client.get_issues(opts.project)
+    client = get_issues_client(opts.user)
+    issues_feed = client.get_issues(opts.project)
     for issue in issues_feed.entry:
         print issue.title.text
 
