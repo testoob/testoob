@@ -22,6 +22,7 @@ def get_optparser():
     p.add_option("--user", "-u", metavar="USERNAME")
     p.add_option("--project", "-p")
     p.add_option("--tracdb", metavar="FILE")
+    p.add_option("--list", "-", action="store_true", default=False)
     return p
 
 def get_issues_client(username):
@@ -121,9 +122,12 @@ def main(args):
     verify_required_option('user')
     verify_required_option('tracdb')
 
-    import pprint
-    pprint.pprint(list(load_trac_tickets(opts.tracdb))[:1000])
-    sys.exit(1)
+    print "Loading Trac tickets..."
+    tickets = load_trac_tickets(opts.tracdb)
+    if opts.list:
+        import pprint
+        pprint.pprint(list(tickets))
+        sys.exit(0)
 
     client = get_issues_client(opts.user)
     issues_feed = client.get_issues(opts.project)
