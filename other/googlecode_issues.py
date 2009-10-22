@@ -22,7 +22,7 @@ def get_optparser():
     p.add_option("--user", "-u", metavar="USERNAME")
     p.add_option("--project", "-p")
     p.add_option("--tracdb", metavar="FILE")
-    p.add_option("--list", "-", action="store_true", default=False)
+    p.add_option("--list", "-l", action="store_true", default=False)
     return p
 
 def get_issues_client(username):
@@ -36,6 +36,21 @@ def get_issues_client(username):
         die("Couldn't authenticate user '%s': %s" % (username, e))
 
     return issues_client
+
+class Issue:
+    def __init__(self, trac_dict, google_code_dict, comments):
+        self.trac_dict = trac_dict
+        self.google_code_dict = google_code_dict
+        self.comments = comments
+
+def comment_trac2gcode(trac_dict):
+    return {
+        "comment": trac_dict["newvalue"] + "\n\n[originally commented on trac by %s]"%mangle_email(trac_dict["author"])
+    }
+class Comment:
+    def __init__(self, trac_dict):
+        self.trac_dict = trac_dict
+        self.google_code_dict = comment_trac2gcode(trac_dict)
 
 def mangle_email(email):
     return " xxATxx ".join(email.split("@")).replace(".", " dot ")
@@ -61,15 +76,16 @@ def convert_trac_ticket_row(row):
             result.append("Milestone-" + trac_milestone.capitalize())
         return result
 
-    result = {
+    google_code_dict = {
         "title" : row["summary"],
         "content": calc_content(row["description"], row["reporter"]),
         "status": calc_status(row["status"], row["resolution"]),
         "labels": calc_labels(row["type"], row["priority"], row["component"], row["milestone"]),
     }
     if row["cc"]:
-        result["ccs"] = row["cc"].split(","),
-    return result
+        google_code_dict["ccs"] = row["cc"].split(","),
+
+    return Issue(dict(row), google_code_dict, [])
     # summary -> title
     # description -> content
     # status -> status
@@ -109,6 +125,21 @@ def load_trac_tickets(trac_db_filename):
         finally:
             c.close()
 
+def populate_issue_comments(trac_db_filename, issues):
+    with sqlite3.connect(trac_db_filename) as conn:
+        c = conn.cursor()
+        c.row_factory = sqlite3.Row
+        try:
+            for i in issues:
+                c.execute("select * from ticket_change where ticket = ?", (i.trac_dict["id"],))
+                for ticket_change_row in c:
+                    i.comments.append(Comment(dict(ticket_change_row)))
+                
+            c.execute("select * from ticket")
+        finally:
+            c.close()
+
+
 def main(args):
     optparser = get_optparser()
 
@@ -123,10 +154,11 @@ def main(args):
     verify_required_option('tracdb')
 
     print "Loading Trac tickets..."
-    tickets = load_trac_tickets(opts.tracdb)
+    issues = list(load_trac_tickets(opts.tracdb))
+    populate_issue_comments(opts.tracdb, issues)
     if opts.list:
         import pprint
-        pprint.pprint(list(tickets))
+        pprint.pprint(list((i.google_code_dict, [x.google_code_dict for x in i.comments]) for i in issues if i.comments))
         sys.exit(0)
 
     client = get_issues_client(opts.user)
