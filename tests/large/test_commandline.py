@@ -108,7 +108,7 @@ OK
 ^======================================================================
 FAIL: testFailure \(.*suites\.CaseFailure\.testFailure\)
 ----------------------------------------------------------------------
-.*AssertionError
+.*AssertionError.*
 
 Failed 1 tests
  - testFailure \(suites\.CaseFailure\)
@@ -162,10 +162,20 @@ testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. OK
                 rc_predicate = lambda rc: rc != 0,
             )
 
-    def testLaunchingPdb(self):
+    def testLaunchingPdb26(self):
+        if sys.version_info >= (2, 7):
+            testoob.testing.skip("Python 2.6 or earlier needed")
         self._check_pdb_run(
             options=["--debug"],
             pdb_message=r"raise self\.failureException, msg",
+        )
+
+    def testLaunchingPdb27(self):
+        if sys.version_info < (2, 7):
+            testoob.testing.skip("Python 2.7 or later needed")
+        self._check_pdb_run(
+            options=["--debug"],
+            pdb_message=r"raise self\.failureException\(msg\)",
         )
 
     def testRerunOnFail(self):
@@ -434,7 +444,7 @@ RuntimeError
 FAIL: testFailure \(suites\.CaseMixed\.testFailure\)
 ----------------------------------------------------------------------
 .*
-AssertionError
+AssertionError.*
 
 Erred 1 tests
  - testError \(suites\.CaseMixed\)
@@ -498,7 +508,7 @@ Erroring\.\.\.
 FAIL: testFailure \(suites\.CaseVerbous\.testFailure\)
 ----------------------------------------------------------------------
 .*
-AssertionError
+AssertionError.*
 ======================================================================
 Run's output
 ----------------------------------------------------------------------
@@ -519,7 +529,7 @@ FAILED \(failures=1, errors=1\)
         args = _testoob_args(options=["--capture", "--immediate"], tests=["CaseVerbous"])
         regex=r"""E
 ======================================================================
-ERROR: testError \(suites\.CaseVerbous\.testError\)
+ERROR: testError \(suites\.CaseVerbous.*\)
 ----------------------------------------------------------------------
 .*
 RuntimeError
@@ -531,10 +541,10 @@ Erroring\.\.\.
 ======================================================================
 F
 ======================================================================
-FAIL: testFailure \(suites\.CaseVerbous\.testFailure\)
+FAIL: testFailure \(suites\.CaseVerbous.*\)
 ----------------------------------------------------------------------
 .*
-AssertionError
+AssertionError.*
 ======================================================================
 Run's output
 ----------------------------------------------------------------------
@@ -620,7 +630,7 @@ FAILED \(failures=1, errors=1\)
         )
     def testTestMethodRegex(self):
         testoob.testing.command_line(
-                _testoob_args(options=["--test-method-regex=Test$"],
+                _testoob_args(options=["--test-method-regex=Something$"],
                               tests=["CaseDifferentTestNameSignatures"]),
                 expected_error_regex="Ran 1 test.*OK",
                 expected_rc=0,
@@ -660,6 +670,16 @@ FAILED \(failures=1, errors=1\)
         testoob.testing.command_line(
                 _testoob_args(options=["-v"], tests=["Skipping"]),
                 expected_error_regex='SKIPPED.*SKIPPED',
+                expected_rc=0,
+        )
+
+    def testSkippingTestsReason(self):
+        if sys.version_info < (2, 7):
+            testoob.testing.skip("unittest.TestCase.testSkip available on 2.7 and later")
+
+        testoob.testing.command_line(
+                _testoob_args(options=["-v"], tests=["SkippingForPython27"]),
+                expected_error_regex=r'Skipped 1 tests.* \(Skipping with Python 2\.7 unittest\)',
                 expected_rc=0,
         )
 

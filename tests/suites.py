@@ -135,6 +135,11 @@ class Skipping(unittest.TestCase):
         import testoob
         raise testoob.SkipTestException()
 
+class SkippingForPython27(unittest.TestCase):
+    def test_pass(self): pass
+    def test_skip(self):
+        self.skipTest('Skipping with Python 2.7 unittest')
+        
 class CaseTestoobAsserts(unittest.TestCase):
     def test_assert_ture(self):
         import testoob

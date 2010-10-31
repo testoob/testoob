@@ -86,6 +86,12 @@ class ReporterProxy:
         self._apply_method("addAssert", create_test_info(test), assertName, varList, exception)
 
     def addSkip(self, test, err, isRegistered=True):
+        import unittest
+        # In Python 2.7, a SkipTest class is made available.
+        # We should be able to deal with that by extracting the
+        # right info from it.
+        if isinstance(err,str) and hasattr(unittest,'SkipTest'):
+            err = unittest.SkipTest(err), err, None
         self._apply_method("addSkip", create_test_info(test), create_err_info(test, err), isRegistered)
 
     def isSuccessful(self):
