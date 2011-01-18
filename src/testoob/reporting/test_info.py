@@ -45,6 +45,9 @@ class TestInfo:
     def classname(self):
         return self.fixture.__class__.__name__
 
+    def absclassname(self):
+        return self.module() + "." + self.classname()
+
     def funcname(self):
         # parsing id() because the function name is a private fixture field
         return self.fixture.id().split(".")[-1]
