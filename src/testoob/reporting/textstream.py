@@ -46,7 +46,8 @@ class TextStreamReporter(BaseReporter):
 
     separator1 = '=' * 70
     separator2 = '-' * 70
-
+    _newline_needed_after_result = False
+    
     def __init__(self, stream, create_writers = StreamWriters):
         # TODO - why the hell do we save re?
         import re
@@ -73,6 +74,7 @@ class TextStreamReporter(BaseReporter):
         if self.showAll:
             writer.write("\n" * self.multiLineOutput)
             writer.write(long_string)
+            self._newline_needed_after_result = True
         elif self.dots:
             writer.write(short_string)
 
@@ -80,12 +82,28 @@ class TextStreamReporter(BaseReporter):
         BaseReporter.addSuccess(self, test_info)
         self._report_result("OK", ".", self.writers.success)
 
+    def _write_newline_after_result_if_necessary(self):
+        if self.showAll and self._newline_needed_after_result:
+            self._writeln("")
+            self._newline_needed_after_result = False
+        
     def addSkip(self, test_info, err_info, isRegistered=True):
-        # TODO: why does addSkip get called _after_ stopTest?
+        # addSkip can be called after or before stopTest:
+        # 1) If a testcase is skipped programmatically, addSkip
+        #    is called before stopTest, as expected
+        # 2) If a testcase is skipped using keyboard interrupt,
+        #    the testcase is rerun with a new decorator that
+        #    calls addSkip, causing it to be run after stopTest.
+        # When adding the newline after SKIPPED, this has to be
+        # taken into account.
         BaseReporter.addSkip(self, test_info, err_info, isRegistered)
-        # newline needed because newline added in stopTest gets printed before
-        # SKIPPED does
-        self._report_result("SKIPPED\n", "S", self.writers.warning)
+        self._report_result("SKIPPED", "S", self.writers.warning)
+        # newline needed here because newline added in stopTest gets
+        # printed before SKIPPED does, if the root-cause was a 
+        # keyboardInterrupt, which can be recognized by an empty
+        # exception value.
+        if err_info.exc_info[2] is None:
+            self._write_newline_after_result_if_necessary()
 
     def _report_failure(self, long_string, short_string, writer, test_info, err_info):
         self._report_result(long_string, short_string, writer)
@@ -112,8 +130,11 @@ class TextStreamReporter(BaseReporter):
                 " [%.2f seconds]" % self.current_test_total_time
             )
 
-        if self.showAll:
-            self._writeln("")
+        # If a test is skipped because of a KeyboardInterrupt, it will be re-run
+        # to make it explicitely skipped. In those cases, you don't want a newline
+        # yet. In all other cases, you'd like to have a newline in verbose mode
+        # to close off the "OK", "SKIPPED", "FAIL", or "ERROR" strings
+        self._write_newline_after_result_if_necessary()
 
     def _vassertMessage(self, assertName, varList):
         msg = "(" + assertName + ") "

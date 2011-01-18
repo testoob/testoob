@@ -663,7 +663,7 @@ FAILED \(failures=1, errors=1\)
     def testSkippingTestsVerbose(self):
         testoob.testing.command_line(
                 _testoob_args(options=["-v"], tests=["Skipping"]),
-                expected_error_regex='SKIPPED.*SKIPPED',
+                expected_error_regex='SKIPPED\n[^\n].*SKIPPED',
                 expected_rc=0,
         )
 
