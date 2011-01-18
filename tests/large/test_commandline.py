@@ -162,20 +162,14 @@ testJ \(.*suites\.CaseLetters\.testJ\) \.\.\. OK
                 rc_predicate = lambda rc: rc != 0,
             )
 
-    def testLaunchingPdb26(self):
-        if sys.version_info >= (2, 7):
-            testoob.testing.skip("Python 2.6 or earlier needed")
-        self._check_pdb_run(
-            options=["--debug"],
-            pdb_message=r"raise self\.failureException, msg",
-        )
-
-    def testLaunchingPdb27(self):
+    def testLaunchingPdb(self):
         if sys.version_info < (2, 7):
-            testoob.testing.skip("Python 2.7 or later needed")
+            expected_pdb_message=r"raise self\.failureException, msg"
+        else:
+            expected_pdb_message=r"raise self\.failureException\(msg\)"
         self._check_pdb_run(
             options=["--debug"],
-            pdb_message=r"raise self\.failureException\(msg\)",
+            pdb_message=expected_pdb_message,
         )
 
     def testRerunOnFail(self):
