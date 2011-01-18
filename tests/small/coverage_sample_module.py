@@ -3,4 +3,3 @@ def foo(x):
     if True:
         4
     return x*4
-

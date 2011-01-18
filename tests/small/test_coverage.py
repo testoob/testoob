@@ -7,6 +7,7 @@ from os.path import abspath
 from unittest import TestCase
 
 import coverage_sample_module as sample
+import coverage_sample_module2 as sample2
 
 import testoob
 
@@ -73,16 +74,33 @@ class unit_tests(CoverageTest):
         self.assertEqual( 5, result["covered"] )
         self.assertEqual( 50, result["percent"] )
 
+
 class system_tests(CoverageTest):
     "Large-grain tests for Coverage"
 
-    def test_percentage_full(self):
+    def skip_if_no_coverage_support(self):
         if not testoob.capabilities.c.settrace:
             testoob.testing.skip("requires sys.settrace")
         if not testoob.capabilities.c.trace_coverage_support(sample.__file__.replace(".pyc", ".py")):
             testoob.testing.skip("requires coverage support from trace")
+    
+    def test_percentage_full(self):
+        self.skip_if_no_coverage_support()
         self.coverage.runfunc(sample.foo, 5)
         self.assertEqual( 100, self.coverage.total_coverage_percentage() )
+
+    def get_coverage_percentage(self, filename):
+        statistics = self.coverage.getstatistics()
+        coverage_percentage = 0
+        for file_ in statistics:
+            if file_.endswith(filename):
+                coverage_percentage = statistics[file_]['percent']
+        return coverage_percentage
+        
+    def test_multithreaded_coverage(self):
+        self.skip_if_no_coverage_support()
+        self.coverage.runfunc(sample2.multi_thread_func)
+        self.assertEqual( 100, self.get_coverage_percentage('coverage_sample_module2.py') )
 
 if __name__ == "__main__":
     import testoob

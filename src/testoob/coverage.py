@@ -16,6 +16,15 @@
 "Code coverage module"
 
 import os, sys
+try:
+    import threading
+except ImportError:
+    class threading: 
+        '''Dummy threading module if real threading module is not
+        available.'''
+        @staticmethod
+        def settrace(func):
+            pass
 
 def supported():
     "Is coverage supported?"
@@ -88,11 +97,13 @@ class Coverage:
         Runs the function with arguments and keyword arguments, and checks the
         code coverage.
         """
+        threading.settrace(self._tracer)
         sys.settrace(self._tracer)
         try:
             return func(*args, **kwargs)
         finally:
             sys.settrace(None)
+            threading.settrace(None)
 
     def getstatistics(self):
         """
