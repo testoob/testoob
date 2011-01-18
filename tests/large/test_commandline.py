@@ -750,7 +750,7 @@ FAILED \(failures=1, errors=1\)
                     options=["--profiler=" + profiler_name, "--profdata=" + stats_filename],
                     tests=[test_case]),
                 rc_predicate=rc_predicate,
-                expected_output_regex="[0-9]+ function calls.*in [0-9.]+ CPU seconds",
+                expected_output_regex="[0-9]+ function calls.*in [0-9.]+ (CPU )?seconds",
                 skip_check = _missing_modules_skip_check,
             )
         finally:
