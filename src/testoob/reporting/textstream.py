@@ -46,6 +46,8 @@ class TextStreamReporter(BaseReporter):
 
     separator1 = '=' * 70
     separator2 = '-' * 70
+
+    # Default value, may be overridden per instance. Use immutable values only.
     _newline_needed_after_result = False
     
     def __init__(self, stream, create_writers = StreamWriters):
