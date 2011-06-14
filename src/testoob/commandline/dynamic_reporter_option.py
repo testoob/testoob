@@ -1,33 +1,35 @@
 import parsing
-parsing.parser.add_option("--add_reporter", metavar="CLASS", help="dynamically load reporter (my_package.my_module.my_reporter_class, must be in the PYTHONPATH)")
+parsing.parser.add_option("--add_reporter", metavar="CLASS",
+    help="dynamically load reporter (my_package.my_module.my_reporter_class, must be in the PYTHONPATH)")
+
+def split_module_classname(classname):
+    last_dot = classname.rfind(".")
+    module_name = classname[:last_dot]
+    class_name = classname[last_dot+1:]
+    return module_name, class_name
+
+def dynamically_import_class(classname):
+    module_name, class_name = split_module_classname(classname)
+
+    try:
+        module = __import__(module_name, globals(), locals(), [class_name])
+        return getattr(module, class_name)
+    except:
+        raise parsing.ArgumentsError("Unable to load or find reporter class")
 
 def process_options(options):
     if options.add_reporter is None:
         return
 
-    # split package/module from class name
-    mod_class_split_loc = options.add_reporter.rfind(".")
-    mod_name = options.add_reporter[0:mod_class_split_loc]
-    class_name = options.add_reporter[mod_class_split_loc+1:]
+    reporter_classname = options.add_reporter
 
-    try:
-        # dynamically import the module
-        mod = __import__(mod_name, globals(), locals(), [class_name])
-        # get the class
-        klass = getattr(mod, class_name)
-    except:
-        # raise command line error
-        from commandline.parsing import ArgumentsError
-        raise ArgumentsError("Unable to load or find reporter class")
+    klass = dynamically_import_class(reporter_classname)
 
-    # instantiate the class if it is derived from IReporters
     from testoob.reporting.base import IReporter
-    if issubclass(klass, IReporter):
-        # instantiate the klass and attach it as a reporter
-        parsing.kwargs["reporters"].append( klass() )
-    else:
-        # raise command line error
-        from commandline.parsing import ArgumentsError
-        raise ArgumentsError("added reporter class must be subclass of testoob.reporting.base.IReporters")
+    if not issubclass(klass, IReporter):
+        raise parsing.ArgumentsError("added reporter class must be subclass of testoob.reporting.base.IReporter")
+
+    # instantiate the klass and attach it as a reporter
+    parsing.kwargs["reporters"].append( klass() )
 
 parsing.option_processors.append(process_options)

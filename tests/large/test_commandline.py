@@ -877,7 +877,7 @@ FAILED \(failures=1, errors=1\)
         finally:
             _safe_unlink(output_file)
         
-    def testAddReporterOptionUnableLoadClass(self):
+    def testAddReporterUnableLoadClass(self):
         args = _testoob_args(options=["--add_reporter=NotExisting"])
         regex=r"Unable to load or find reporter class"
         testoob.testing.command_line(
@@ -887,9 +887,9 @@ FAILED \(failures=1, errors=1\)
                 rc_predicate = lambda rc: rc != 0,
             )
 
-    def testAddReporterOptionReporterNotDerivedFromIReporter(self):
+    def testAddReporterReporterNotDerivedFromIReporter(self):
         args = _testoob_args(options=["--add_reporter=testoob.reporting.reporter_proxy.ReporterProxy"])
-        regex=r"added reporter class must be subclass of testoob.reporting.base.IReporters"
+        regex=r"added reporter class must be subclass of testoob.reporting.base.IReporter"
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout
@@ -897,13 +897,13 @@ FAILED \(failures=1, errors=1\)
                 rc_predicate = lambda rc: rc != 0,
             )
 
-    def testAddReporterOption(self):
+    def testAddReporter(self):
         args = _testoob_args(options=["--add_reporter=testoob.reporting.base.BaseReporter"], tests=["CaseDigits"])
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout
                 expected_error_regex = "", # accept anything on stderr
-                rc_predicate = lambda rc: rc == 0,
+                expected_rc = 0,
             )
             
  
