@@ -877,6 +877,35 @@ FAILED \(failures=1, errors=1\)
         finally:
             _safe_unlink(output_file)
         
+    def testAddReporterOptionUnableLoadClass(self):
+        args = _testoob_args(options=["--add_reporter=NotExisting"])
+        regex=r"Unable to load or find reporter class"
+        testoob.testing.command_line(
+                args = args,
+                expected_output_regex = "", # accept anything on stdout
+                expected_error_regex = regex,
+                rc_predicate = lambda rc: rc != 0,
+            )
 
+    def testAddReporterOptionReporterNotDerivedFromIReporter(self):
+        args = _testoob_args(options=["--add_reporter=testoob.reporting.reporter_proxy.ReporterProxy"])
+        regex=r"added reporter class must be subclass of testoob.reporting.base.IReporters"
+        testoob.testing.command_line(
+                args = args,
+                expected_output_regex = "", # accept anything on stdout
+                expected_error_regex = regex,
+                rc_predicate = lambda rc: rc != 0,
+            )
+
+    def testAddReporterOption(self):
+        args = _testoob_args(options=["--add_reporter=testoob.reporting.base.BaseReporter"], tests=["CaseDigits"])
+        testoob.testing.command_line(
+                args = args,
+                expected_output_regex = "", # accept anything on stdout
+                expected_error_regex = "", # accept anything on stderr
+                rc_predicate = lambda rc: rc == 0,
+            )
+            
+ 
 if __name__ == "__main__":
     testoob.main()
