@@ -879,7 +879,7 @@ FAILED \(failures=1, errors=1\)
         
     def testAddReporterBadModuleName(self):
         args = _testoob_args(options=["--add_reporter=NoSuchModule.Foo"])
-        regex=r"Unable to load or find class 'NoSuchModule.Foo'"
+        regex=r"Can't load module 'NoSuchModule'"
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout
@@ -889,7 +889,7 @@ FAILED \(failures=1, errors=1\)
 
     def testAddReporterBadClassName(self):
         args = _testoob_args(options=["--add_reporter=sys.NoSuchClass"])
-        regex=r"Unable to load or find class 'sys.NoSuchClass'"
+        regex=r"Can't find class 'NoSuchClass' in module 'sys'"
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout

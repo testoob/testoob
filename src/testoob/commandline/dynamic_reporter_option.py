@@ -14,8 +14,10 @@ def dynamically_import_class(classname):
     try:
         module = __import__(module_name, globals(), locals(), [class_name])
         return getattr(module, class_name)
-    except:
-        raise parsing.ArgumentsError("Unable to load or find class '%s'" % classname)
+    except ImportError:
+        raise parsing.ArgumentsError("Can't load module '%s'" % module_name)
+    except AttributeError:
+        raise parsing.ArgumentsError("Can't find class '%s' in module '%s'" % (class_name, module_name))
 
 def process_options(options):
     if options.add_reporter is None:
