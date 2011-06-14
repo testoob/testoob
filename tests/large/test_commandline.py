@@ -879,7 +879,7 @@ FAILED \(failures=1, errors=1\)
         
     def testAddReporterBadModuleName(self):
         args = _testoob_args(options=["--add_reporter=NoSuchModule.Foo"])
-        regex=r"Can't load module 'NoSuchModule'"
+        regex=r"Can't load module 'NoSuchModule', got error: "
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout

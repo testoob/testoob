@@ -14,8 +14,9 @@ def dynamically_import_class(full_class_name):
     try:
         module = __import__(module_name, globals(), locals(), [class_name])
         return getattr(module, class_name)
-    except ImportError:
-        raise parsing.ArgumentsError("Can't load module '%s'" % module_name)
+    except ImportError, e:
+        # TODO: show entire stack trace?
+        raise parsing.ArgumentsError("Can't load module '%s', got error: %s" % (module_name, e))
     except AttributeError:
         raise parsing.ArgumentsError("Can't find class '%s' in module '%s'" % (class_name, module_name))
 
