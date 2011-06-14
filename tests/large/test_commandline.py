@@ -878,7 +878,7 @@ FAILED \(failures=1, errors=1\)
             _safe_unlink(output_file)
         
     def testAddReporterBadModuleName(self):
-        args = _testoob_args(options=["--add_reporter=NoSuchModule.Foo"])
+        args = _testoob_args(options=["--add-reporter=NoSuchModule.Foo"])
         regex=r"Can't load module 'NoSuchModule', got error: "
         testoob.testing.command_line(
                 args = args,
@@ -888,7 +888,7 @@ FAILED \(failures=1, errors=1\)
             )
 
     def testAddReporterBadClassName(self):
-        args = _testoob_args(options=["--add_reporter=sys.NoSuchClass"])
+        args = _testoob_args(options=["--add-reporter=sys.NoSuchClass"])
         regex=r"Can't find class 'NoSuchClass' in module 'sys'"
         testoob.testing.command_line(
                 args = args,
@@ -898,7 +898,7 @@ FAILED \(failures=1, errors=1\)
             )
 
     def testAddReporterReporterNotDerivedFromIReporter(self):
-        args = _testoob_args(options=["--add_reporter=testoob.reporting.reporter_proxy.ReporterProxy"])
+        args = _testoob_args(options=["--add-reporter=testoob.reporting.reporter_proxy.ReporterProxy"])
         regex=r"class '.*ReporterProxy' must subclass .*IReporter"
         testoob.testing.command_line(
                 args = args,
@@ -908,7 +908,7 @@ FAILED \(failures=1, errors=1\)
             )
 
     def testAddReporter(self):
-        args = _testoob_args(options=["--add_reporter=testoob.reporting.base.BaseReporter"], tests=["CaseDigits"])
+        args = _testoob_args(options=["--add-reporter=testoob.reporting.base.BaseReporter"], tests=["CaseDigits"])
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout

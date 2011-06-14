@@ -1,5 +1,5 @@
 import parsing
-parsing.parser.add_option("--add_reporter", metavar="CLASSNAME",
+parsing.parser.add_option("--add-reporter", metavar="CLASSNAME",
     help="dynamically load reporter class (package.module.classname), "
          "must be in the PYTHONPATH")
 
