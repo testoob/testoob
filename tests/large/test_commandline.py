@@ -877,9 +877,19 @@ FAILED \(failures=1, errors=1\)
         finally:
             _safe_unlink(output_file)
         
-    def testAddReporterUnableLoadClass(self):
-        args = _testoob_args(options=["--add_reporter=NotExisting"])
-        regex=r"Unable to load or find class 'NotExisting'"
+    def testAddReporterBadModuleName(self):
+        args = _testoob_args(options=["--add_reporter=NoSuchModule.Foo"])
+        regex=r"Unable to load or find class 'NoSuchModule.Foo'"
+        testoob.testing.command_line(
+                args = args,
+                expected_output_regex = "", # accept anything on stdout
+                expected_error_regex = regex,
+                rc_predicate = lambda rc: rc != 0,
+            )
+
+    def testAddReporterBadClassName(self):
+        args = _testoob_args(options=["--add_reporter=sys.NoSuchClass"])
+        regex=r"Unable to load or find class 'sys.NoSuchClass'"
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout
