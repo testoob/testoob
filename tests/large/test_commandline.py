@@ -879,7 +879,7 @@ FAILED \(failures=1, errors=1\)
         
     def testAddReporterUnableLoadClass(self):
         args = _testoob_args(options=["--add_reporter=NotExisting"])
-        regex=r"Unable to load or find reporter class"
+        regex=r"Unable to load or find class 'NotExisting'"
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout
@@ -889,7 +889,7 @@ FAILED \(failures=1, errors=1\)
 
     def testAddReporterReporterNotDerivedFromIReporter(self):
         args = _testoob_args(options=["--add_reporter=testoob.reporting.reporter_proxy.ReporterProxy"])
-        regex=r"added reporter class must be subclass of testoob.reporting.base.IReporter"
+        regex=r"class '.*ReporterProxy' must subclass .*IReporter"
         testoob.testing.command_line(
                 args = args,
                 expected_output_regex = "", # accept anything on stdout

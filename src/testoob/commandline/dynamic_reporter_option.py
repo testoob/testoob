@@ -15,7 +15,7 @@ def dynamically_import_class(classname):
         module = __import__(module_name, globals(), locals(), [class_name])
         return getattr(module, class_name)
     except:
-        raise parsing.ArgumentsError("Unable to load or find reporter class")
+        raise parsing.ArgumentsError("Unable to load or find class '%s'" % classname)
 
 def process_options(options):
     if options.add_reporter is None:
@@ -27,7 +27,7 @@ def process_options(options):
 
     from testoob.reporting.base import IReporter
     if not issubclass(klass, IReporter):
-        raise parsing.ArgumentsError("added reporter class must be subclass of testoob.reporting.base.IReporter")
+        raise parsing.ArgumentsError("class '%s' must subclass testoob.reporting.base.IReporter" % reporter_classname)
 
     # instantiate the klass and attach it as a reporter
     parsing.kwargs["reporters"].append( klass() )
