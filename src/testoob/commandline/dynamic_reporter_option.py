@@ -24,13 +24,11 @@ def process_options(options):
     if options.add_reporter is None:
         return
 
-    reporter_classname = options.add_reporter
-
-    klass = dynamically_import_class(reporter_classname)
+    klass = dynamically_import_class(options.add_reporter)
 
     from testoob.reporting.base import IReporter
     if not issubclass(klass, IReporter):
-        raise parsing.ArgumentsError("class '%s' must subclass testoob.reporting.base.IReporter" % reporter_classname)
+        raise parsing.ArgumentsError("class '%s' must subclass testoob.reporting.base.IReporter" % options.add_reporter)
 
     # instantiate the klass and attach it as a reporter
     parsing.kwargs["reporters"].append( klass() )
