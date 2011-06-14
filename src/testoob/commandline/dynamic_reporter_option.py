@@ -1,6 +1,7 @@
 import parsing
-parsing.parser.add_option("--add_reporter", metavar="CLASS",
-    help="dynamically load reporter (my_package.my_module.my_reporter_class, must be in the PYTHONPATH)")
+parsing.parser.add_option("--add_reporter", metavar="CLASSNAME",
+    help="dynamically load reporter class (package.module.classname), "
+         "must be in the PYTHONPATH")
 
 def split_module_classname(full_class_name):
     last_dot = full_class_name.rfind(".")
